@@ -1,37 +1,37 @@
-# URI for database connection, leave empty if using address and credential settings directly
+# uri: 数据库连接 URI，留空则使用下方的 address 和账号密码配置
 uri:
-# List of MongoDB server addresses
+# address: MongoDB 服务器地址列表
 address: [localhost:37017]
-# Name of the database
+# database: 数据库名
 database: openim_v3
-# Username for database authentication
+# username: 数据库认证用户名
 username: openIM
-# Password for database authentication
+# password: 数据库认证密码
 password: openIM123
-# Authentication source for database authentication, if use root user, set it to admin
+# authSource: 认证库；使用 root 用户时设为 admin
 authSource: openim_v3
-# Maximum number of connections in the connection pool
+# maxPoolSize: 连接池最大连接数
 maxPoolSize: 100
-# Maximum number of retry attempts for a failed database connection
+# maxRetry: 数据库连接失败的最大重试次数
 maxRetry: 10
-# MongoDB Mode, including "standalone", "replicaSet"
+# mongoMode: MongoDB 模式，可选 "standalone"（单机）、"replicaSet"（副本集）
 mongoMode: "standalone"
 
-# The following configurations only take effect when mongoMode is set to "replicaSet"
+# 以下配置仅 mongoMode 为 "replicaSet" 时生效
 replicaSet:
   name: rs0
   hosts: [127.0.0.1:37017, 127.0.0.1:37018, 127.0.0.1:37019]
-  # Read concern level: "local", "available", "majority", "linearizable", "snapshot"
+  # readConcern: 读关注级别，可选 "local"、"available"、"majority"、"linearizable"、"snapshot"
   readConcern: majority
-  # maximum staleness of data in seconds
+  # maxStaleness: 数据最大陈旧时间（秒）
   maxStaleness: 90s
 
-# The following configurations only take effect when mongoMode is set to "replicaSet"
+# 以下配置仅 mongoMode 为 "replicaSet" 时生效
 readPreference:
-  # Read preference mode, can be "primary", "primaryPreferred", "secondary", "secondaryPreferred", "nearest"
+  # mode: 读偏好模式，可选 "primary"、"primaryPreferred"、"secondary"、"secondaryPreferred"、"nearest"
   mode: primary
   maxStaleness: 90s
-  # TagSets is an array of maps with priority based on order, empty map must be placed last for fallback tagSets
+  # tagSets: 标签集合数组，按顺序区分优先级，空 map 必须放最后作为兜底
   tagSets:
     - datacenter: "cn-east"
       rack: "1"
@@ -39,13 +39,13 @@ readPreference:
     - datacenter: "cn-east"
       storage: "ssd"
     - datacenter: "cn-east"
-    - {} # Empty map, indicates any node
+    - {} # 空 map，表示任意节点
 
-# The following configurations only take effect when mongoMode is set to "replicaSet"
+# 以下配置仅 mongoMode 为 "replicaSet" 时生效
 writeConcern:
-  # Write node count or tag (int, "majority", or custom tag)
+  # w: 写入节点数或标签（整数、"majority" 或自定义标签）
   w: majority
-  # Whether to wait for journal confirmation
+  # j: 是否等待 journal 落盘确认
   j: true
-  # Write timeout duration
+  # wtimeout: 写入超时时间
   wtimeout: 30s

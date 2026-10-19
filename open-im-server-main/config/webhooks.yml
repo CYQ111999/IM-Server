@@ -1,10 +1,13 @@
+# 消息/事件回调 webhook 配置：各钩子均为「动作前(before)/动作后(after)」触发
+# enable: 是否启用该回调；timeout: 回调超时（秒）
+# failedContinue: 回调失败时是否继续执行业务流程（true = 不阻塞主流程）
 url: http://127.0.0.1:10006/callbackExample
 beforeSendSingleMsg:
   enable: false
   timeout: 5
   failedContinue: true
-  # Only the contentType not in deniedTypes will send the callback.
-  # If not set, all contentType messages will through this filter.
+  # deniedTypes: 只有 contentType 不在该列表中的消息才触发回调
+  # 不设置则所有 contentType 的消息都触发
   deniedTypes: []
 beforeUpdateUserInfoEx:
   enable: false
@@ -16,30 +19,30 @@ afterUpdateUserInfoEx:
 afterSendSingleMsg:
   enable: false
   timeout: 5
-  # Only the recvIDs specified in attentionIds will send the callback
-  # if not set, all user messages will be callback
+  # attentionIds: 只有接收方在该列表中的消息才触发回调
+  # 不设置则所有用户的消息都触发
   attentionIds: []
-  # See beforeSendSingleMsg comment.
+  # 同 beforeSendSingleMsg 的说明
   deniedTypes: []
 beforeSendGroupMsg:
   enable: false
   timeout: 5
   failedContinue: true
-  # See beforeSendSingleMsg comment.
+  # 同 beforeSendSingleMsg 的说明
   deniedTypes: []
 beforeMsgModify:
   enable: false
   timeout: 5
   failedContinue: true
-  # See beforeSendSingleMsg comment.
+  # 同 beforeSendSingleMsg 的说明
   deniedTypes: []
 afterSendGroupMsg:
   enable: false
   timeout: 5
-  # Only the GroupIDs specified in attentionIds will send the callback
-  # if not set, all user messages will be callback
+  # attentionIds: 只有群 ID 在该列表中的群消息才触发回调
+  # 不设置则所有用户的消息都触发
   attentionIds: []
-  # See beforeSendSingleMsg comment.
+  # 同 beforeSendSingleMsg 的说明
   deniedTypes: []
 afterMsgSaveDB:
   enable: false
@@ -160,8 +163,8 @@ afterRevokeMsg:
 beforeAddBlack:
   enable: false
   timeout: 5
-  failedContinue:
-afterAddFriend:
+  failedContinue: true
+afterAddBlack:
   enable: false
   timeout: 5
 beforeAddFriendAgree:

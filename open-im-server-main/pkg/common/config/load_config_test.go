@@ -38,14 +38,14 @@ func TestLoadMongoConfig(t *testing.T) {
 
 func TestLoadMinioConfig(t *testing.T) {
 	var storageConfig Minio
-	err := Load("../../../config/minio.yml", "IMENV_MINIO", "", &storageConfig)
+	err := Load("../../../config/", "minio.yml", "IMENV_MINIO", &storageConfig)
 	assert.Nil(t, err)
 	assert.Equal(t, "openim", storageConfig.Bucket)
 }
 
 func TestLoadWebhooksConfig(t *testing.T) {
 	var webhooks Webhooks
-	err := Load("../../../config/webhooks.yml", "IMENV_WEBHOOKS", "", &webhooks)
+	err := Load("../../../config/", "webhooks.yml", "IMENV_WEBHOOKS", &webhooks)
 	assert.Nil(t, err)
 	assert.Equal(t, 5, webhooks.BeforeAddBlack.Timeout)
 
@@ -53,24 +53,34 @@ func TestLoadWebhooksConfig(t *testing.T) {
 
 func TestLoadOpenIMRpcUserConfig(t *testing.T) {
 	var user User
-	err := Load("../../../config/openim-rpc-user.yml", "IMENV_OPENIM_RPC_USER", "", &user)
+	// 通过环境变量覆盖 listenIP 与 ports，验证 env 覆盖机制
+	os.Setenv("IMENV_OPENIM_RPC_USER_RPC_LISTENIP", "0.0.0.0")
+	os.Setenv("IMENV_OPENIM_RPC_USER_RPC_PORTS", "10110,10111,10112")
+	err := Load("../../../config/", "openim-rpc-user.yml", "IMENV_OPENIM_RPC_USER", &user)
 	assert.Nil(t, err)
-	//export IMENV_OPENIM_RPC_USER_RPC_LISTENIP="0.0.0.0"
 	assert.Equal(t, "0.0.0.0", user.RPC.ListenIP)
-	//export IMENV_OPENIM_RPC_USER_RPC_PORTS="10110,10111,10112"
 	assert.Equal(t, []int{10110, 10111, 10112}, user.RPC.Ports)
 }
 
 func TestLoadNotificationConfig(t *testing.T) {
 	var noti Notification
-	err := Load("../../../config/notification.yml", "IMENV_NOTIFICATION", "", &noti)
+	err := Load("../../../config/", "notification.yml", "IMENV_NOTIFICATION", &noti)
 	assert.Nil(t, err)
 	assert.Equal(t, "Your friend's profile has been changed", noti.FriendRemarkSet.OfflinePush.Title)
 }
 
 func TestLoadOpenIMThirdConfig(t *testing.T) {
 	var third Third
-	err := Load("../../../config/openim-rpc-third.yml", "IMENV_OPENIM_RPC_THIRD", "", &third)
+	// 通过环境变量覆盖对象存储配置，验证 env 覆盖机制
+	os.Setenv("IMENV_OPENIM_RPC_THIRD_OBJECT_ENABLE", "enabled")
+	os.Setenv("IMENV_OPENIM_RPC_THIRD_OBJECT_OSS_ENDPOINT", "https://oss-cn-chengdu.aliyuncs.com")
+	os.Setenv("IMENV_OPENIM_RPC_THIRD_OBJECT_OSS_BUCKET", "my_bucket_name")
+	os.Setenv("IMENV_OPENIM_RPC_THIRD_OBJECT_OSS_BUCKETURL", "https://my_bucket_name.oss-cn-chengdu.aliyuncs.com")
+	os.Setenv("IMENV_OPENIM_RPC_THIRD_OBJECT_OSS_ACCESSKEYID", "AKID1234567890")
+	os.Setenv("IMENV_OPENIM_RPC_THIRD_OBJECT_OSS_ACCESSKEYSECRET", "abc123xyz789")
+	os.Setenv("IMENV_OPENIM_RPC_THIRD_OBJECT_OSS_SESSIONTOKEN", "session_token_value")
+	os.Setenv("IMENV_OPENIM_RPC_THIRD_OBJECT_OSS_PUBLICREAD", "true")
+	err := Load("../../../config/", "openim-rpc-third.yml", "IMENV_OPENIM_RPC_THIRD", &third)
 	assert.Nil(t, err)
 	assert.Equal(t, "enabled", third.Object.Enable)
 	assert.Equal(t, "https://oss-cn-chengdu.aliyuncs.com", third.Object.Oss.Endpoint)
@@ -78,15 +88,13 @@ func TestLoadOpenIMThirdConfig(t *testing.T) {
 	assert.Equal(t, "https://my_bucket_name.oss-cn-chengdu.aliyuncs.com", third.Object.Oss.BucketURL)
 	assert.Equal(t, "AKID1234567890", third.Object.Oss.AccessKeyID)
 	assert.Equal(t, "abc123xyz789", third.Object.Oss.AccessKeySecret)
-	assert.Equal(t, "session_token_value", third.Object.Oss.SessionToken) // Uncomment if session token is needed
+	assert.Equal(t, "session_token_value", third.Object.Oss.SessionToken)
 	assert.Equal(t, true, third.Object.Oss.PublicRead)
-
-	// Environment: IMENV_OPENIM_RPC_THIRD_OBJECT_ENABLE=enabled;IMENV_OPENIM_RPC_THIRD_OBJECT_OSS_ENDPOINT=https://oss-cn-chengdu.aliyuncs.com;IMENV_OPENIM_RPC_THIRD_OBJECT_OSS_BUCKET=my_bucket_name;IMENV_OPENIM_RPC_THIRD_OBJECT_OSS_BUCKETURL=https://my_bucket_name.oss-cn-chengdu.aliyuncs.com;IMENV_OPENIM_RPC_THIRD_OBJECT_OSS_ACCESSKEYID=AKID1234567890;IMENV_OPENIM_RPC_THIRD_OBJECT_OSS_ACCESSKEYSECRET=abc123xyz789;IMENV_OPENIM_RPC_THIRD_OBJECT_OSS_SESSIONTOKEN=session_token_value;IMENV_OPENIM_RPC_THIRD_OBJECT_OSS_PUBLICREAD=true
 }
 
 func TestTransferConfig(t *testing.T) {
 	var tran MsgTransfer
-	err := Load("../../../config/openim-msgtransfer.yml", "IMENV_OPENIM-MSGTRANSFER", "", &tran)
+	err := Load("../../../config/", "openim-msgtransfer.yml", "IMENV_OPENIM-MSGTRANSFER", &tran)
 	assert.Nil(t, err)
 	assert.Equal(t, true, tran.Prometheus.Enable)
 	assert.Equal(t, true, tran.Prometheus.AutoSetPorts)

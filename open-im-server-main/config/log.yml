@@ -1,14 +1,14 @@
-# Log storage path, default is acceptable, change to a full path if modification is needed
+# storageLocation: 日志存储路径，默认即可，修改时请填完整路径
 storageLocation: ../../../../logs/
-# Log rotation period (in hours), default is acceptable
+# rotationTime: 日志轮转周期（小时），默认即可
 rotationTime: 24
-# Number of log files to retain, default is acceptable
+# remainRotationCount: 保留的日志文件数量，默认即可
 remainRotationCount: 2
-# Log level settings: 3 for production environment; 6 for more verbose logging in debugging environments
+# remainLogLevel: 日志级别，生产环境用 3；调试环境用 6 输出更详细日志
 remainLogLevel: 6
-# Whether to output to standard output, default is acceptable
+# isStdout: 是否输出到标准输出，默认即可
 isStdout: false
-# Whether to log in JSON format, default is acceptable
+# isJson: 是否以 JSON 格式记录日志，默认即可
 isJson: false
-# output simplify log when KeyAndValues's value len is bigger than 50 in rpc method log
+# isSimplify: RPC 方法日志中，当 KeyAndValues 的值长度超过 50 时输出精简日志
 isSimplify: true

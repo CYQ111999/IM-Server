@@ -1,31 +1,31 @@
 api:
-  # Listening IP; 0.0.0.0 means both internal and external IPs are listened to, default is recommended
+  # listenIP: 监听 IP；0.0.0.0 表示内网外网都监听，推荐默认
   listenIP: 0.0.0.0
-  # Listening ports; if multiple are configured, multiple instances will be launched, must be consistent with the number of prometheus.ports
+  # ports: 监听端口；配置多个将启动多个实例，数量必须与 prometheus.ports 一致
   ports: [ 10002 ]
-  # Fallback for IP resolution issues in multi-instance standalone mode.
+  # 多实例 standalone 模式下 IP 解析异常时的兜底配置
   # registerIP:
-  # API compression level; 0: default compression, 1: best compression, 2: best speed, -1: no compression
+  # compressionLevel: API 压缩级别；0: 默认压缩，1: 压缩率最高，2: 速度最快，-1: 不压缩
   compressionLevel: 0
 
 
 prometheus:
-  # Enable Prometheus metrics exposure for this service; set to true to allow scraping.
+  # enable: 是否暴露 Prometheus 指标；true 表示允许抓取
   enable: true
-  # autoSetPorts indicates whether to automatically set the ports
+  # autoSetPorts: 是否自动设置端口
   autoSetPorts: true
-  # Prometheus listening ports, must match the number of api.ports
-  # It will only take effect when autoSetPorts is set to false.
+  # ports: Prometheus 监听端口，数量必须与 api.ports 一致
+  # 仅 autoSetPorts 为 false 时生效
   ports:
-  # This address can be accessed via a browser
+  # grafanaURL: 可通过浏览器访问的 Grafana 地址
   grafanaURL:
 
 ratelimiter:
-  # Whether to enable rate limiting
+  # enable: 是否启用限流
   enable: false
-  # WindowSize defines time duration per window
+  # window: 每个窗口的时间长度
   window: 20s
-  # BucketNum defines bucket number for each window
+  # bucket: 每个窗口的桶数量
   bucket: 500
-  # CPU threshold; valid range 0–1000 (1000 = 100%)
+  # cpuThreshold: CPU 阈值，有效范围 0–1000（1000 = 100%）
   cpuThreshold: 850

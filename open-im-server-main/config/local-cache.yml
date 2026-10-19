@@ -1,3 +1,8 @@
+# 本地缓存配置：分片缓存 + 过期策略 + 失效广播 topic
+# slotNum: 分片数量；slotSize: 每个分片的容量
+# successExpire: 缓存命中后的过期时间（秒）；failedExpire: 未命中（防穿透）的过期时间（秒）
+# topic: 缓存失效广播的 Redis pub/sub topic（任一节点删缓存时通知其他节点同步失效）
+
 auth:
   topic: DELETE_CACHE_AUTH
   slotNum: 100

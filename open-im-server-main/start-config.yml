@@ -1,3 +1,5 @@
+# Mage 启动配置：`mage start` 按本文件启动服务
+# serviceBinaries: 服务名 → 实例数（数量 >1 时自动多开，端口在各自 config 里配置）
 serviceBinaries:
   openim-api: 1
   openim-crontask: 4
@@ -11,8 +13,10 @@ serviceBinaries:
   openim-rpc-friend: 1
   openim-rpc-msg: 1
   openim-rpc-third: 1
+# toolBinaries: 随服务一起启动的工具
 toolBinaries:
   - check-free-memory
   - check-component
   - seq
+# maxFileDescriptors: 最大文件描述符数量
 maxFileDescriptors: 10000

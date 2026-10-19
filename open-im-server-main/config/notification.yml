@@ -1,18 +1,18 @@
 groupCreated:
   isSendMsg: true
-# Deprecated. Fixed as 1.
+# 已废弃，固定为 1。
   reliabilityLevel: 1
-# Deprecated. Fixed as false.
+# 已废弃，固定为 false。
   unreadCount: false
-# Configuration for offline push notifications.
+# 离线推送通知配置
   offlinePush:
-    # Enables or disables offline push notifications.
+    # 是否启用离线推送通知
     enable: false
-    # Title for the notification when a group is created.
+    # 建群通知的标题
     title: create group title
-    # Description for the notification.
+    # 通知的描述
     desc: create group desc
-    # Additional information for the notification.
+    # 通知的附加信息
     ext: create group ext
 
 groupInfoSet:

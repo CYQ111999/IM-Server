@@ -1,28 +1,27 @@
 secret: openIM123
 
-# imAdminUser: Configuration for instant messaging system administrators
+# imAdminUser: 即时通讯系统管理员配置
 imAdminUser:
-  # userIDs: List of administrator user IDs.
-  # Each entry here corresponds by index to the matching entry in the nicknames list below.
+  # userIDs: 管理员用户 ID 列表，与下方 nicknames 按索引一一对应
   userIDs: [imAdmin]
-  # nicknames: List of administrator display names.
-  # Each entry here corresponds by index to the matching entry in the userIDs list above.
+  # nicknames: 管理员显示名列表，与上方 userIDs 按索引一一对应
   nicknames: [superAdmin]
 
-# queue: choose message queue engine
-# Supported values:
-# - kafka (default)
+# queue: 选择消息队列引擎
+# 可选值：
+# - kafka（默认）
 # - redis
-# - memory (standalone only; microservices cannot use memory)
+# - memory（仅 standalone 模式可用；微服务模式不能使用 memory）
 queue: kafka
 
 
-# 1: For Android, iOS, Windows, Mac, and web platforms, only one instance can be online at a time
+# 1: Android、iOS、Windows、Mac、Web 各平台同一时刻只能有一个实例在线
 multiLogin:
   policy: 1
-  # max num of tokens in one end
+  # maxNumOneEnd: 单端最多保留的 token 数量
   maxNumOneEnd: 30
 
+# rpcMaxBodySize: RPC 请求/响应体大小上限（字节）
 rpcMaxBodySize:
   requestMaxBodySize:  8388608
   responseMaxBodySize: 8388608

@@ -1,12 +1,13 @@
+# address: Redis 地址列表
 address: [localhost:16379]
 username:
 password: openIM123
-# redis Mode, including "standalone","cluster","sentinel"
+# redisMode: Redis 模式，可选 "standalone"（单机）、"cluster"（集群）、"sentinel"（哨兵）
 redisMode: "standalone"
 db: 0
 maxRetry: 10
 poolSize: 100
-# Sentinel configuration (only used when redisMode is "sentinel")
+# sentinelMode: 哨兵配置（仅 redisMode 为 "sentinel" 时生效）
 sentinelMode:
   masterName: "redis-master"
   sentinelsAddrs: ["127.0.0.1:26379", "127.0.0.1:26380", "127.0.0.1:26381"]

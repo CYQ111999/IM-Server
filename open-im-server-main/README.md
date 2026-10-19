@@ -1,140 +1,130 @@
-<p align="center">
-    <a href="https://openim.io">
-        <img src="./assets/logo-gif/openim-logo.gif" width="60%" height="30%"/>
-    </a>
-</p>
+# IM-Server — 即时通讯服务端
 
-<div align="center">
+基于 Go 的即时通讯（IM）微服务集群。本项目源于开源项目 [OpenIM Server](https://github.com/openimsdk/open-im-server) v3.8，在保留核心架构的基础上进行了企业级模块剥离、代码注释中文化与文档重构，作为个人学习与面试讲述项目。
 
-[![Stars](https://img.shields.io/github/stars/openimsdk/open-im-server?style=for-the-badge&logo=github&colorB=ff69b4)](https://github.com/openimsdk/open-im-server/stargazers)
-[![Forks](https://img.shields.io/github/forks/openimsdk/open-im-server?style=for-the-badge&logo=github&colorB=blue)](https://github.com/openimsdk/open-im-server/network/members)
-[![Codecov](https://img.shields.io/codecov/c/github/openimsdk/open-im-server?style=for-the-badge&logo=codecov&colorB=orange)](https://app.codecov.io/gh/openimsdk/open-im-server)
-[![Go Report Card](https://goreportcard.com/badge/github.com/openimsdk/open-im-server?style=for-the-badge)](https://goreportcard.com/report/github.com/openimsdk/open-im-server)
-[![Go Reference](https://img.shields.io/badge/Go%20Reference-blue.svg?style=for-the-badge&logo=go&logoColor=white)](https://pkg.go.dev/github.com/openimsdk/open-im-server/v3)
-[![License](https://img.shields.io/badge/license-Apache--2.0-green?style=for-the-badge)](https://github.com/openimsdk/open-im-server/blob/main/LICENSE)
-[![Slack](https://img.shields.io/badge/Slack-500%2B-blueviolet?style=for-the-badge&logo=slack&logoColor=white)](https://join.slack.com/t/openimsdk/shared_invite/zt-2ijy1ys1f-O0aEDCr7ExRZ7mwsHAVg9A)
-[![Best Practices](https://img.shields.io/badge/Best%20Practices-purple?style=for-the-badge)](https://www.bestpractices.dev/projects/8045)
-[![Good First Issues](https://img.shields.io/github/issues/openimsdk/open-im-server/good%20first%20issue?style=for-the-badge&logo=github)](https://github.com/openimsdk/open-im-server/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc+label%3A%22good+first+issue%22)
-[![Language](https://img.shields.io/badge/Language-Go-blue.svg?style=for-the-badge&logo=go&logoColor=white)](https://golang.org/)
-[![Gurubase](https://img.shields.io/badge/Gurubase-Ask%20OpenIM%20Guru-006BFF?style=for-the-badge)](https://gurubase.io/g/openim)
+> 诚实声明：本项目为二次开发学习项目，核心架构来自 OpenIM Server（Apache-2.0），保留 `LICENSE` 文件。
 
-<p align="center">
-  <a href="./README.md">English</a> · 
-  <a href="./README_zh_CN.md">中文</a> · 
-  <a href="./docs/readme/README_uk.md">Українська</a> · 
-  <a href="./docs/readme/README_cs.md">Česky</a> · 
-  <a href="./docs/readme/README_hu.md">Magyar</a> · 
-  <a href="./docs/readme/README_es.md">Español</a> · 
-  <a href="./docs/readme/README_fa.md">فارسی</a> · 
-  <a href="./docs/readme/README_fr.md">Français</a> · 
-  <a href="./docs/readme/README_de.md">Deutsch</a> · 
-  <a href="./docs/readme/README_pl.md">Polski</a> · 
-  <a href="./docs/readme/README_id.md">Indonesian</a> · 
-  <a href="./docs/readme/README_fi.md">Suomi</a> · 
-  <a href="./docs/readme/README_ml.md">മലയാളം</a> · 
-  <a href="./docs/readme/README_ja.md">日本語</a> · 
-  <a href="./docs/readme/README_nl.md">Nederlands</a> · 
-  <a href="./docs/readme/README_it.md">Italiano</a> · 
-  <a href="./docs/readme/README_ru.md">Русский</a> · 
-  <a href="./docs/readme/README_pt_BR.md">Português (Brasil)</a> · 
-  <a href="./docs/readme/README_eo.md">Esperanto</a> · 
-  <a href="./docs/readme/README_ko.md">한국어</a> · 
-  <a href="./docs/readme/README_ar.md">العربي</a> · 
-  <a href="./docs/readme/README_vi.md">Tiếng Việt</a> · 
-  <a href="./docs/readme/README_da.md">Dansk</a> · 
-  <a href="./docs/readme/README_el.md">Ελληνικά</a> · 
-  <a href="./docs/readme/README_tr.md">Türkçe</a>
-</p>
+## 架构总览
 
-</div>
+```mermaid
+flowchart LR
+    Client[客户端 / Web] -->|HTTP REST| API[openim-api 网关 :10002]
+    Client -->|WebSocket| GW[openim-msggateway :10001]
+    API --> Auth[auth-rpc]
+    API --> User[user-rpc]
+    API --> Friend[friend-rpc]
+    API --> Group[group-rpc]
+    API --> Msg[msg-rpc]
+    API --> Conv[conversation-rpc]
+    GW -->|gRPC| Auth
+    GW -->|gRPC| Msg
+    Msg -->|生产消息| Kafka[(Kafka :19094)]
+    Kafka -->|消费| MT[openim-msgtransfer]
+    Kafka -->|消费| Push[openim-push]
+    MT --> Redis[(Redis :16379)]
+    MT --> Mongo[(MongoDB :37017)]
+    Push -->|在线推送| GW
+    Auth --> Redis
+    User --> Redis
+    User --> Mongo
+    Friend --> Mongo
+    Group --> Mongo
+    Conv --> Mongo
+    Msg --> Mongo
+```
 
-</p>
+消息主链路：**客户端 → msg-rpc 落序/落库 → Kafka 解耦 → msgtransfer 分发（在线走 Redis → msggateway → WebSocket 下发；离线走 Mongo）→ push 服务推送**。
 
-## :busts_in_silhouette: Join Our Community
+## 目录结构
 
-- 💬 [Follow us on Twitter](https://twitter.com/founder_im63606)
-- 🚀 [Join our Slack](https://join.slack.com/t/openimsdk/shared_invite/zt-2ijy1ys1f-O0aEDCr7ExRZ7mwsHAVg9A)
-- :eyes: [Join our WeChat Group](https://openim-1253691595.cos.ap-nanjing.myqcloud.com/WechatIMG20.jpeg)
+```
+├── cmd/                        # 各服务可执行入口
+│   ├── openim-api/             #   REST 网关（Gin）
+│   ├── openim-msggateway/      #   WebSocket 长连接网关
+│   ├── openim-msgtransfer/     #   Kafka 消费：消息分发与落库
+│   ├── openim-push/            #   推送服务（在线推送 + 离线推送）
+│   └── openim-rpc/             #   六大 gRPC 业务服务
+│       ├── openim-rpc-auth/        #   鉴权（token 签发/校验）
+│       ├── openim-rpc-user/        #   用户资料
+│       ├── openim-rpc-friend/      #   好友/黑名单
+│       ├── openim-rpc-group/       #   群组
+│       ├── openim-rpc-msg/         #   消息
+│       └── openim-rpc-conversation/#   会话
+├── internal/                   # 各服务业务实现（api/msggateway/msgtransfer/push/rpc）
+├── pkg/                        # 基础设施
+│   ├── common/storage/         #   ★ 存储分层：Redis 缓存 + MongoDB 持久化 + Kafka
+│   ├── common/config/          #   配置加载（YAML + 环境变量覆盖）
+│   ├── rpcli / rpccache / localcache/  # RPC 客户端与两级缓存
+│   ├── notification/           #   系统通知消息（tip 消息）
+│   └── msgprocessor / mqbuild / authverify / callbackstruct / apistruct / dbbuild
+├── config/                     # 每个服务一份 YAML + share.yml 公共配置
+├── components/                 # docker-compose 挂载数据目录
+├── docs/                       # 中文开发文档
+├── magefile.go                 # Mage 构建入口
+└── docker-compose.yml          # 中间件 + 前端一键启动
+```
 
-## Ⓜ️ About OpenIM
+## 技术栈
 
-Unlike standalone chat applications such as Telegram, Signal, and Rocket.Chat, OpenIM offers an open-source instant messaging solution designed specifically for developers rather than as a directly installable standalone chat app. Comprising OpenIM SDK and OpenIM Server, it provides developers with a complete set of tools and services to integrate instant messaging functions into their applications, including message sending and receiving, user management, and group management. Overall, OpenIM aims to provide developers with the necessary tools and framework to implement efficient instant messaging solutions in their applications.
+| 类别 | 选型 |
+| --- | --- |
+| 语言 | Go 1.25 |
+| RPC | gRPC + Protobuf（`github.com/openimsdk/protocol`） |
+| HTTP | Gin |
+| 长连接 | WebSocket（自实现连接管理/心跳/多端同步） |
+| 消息队列 | Kafka（消息收发与落库/推送解耦，支持 redis/memory 引擎切换） |
+| 缓存 | Redis + 进程内本地缓存（localcache） |
+| 持久化 | MongoDB |
+| 服务发现 | etcd（standalone 模式自动切换为进程内内存注册） |
+| 对象存储 | MinIO（可选） |
+| 构建 | Mage |
 
-![App-OpenIM Relationship](./docs/images/oepnim-design.png)
+## 快速开始
 
-## 🚀 Introduction to OpenIMSDK
+### 模式 A：源码运行（开发/改造用）
 
-**OpenIMSDK**, designed for **OpenIMServer**, is an IM SDK created specifically for integration into client applications. It supports various functionalities and modules:
+```bash
+# 1. 启动中间件（Mongo/Redis/etcd/Kafka/MinIO + 网页前端）
+docker compose --env-file .env up -d
 
-- 🌟 Main Features:
+# 2. 编译全部服务
+mage build
 
-  - 📦 Local Storage
-  - 🔔 Listener Callbacks
-  - 🛡️ API Wrapping
-  - 🌐 Connection Management
+# 3. 启动全部服务（读取 start-config.yml）
+mage start
+```
 
-- 📚 Main Modules:
-  1. 🚀 Initialization and Login
-  2. 👤 User Management
-  3. 👫 Friends Management
-  4. 🤖 Group Functions
-  5. 💬 Session Handling
+启动后访问：
 
-Built with Golang and supports cross-platform deployment to ensure a consistent integration experience across all platforms.
+| 地址 | 说明 |
+| --- | --- |
+| http://localhost:11001 | Web 演示端（注册/登录/聊天） |
+| http://localhost:11002 | 管理后台（账号 `chatAdmin` / `chatAdmin`） |
 
-👉 **[Explore the GO SDK](https://github.com/openimsdk/openim-sdk-core)**
+> 注册验证码：短信未配置，直接填 **`666666`**（官方超级验证码）。
 
-## 🌐 Introduction to OpenIMServer
+### 模式 B：全 Docker（快速演示）
 
-- **OpenIMServer** features include:
-  - 🌐 Microservices Architecture: Supports cluster mode, including a gateway and multiple rpc services.
-  - 🚀 Diverse Deployment Options: Supports source code, Kubernetes, or Docker deployment.
-  - Massive User Support: Supports large-scale groups with hundreds of thousands, millions of users, and billions of messages.
+克隆 `openimsdk/openim-docker` 的 `release-v3.8` 分支，`docker compose up -d` 即可跑通全套（含 chat 服务）。该模式使用官方预编译镜像，**对本仓库的源码修改不生效**。
 
-### Enhanced Business Functions:
+### 常用 Mage 命令
 
-- **REST API**: Provides a REST API for business systems to enhance functionality, such as group creation and message pushing through backend interfaces.
+```bash
+mage build                      # 编译全部服务
+mage build openim-api           # 只编译指定服务
+mage start                      # 按 start-config.yml 启动全部
+mage stop                       # 停止全部
+mage check                      # 检查各服务进程状态
+```
 
-- **Webhooks**: Expands business forms through callbacks, sending requests to business servers before or after certain events.
+## 开发文档
 
-  ![Overall Architecture](./docs/images/architecture-layers.png)
+- [配置说明](docs/配置说明.md)
+- [开发指南](docs/开发指南.md)
+- [Kafka 说明](docs/Kafka说明.md)
+- [错误码规范](docs/错误码规范.md)
+- [命名规范](docs/命名规范.md)
 
-## :rocket: Quick Start
+## 许可证
 
-Experience online for iOS/Android/H5/PC/Web:
-
-👉 **[OpenIM Online Demo](https://www.openim.io/en/commercial)**
-
-To facilitate user experience, we offer various deployment solutions. You can choose your preferred deployment method from the list below:
-
-- **[Source Code Deployment Guide](https://docs.openim.io/guides/gettingStarted/imSourceCodeDeployment)**
-- **[Docker Deployment Guide](https://docs.openim.io/guides/gettingStarted/dockerCompose)**
-
-## System Support
-
-Supports Linux, Windows, Mac systems, and ARM and AMD CPU architectures.
-
-## :link: Links
-
-- **[Developer Manual](https://docs.openim.io/)**
-- **[Changelog](https://github.com/openimsdk/open-im-server/blob/main/CHANGELOG.md)**
-
-## :writing_hand: How to Contribute
-
-We welcome contributions of any kind! Please make sure to read our [Contributor Documentation](https://github.com/openimsdk/open-im-server/blob/main/CONTRIBUTING.md) before submitting a Pull Request.
-
-- **[Report a Bug](https://github.com/openimsdk/open-im-server/issues/new?assignees=&labels=bug&template=bug_report.md&title=)**
-- **[Suggest a Feature](https://github.com/openimsdk/open-im-server/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=)**
-- **[Submit a Pull Request](https://github.com/openimsdk/open-im-server/pulls)**
-
-Thank you for contributing to building a powerful instant messaging solution!
-
-## :closed_book: License
-
-This software is licensed under the Apache License 2.0
-
-## 🔮 Thanks to our contributors!
-
-<a href="https://github.com/openimsdk/open-im-server/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=openimsdk/open-im-server" />
-</a>
+本项目基于 Apache-2.0 许可的 OpenIM Server 二次开发，保留原始 `LICENSE` 文件。仅用于本地学习/私有/非商用。

@@ -1,40 +1,40 @@
-## Kafka authentication
+## Kafka 认证配置
 username:
 password:
 
-# Producer acknowledgment settings
+# producerAck: 生产者确认级别
 producerAck:
-# Compression type to use (e.g., none, gzip, snappy)
+# compressType: 压缩类型（如 none、gzip、snappy）
 compressType: none
-# List of Kafka broker addresses
+# address: Kafka broker 地址列表
 address: [localhost:19094]
-# Kafka topic for Redis integration
+# toRedisTopic: 在线消息投递 Redis 的 topic
 toRedisTopic: toRedis
-# Kafka topic for MongoDB integration
+# toMongoTopic: 消息落库 MongoDB 的 topic
 toMongoTopic: toMongo
-# Kafka topic for push notifications
+# toPushTopic: 推送到 push 服务的 topic
 toPushTopic: toPush
-# Kafka topic for offline push notifications
+# toOfflinePushTopic: 离线推送的 topic
 toOfflinePushTopic: toOfflinePush
-# Consumer group ID for Redis topic
+# toRedisGroupID: toRedisTopic 的消费组 ID
 toRedisGroupID: redis
-# Consumer group ID for MongoDB topic
+# toMongoGroupID: toMongoTopic 的消费组 ID
 toMongoGroupID: mongo
-# Consumer group ID for push notifications topic
+# toPushGroupID: toPushTopic 的消费组 ID
 toPushGroupID: push
-# Consumer group ID for offline push notifications topic
+# toOfflinePushGroupID: toOfflinePushTopic 的消费组 ID
 toOfflinePushGroupID: offlinePush
-# TLS (Transport Layer Security) configuration
+# tls: TLS（传输层安全）配置
 tls:
-  # Enable or disable TLS
+  # enableTLS: 是否启用 TLS
   enableTLS: false
-  # CA certificate file path
+  # caCrt: CA 证书文件路径
   caCrt:
-  # Client certificate file path
+  # clientCrt: 客户端证书文件路径
   clientCrt:
-  # Client key file path
+  # clientKey: 客户端私钥文件路径
   clientKey:
-  # Client key password
+  # clientKeyPwd: 客户端私钥密码
   clientKeyPwd:
-  # Whether to skip TLS verification (not recommended for production)
+  # insecureSkipVerify: 是否跳过 TLS 校验（生产环境不建议）
   insecureSkipVerify: false

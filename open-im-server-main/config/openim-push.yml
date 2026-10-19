@@ -1,41 +1,47 @@
 rpc:
-  # The IP address where this RPC service registers itself; if left blank, it defaults to the internal network IP
+  # registerIP: 本 RPC 服务注册的 IP；留空默认使用内网 IP
   registerIP:
-  # IP address that the RPC service listens on; setting to 0.0.0.0 listens on both internal and external IPs. If left blank, it automatically uses the internal network IP
+  # listenIP: RPC 服务监听 IP；0.0.0.0 表示内网外网都监听，留空自动使用内网 IP
   listenIP: 0.0.0.0
-  # autoSetPorts indicates whether to automatically set the ports
-  # if you use in kubernetes, set it to false
+  # autoSetPorts: 是否自动设置端口
+  # 如果在 kubernetes 中使用，设为 false
   autoSetPorts: true
-  # List of ports that the RPC service listens on; configuring multiple ports will launch multiple instances. These must match the number of configured prometheus ports
-  # It will only take effect when autoSetPorts is set to false.
+  # ports: RPC 服务监听端口列表；配置多个将启动多个实例，数量必须与 prometheus 端口一致
+  # 仅 autoSetPorts 为 false 时生效
   ports:
 
 ratelimiter:
-  # Whether to enable rate limiting
+  # enable: 是否启用限流
   enable: false
-  # WindowSize defines time duration per window
+  # window: 每个窗口的时间长度
   window: 20s
-  # BucketNum defines bucket number for each window
+  # bucket: 每个窗口的桶数量
   bucket: 500
-  # CPU threshold; valid range 0–1000 (1000 = 100%)
+  # cpuThreshold: CPU 阈值，有效范围 0–1000（1000 = 100%）
   cpuThreshold: 850
 
 circuitBreaker:
+  # enable: 是否启用熔断
   enable: false
-  window: 5s            # Time window size (seconds)
-  bucket: 100            # Number of buckets
-  success: 0.6          # Success rate threshold (0.6 means 60%)
-  request: 500 # Request threshold; circuit breaker evaluation occurs when reached
+  # window: 时间窗口大小（秒）
+  window: 5s
+  # bucket: 桶数量
+  bucket: 100
+  # success: 成功率阈值（0.6 表示 60%）
+  success: 0.6
+  # request: 请求阈值，达到后进行熔断评估
+  request: 500
 
 prometheus:
-  # Enable Prometheus metrics exposure for this service; set to true to allow scraping.
+  # enable: 是否暴露 Prometheus 指标；true 表示允许抓取
   enable: false
-  # List of ports that Prometheus listens on; these must match the number of rpc.ports to ensure correct monitoring setup
-  # It will only take effect when autoSetPorts is set to false.
+  # ports: Prometheus 监听端口，数量必须与 rpc.ports 一致，保证监控配置正确
+  # 仅 autoSetPorts 为 false 时生效
   ports:
 
+# maxConcurrentWorkers: 最大并发 worker 数
 maxConcurrentWorkers: 3
-#Use geTui for offline push notifications, or choose fcm or jpns; corresponding configuration settings must be specified.
+# enable: 离线推送开关；可选择 getui（个推）、fcm 或 jpush，需同时配置对应参数
 enable:
 getui:
   pushUrl: https://restapi.getui.com/v2/$appId
@@ -45,19 +51,20 @@ getui:
   channelID:
   channelName:
 fcm:
-  # Prioritize using file paths. If the file path is empty, use URL
-  filePath:   # File path is concatenated with the parameters passed in through - c(`mage` default pass in `config/`) and filePath.
-  authURL:   #  Must start with https or http.
+  # 优先使用文件路径；文件路径为空时使用 URL
+  filePath:   # 文件路径会与 -c 参数（mage 默认传 config/）传入的值拼接
+  authURL:   #  必须以 https 或 http 开头
 jpush:
   appKey:
   masterSecret:
   pushURL:
   pushIntent:
 
-# iOS system push sound and badge count
+# iOS 系统推送的声音与角标数
 iosPush:
   pushSound: xxx
   badgeCount: true
   production: false
 
+# fullUserCache: 是否缓存完整用户信息
 fullUserCache: true
