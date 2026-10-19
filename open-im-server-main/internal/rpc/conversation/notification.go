@@ -36,7 +36,7 @@ func NewConversationNotificationSender(conf *config.Notification, msgClient *rpc
 	}))}
 }
 
-// SetPrivate invote.
+// SetPrivate 私聊设置通知。
 func (c *ConversationNotificationSender) ConversationSetPrivateNotification(ctx context.Context, sendID, recvID string,
 	isPrivateChat bool, conversationID string,
 ) {

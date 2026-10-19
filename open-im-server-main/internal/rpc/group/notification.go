@@ -46,7 +46,7 @@ import (
 	"github.com/openimsdk/tools/utils/stringutil"
 )
 
-// GroupApplicationReceiver
+// 群申请接收方类型
 const (
 	applicantReceiver = iota
 	adminReceiver

@@ -133,7 +133,7 @@ func (c *conversationServer) GetConversation(ctx context.Context, req *pbconvers
 	return resp, nil
 }
 
-// Deprecated: Use `GetConversations` instead.
+// 已废弃：请改用 `GetConversations`。
 func (c *conversationServer) GetSortedConversationList(ctx context.Context, req *pbconversation.GetSortedConversationListReq) (resp *pbconversation.GetSortedConversationListResp, err error) {
 	if err := authverify.CheckAccess(ctx, req.UserID); err != nil {
 		return nil, err
@@ -257,7 +257,7 @@ func (c *conversationServer) getConversations(ctx context.Context, ownerUserID s
 	return convert.ConversationsDB2Pb(conversations), nil
 }
 
-// Deprecated
+// 已废弃
 func (c *conversationServer) SetConversation(ctx context.Context, req *pbconversation.SetConversationReq) (*pbconversation.SetConversationResp, error) {
 	if err := authverify.CheckAccess(ctx, req.GetConversation().GetUserID()); err != nil {
 		return nil, err
@@ -379,14 +379,14 @@ func (c *conversationServer) UpdateConversationsByUser(ctx context.Context, req 
 	return &pbconversation.UpdateConversationsByUserResp{}, nil
 }
 
-// create conversation without notification for msg redis transfer.
+// 为消息 Redis 转存创建会话，不发送通知。
 func (c *conversationServer) CreateSingleChatConversations(ctx context.Context, req *pbconversation.CreateSingleChatConversationsReq) (*pbconversation.CreateSingleChatConversationsResp, error) {
 	var conversation dbModel.Conversation
 	conversation.CreateTime = time.Now()
 
 	switch req.ConversationType {
 	case constant.SingleChatType:
-		// sendUser create
+		// 发送方视角的会话
 		conversation.ConversationID = req.ConversationID
 		conversation.ConversationType = req.ConversationType
 		conversation.OwnerUserID = req.SendID
@@ -403,7 +403,7 @@ func (c *conversationServer) CreateSingleChatConversations(ctx context.Context, 
 
 		c.webhookAfterCreateSingleChatConversations(ctx, &c.config.WebhooksConfig.AfterCreateSingleChatConversations, &conversation)
 
-		// recvUser create
+		// 接收方视角的会话
 		conversation2 := conversation
 		conversation2.OwnerUserID = req.RecvID
 		conversation2.UserID = req.SendID

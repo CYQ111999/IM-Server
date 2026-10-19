@@ -21,7 +21,7 @@ import (
 	pbgroup "github.com/openimsdk/protocol/group"
 )
 
-// GetGroupInfoCache get group info from cache.
+// GetGroupInfoCache 从缓存中获取群组信息。
 func (g *groupServer) GetGroupInfoCache(ctx context.Context, req *pbgroup.GetGroupInfoCacheReq) (*pbgroup.GetGroupInfoCacheResp, error) {
 	group, err := g.db.TakeGroup(ctx, req.GroupID)
 	if err != nil {

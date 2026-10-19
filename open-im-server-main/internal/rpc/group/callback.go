@@ -31,7 +31,7 @@ import (
 	"github.com/openimsdk/tools/utils/datautil"
 )
 
-// CallbackBeforeCreateGroup callback before create group.
+// CallbackBeforeCreateGroup 创建群组前的回调。
 func (g *groupServer) webhookBeforeCreateGroup(ctx context.Context, before *config.BeforeConfig, req *group.CreateGroupReq) error {
 	return webhook.WithCondition(ctx, before, func(ctx context.Context) error {
 		cbReq := &callbackstruct.CallbackBeforeCreateGroupReq{
@@ -264,11 +264,11 @@ func (g *groupServer) webhookBeforeInviteUserToGroup(ctx context.Context, before
 			return err
 		}
 
-		// Handle the scenario where certain members are refused
-		// You might want to update the req.Members list or handle it as per your business logic
+		// 处理部分成员被拒绝的场景
+		// 可根据业务逻辑更新 req.Members 列表或做其他处理
 
 		// if len(resp.RefusedMembersAccount) > 0 {
-		// implement members are refused
+		// 处理被拒绝的成员
 		// }
 
 		return nil

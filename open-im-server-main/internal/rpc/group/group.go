@@ -698,7 +698,7 @@ func (g *groupServer) getGroupMembersInfo(ctx context.Context, groupID string, u
 	}), nil
 }
 
-// GetGroupApplicationList handles functions that get a list of group requests.
+// GetGroupApplicationList 获取入群申请列表。
 func (g *groupServer) GetGroupApplicationList(ctx context.Context, req *pbgroup.GetGroupApplicationListReq) (*pbgroup.GetGroupApplicationListResp, error) {
 	if err := authverify.CheckAccess(ctx, req.FromUserID); err != nil {
 		return nil, err
@@ -1248,7 +1248,7 @@ func (g *groupServer) SetGroupInfoEx(ctx context.Context, req *pbgroup.SetGroupI
 		g.notification.GroupInfoSetNameNotification(ctx, &sdkws.GroupInfoSetNameTips{Group: tips.Group, OpUser: tips.OpUser})
 	}
 
-	// if updatedData > 0, send the normal notification
+	// 若 updatedData > 0，发送普通通知
 	if normalFlag {
 		g.notification.GroupInfoSetNotification(ctx, tips)
 	}
