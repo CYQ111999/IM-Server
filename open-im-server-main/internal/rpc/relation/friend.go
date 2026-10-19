@@ -107,7 +107,7 @@ func Start(ctx context.Context, config *Config, client discovery.SvcDiscoveryReg
 		redis.NewFriendCacheRedis(rdb, &config.LocalCacheConfig, friendMongoDB),
 		mgocli.GetTx(),
 	)
-	// Initialize notification sender
+	// 初始化通知发送器
 	notificationSender := NewFriendNotificationSender(
 		&config.NotificationConfig,
 		rpcli.NewMsgClient(msgConn),
@@ -116,7 +116,7 @@ func Start(ctx context.Context, config *Config, client discovery.SvcDiscoveryReg
 	)
 	localcache.InitLocalCache(&config.LocalCacheConfig)
 
-	// Register Friend server with refactored MongoDB and Redis integrations
+	// 注册 Friend 服务（使用重构后的 MongoDB 与 Redis 集成）
 	relation.RegisterFriendServer(server, &friendServer{
 		db: database,
 		blackDatabase: controller.NewBlackDatabase(
@@ -133,7 +133,7 @@ func Start(ctx context.Context, config *Config, client discovery.SvcDiscoveryReg
 	return nil
 }
 
-// ok.
+// 已完成。
 func (s *friendServer) ApplyToAddFriend(ctx context.Context, req *relation.ApplyToAddFriendReq) (resp *relation.ApplyToAddFriendResp, err error) {
 	resp = &relation.ApplyToAddFriendResp{}
 	if err := authverify.CheckAccess(ctx, req.FromUserID); err != nil {
@@ -164,7 +164,7 @@ func (s *friendServer) ApplyToAddFriend(ctx context.Context, req *relation.Apply
 	return resp, nil
 }
 
-// ok.
+// 已完成。
 func (s *friendServer) ImportFriends(ctx context.Context, req *relation.ImportFriendReq) (resp *relation.ImportFriendResp, err error) {
 	if err := authverify.CheckAdmin(ctx); err != nil {
 		return nil, err
@@ -199,7 +199,7 @@ func (s *friendServer) ImportFriends(ctx context.Context, req *relation.ImportFr
 	return &relation.ImportFriendResp{}, nil
 }
 
-// ok.
+// 已完成。
 func (s *friendServer) RespondFriendApply(ctx context.Context, req *relation.RespondFriendApplyReq) (resp *relation.RespondFriendApplyResp, err error) {
 	resp = &relation.RespondFriendApplyResp{}
 	if err := authverify.CheckAccess(ctx, req.ToUserID); err != nil {
@@ -235,7 +235,7 @@ func (s *friendServer) RespondFriendApply(ctx context.Context, req *relation.Res
 	return nil, errs.ErrArgs.WrapMsg("req.HandleResult != -1/1")
 }
 
-// ok.
+// 已完成。
 func (s *friendServer) DeleteFriend(ctx context.Context, req *relation.DeleteFriendReq) (resp *relation.DeleteFriendResp, err error) {
 	if err := authverify.CheckAccess(ctx, req.OwnerUserID); err != nil {
 		return nil, err
@@ -256,7 +256,7 @@ func (s *friendServer) DeleteFriend(ctx context.Context, req *relation.DeleteFri
 	return &relation.DeleteFriendResp{}, nil
 }
 
-// ok.
+// 已完成。
 func (s *friendServer) SetFriendRemark(ctx context.Context, req *relation.SetFriendRemarkReq) (resp *relation.SetFriendRemarkResp, err error) {
 	if err = s.webhookBeforeSetFriendRemark(ctx, &s.config.WebhooksConfig.BeforeSetFriendRemark, req); err != nil && err != servererrs.ErrCallbackContinue {
 		return nil, err
@@ -320,7 +320,7 @@ func (s *friendServer) getFriend(ctx context.Context, ownerUserID string, friend
 	return convert.FriendsDB2Pb(ctx, friends, s.userClient.GetUsersInfoMap)
 }
 
-// Get the list of friend requests sent out proactively.
+// 获取主动发出的好友申请列表。
 func (s *friendServer) GetDesignatedFriendsApply(ctx context.Context, req *relation.GetDesignatedFriendsApplyReq) (resp *relation.GetDesignatedFriendsApplyResp, err error) {
 	if err := authverify.CheckAccessIn(ctx, req.FromUserID, req.ToUserID); err != nil {
 		return nil, err
@@ -337,7 +337,7 @@ func (s *friendServer) GetDesignatedFriendsApply(ctx context.Context, req *relat
 	return resp, nil
 }
 
-// Get received friend requests (i.e., those initiated by others).
+// 获取收到的好友申请（即他人向自己发起的申请）。
 func (s *friendServer) GetPaginationFriendsApplyTo(ctx context.Context, req *relation.GetPaginationFriendsApplyToReq) (resp *relation.GetPaginationFriendsApplyToResp, err error) {
 	if err := authverify.CheckAccess(ctx, req.UserID); err != nil {
 		return nil, err
@@ -386,7 +386,7 @@ func (s *friendServer) GetPaginationFriendsApplyFrom(ctx context.Context, req *r
 	return resp, nil
 }
 
-// ok.
+// 已完成。
 func (s *friendServer) IsFriend(ctx context.Context, req *relation.IsFriendReq) (resp *relation.IsFriendResp, err error) {
 	if err := authverify.CheckAccessIn(ctx, req.UserID1, req.UserID2); err != nil {
 		return nil, err

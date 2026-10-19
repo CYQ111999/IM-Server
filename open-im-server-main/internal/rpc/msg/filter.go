@@ -14,16 +14,22 @@ const (
 	separator = "-"
 )
 
+// filterAfterMsg 按“消息发送后”过滤配置（AfterConfig）判断消息是否允许发送
 func filterAfterMsg(msg *pbchat.SendMsgReq, after *config.AfterConfig) bool {
 	return filterMsg(msg, after.AttentionIds, after.DeniedTypes)
 }
 
+// filterBeforeMsg 按“消息发送前”过滤配置（BeforeConfig）判断消息是否允许发送
 func filterBeforeMsg(msg *pbchat.SendMsgReq, before *config.BeforeConfig) bool {
 	return filterMsg(msg, nil, before.DeniedTypes)
 }
 
+// filterMsg 通用消息过滤逻辑：
+// 1. 若配置了 attentionIds，则只允许发送给列表中的接收者；
+// 2. 默认禁止的类型（通知类消息、正在输入状态）一律拦截；
+// 3. 若配置了 deniedTypes，命中其中的类型一律拦截。
 func filterMsg(msg *pbchat.SendMsgReq, attentionIds []string, deniedTypes []int32) bool {
-	// According to the attentionIds configuration, only some users are sent
+	// 根据 attentionIds 配置，只对列表中的部分用户生效
 	if len(attentionIds) != 0 && !datautil.Contain(msg.MsgData.RecvID, attentionIds...) {
 		return false
 	}
@@ -44,6 +50,7 @@ func filterMsg(msg *pbchat.SendMsgReq, attentionIds []string, deniedTypes []int3
 	return true
 }
 
+// defaultDeniedTypes 默认禁止发送的消息类型：通知类消息（NotificationBegin~NotificationEnd）与“正在输入”状态
 func defaultDeniedTypes(contentType int32) bool {
 	if contentType >= constant.NotificationBegin && contentType <= constant.NotificationEnd {
 		return true
@@ -54,14 +61,14 @@ func defaultDeniedTypes(contentType int32) bool {
 	return false
 }
 
-// isInInterval if data is in interval
-// Supports two formats: a single type or a range. The range is defined by the lower and upper bounds connected with a hyphen ("-")
-// e.g. [1, 100, 200-500, 600-700] means that only data within the range
-// {1, 100} ∪ [200, 500] ∪ [600, 700] will return true.
+// isInInterval 判断 data 是否命中区间列表
+// 支持两种格式：单个类型值，或用连字符（"-"）连接的上下界区间。
+// 例如 [1, 100, 200-500, 600-700] 表示只有落在
+// {1, 100} ∪ [200, 500] ∪ [600, 700] 范围内的数据才会返回 true。
 func isInInterval(data int32, interval []string) bool {
 	for _, v := range interval {
 		if strings.Contains(v, separator) {
-			// is interval
+			// 是区间格式（形如 200-500）
 			bounds := strings.Split(v, separator)
 			if len(bounds) != 2 {
 				continue

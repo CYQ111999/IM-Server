@@ -21,6 +21,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+// IsNotFound 判断错误是否为“数据不存在”（Redis 返回 Nil 或 Mongo 返回 ErrNoDocuments）
 func IsNotFound(err error) bool {
 	switch errs.Unwrap(err) {
 	case redis.Nil, mongo.ErrNoDocuments:
@@ -30,6 +31,7 @@ func IsNotFound(err error) bool {
 	}
 }
 
+// activeConversations 按会话最近活跃时间排序的实现（sort.Interface）
 type activeConversations []*msg.ActiveConversation
 
 func (s activeConversations) Len() int {
@@ -62,7 +64,7 @@ func (s activeConversations) Swap(i, j int) {
 //	return len(s)
 //}
 //
-//// Less sticky priority, unread priority, time descending
+//// Less 排序规则：置顶优先、未读优先、时间倒序
 //func (s seqTimes) Less(i, j int) bool {
 //	iv, jv := s[i], s[j]
 //	if iv.Pinned && (!jv.Pinned) {

@@ -40,21 +40,18 @@ var (
 )
 
 const (
-	// MessageText is for UTF-8 encoded text messages like JSON.
+	// MessageText 表示 UTF-8 编码的文本消息（如 JSON）。
 	MessageText = iota + 1
-	// MessageBinary is for binary messages like protobufs.
+	// MessageBinary 表示二进制消息（如 protobuf）。
 	MessageBinary
-	// CloseMessage denotes a close control message. The optional message
-	// payload contains a numeric code and text. Use the FormatCloseMessage
-	// function to format a close message payload.
+	// CloseMessage 表示关闭控制消息。可选的消息载荷包含数字代码和文本，
+	// 可使用 FormatCloseMessage 函数格式化关闭消息载荷。
 	CloseMessage = 8
 
-	// PingMessage denotes a ping control message. The optional message payload
-	// is UTF-8 encoded text.
+	// PingMessage 表示 ping 控制消息。可选的消息载荷为 UTF-8 编码的文本。
 	PingMessage = 9
 
-	// PongMessage denotes a pong control message. The optional message payload
-	// is UTF-8 encoded text.
+	// PongMessage 表示 pong 控制消息。可选的消息载荷为 UTF-8 编码的文本。
 	PongMessage = 10
 )
 
@@ -78,10 +75,10 @@ type Client struct {
 	hbCtx          context.Context
 	hbCancel       context.CancelFunc
 	subLock        *sync.Mutex
-	subUserIDs     map[string]struct{} // client conn subscription list
+	subUserIDs     map[string]struct{} // 客户端连接订阅的用户列表
 }
 
-// ResetClient updates the client's state with new connection and context information.
+// ResetClient 使用新的连接与上下文信息重置客户端状态。
 func (c *Client) ResetClient(ctx *UserConnContext, conn ClientConn, longConnServer LongConnServer) {
 	c.w = new(sync.Mutex)
 	c.conn = conn
@@ -110,7 +107,7 @@ func (c *Client) ResetClient(ctx *UserConnContext, conn ClientConn, longConnServ
 	c.subUserIDs = make(map[string]struct{})
 }
 
-// readMessage continuously reads messages from the connection.
+// readMessage 持续从连接中读取消息的循环。
 func (c *Client) readMessage() {
 	defer func() {
 		if r := recover(); r != nil {
@@ -130,7 +127,7 @@ func (c *Client) readMessage() {
 		}
 
 		if c.closed.Load() {
-			// The scenario where the connection has just been closed, but the coroutine has not exited
+			// 连接刚被关闭、但读取协程尚未退出的场景
 			c.closedErr = ErrConnClosed
 			return
 		}
@@ -143,7 +140,7 @@ func (c *Client) readMessage() {
 	}
 }
 
-// handleMessage processes a single message received by the client.
+// handleMessage 处理客户端接收到的一条消息。
 func (c *Client) handleMessage(message []byte) error {
 	if c.IsCompress {
 		var err error
@@ -220,7 +217,7 @@ func (c *Client) setAppBackgroundStatus(ctx context.Context, req *Req) ([]byte, 
 	}
 
 	c.IsBackground = isBackground
-	// TODO: callback
+	// TODO: 补充回调逻辑
 	return resp, nil
 }
 
@@ -232,7 +229,7 @@ func (c *Client) close() {
 	}
 	c.closed.Store(true)
 	c.conn.Close()
-	c.hbCancel() // Close server-initiated heartbeat.
+	c.hbCancel() // 取消服务端主动心跳
 	c.longConnServer.UnRegister(c)
 }
 

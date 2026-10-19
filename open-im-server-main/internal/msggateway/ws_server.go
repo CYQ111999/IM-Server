@@ -230,7 +230,7 @@ func (ws *WsServer) sendUserOnlineInfoToOtherNode(ctx context.Context, client *C
 	wg := errgroup.Group{}
 	wg.SetLimit(concurrentRequest)
 
-	// Online push user online message to other node
+	// 将用户上线消息推送到其他网关节点
 	for _, v := range conns {
 		v := v
 		log.ZDebug(ctx, "sendUserOnlineInfoToOtherNode conn")
@@ -281,7 +281,7 @@ func (ws *WsServer) registerClient(client *Client) {
 		log.ZDebug(client.ctx, "user exist", "userID", client.UserID, "platformID", client.PlatformID)
 		if clientOK {
 			ws.clients.Set(client.UserID, client)
-			// There is already a connection to the platform
+			// 该平台已存在连接（同一用户同一平台重复登录）
 			log.ZDebug(client.ctx, "repeat login", "userID", client.UserID, "platformID",
 				client.PlatformID, "old remote addr", getRemoteAdders(oldClients))
 			ws.onlineUserConnNum.Add(1)
@@ -350,9 +350,9 @@ func (ws *WsServer) multiTerminalLoginChecker(clientOK bool, oldClients []*Clien
 		}
 	}
 
-	// If reconnect: When multiple msgGateway instances are deployed, a client may disconnect from instance A and reconnect to instance B.
-	// During this process, instance A might still be executing, resulting in two clients with the same token existing simultaneously.
-	// This situation needs to be filtered to prevent duplicate clients.
+	// 关于重连的说明：当部署了多个 msgGateway 实例时，客户端可能从实例 A 断开再重连到实例 B，
+	// 此过程中实例 A 可能尚未清理旧连接，导致同一 token 存在两个客户端同时在线的情况。
+	// 这里需要过滤掉这种重复客户端，避免误踢。
 	checkSameTokenFunc := func(oldClients []*Client) []*Client {
 		var clientsNeedToKick []*Client
 
@@ -452,7 +452,7 @@ func (ws *WsServer) unregisterClient(client *Client) {
 	)
 }
 
-// validateRespWithRequest checks if the response matches the expected userID and platformID.
+// validateRespWithRequest 校验鉴权响应中的 userID 与 platformID 是否与请求一致
 func (ws *WsServer) validateRespWithRequest(ctx *UserConnContext, resp *pbAuth.ParseTokenResp) error {
 	userID := ctx.GetUserID()
 	platformID := int32(ctx.GetPlatformID())
@@ -470,7 +470,7 @@ func (ws *WsServer) handlerError(ctx *UserConnContext, w http.ResponseWriter, r 
 		httpError(ctx, err)
 		return
 	}
-	// the browser cannot get the response of upgrade failure
+	// 浏览器无法直接拿到 WebSocket 升级失败的响应，需要先升级成功再通过文本消息把错误发回去
 	data, err := json.Marshal(apiresp.ParseError(err))
 	if err != nil {
 		log.ZError(ctx, "json marshal failed", err)
@@ -489,35 +489,35 @@ func (ws *WsServer) handlerError(ctx *UserConnContext, w http.ResponseWriter, r 
 }
 
 func (ws *WsServer) wsHandler(w http.ResponseWriter, r *http.Request) {
-	// Create a new connection context
+	// 创建新的连接上下文
 	connContext := newContext(w, r)
 
-	// Check if the current number of online user connections exceeds the maximum limit
+	// 检查当前在线连接数是否超过配置的最大连接数上限
 	if ws.onlineUserConnNum.Load() >= ws.wsMaxConnNum {
-		// If it exceeds the maximum connection number, return an error via HTTP and stop processing
+		// 超过上限时通过 HTTP 返回错误，终止后续处理
 		ws.handlerError(connContext, w, r, servererrs.ErrConnOverMaxNumLimit.WrapMsg("over max conn num limit"))
 		return
 	}
 
-	// Parse essential arguments (e.g., user ID, Token)
+	// 解析必要参数（如 userID、Token）
 	err := connContext.ParseEssentialArgs()
 	if err != nil {
-		// If there's an error during parsing, return an error via HTTP and stop processing
+		// 解析失败时通过 HTTP 返回错误，终止后续处理
 		ws.handlerError(connContext, w, r, err)
 		return
 	}
 
-	// Call the authentication client to parse the Token obtained from the context
+	// 调用鉴权客户端解析上下文中的 Token
 	resp, err := ws.authClient.ParseToken(connContext, connContext.GetToken())
 	if err != nil {
 		ws.handlerError(connContext, w, r, err)
 		return
 	}
 
-	// Validate the authentication response matches the request (e.g., user ID and platform ID)
+	// 校验鉴权响应与请求一致（如 userID 与 platformID）
 	err = ws.validateRespWithRequest(connContext, resp)
 	if err != nil {
-		// If validation fails, return an error via HTTP and stop processing
+		// 校验失败时通过 HTTP 返回错误，终止后续处理
 		ws.handlerError(connContext, w, r, err)
 		return
 	}
@@ -543,7 +543,7 @@ func (ws *WsServer) wsHandler(w http.ResponseWriter, r *http.Request) {
 	client := new(Client)
 	client.ResetClient(connContext, NewWebSocketClientConn(conn, maxMessageSize, pongWait, pingInterval), ws)
 
-	// Register the client with the server and start message processing
+	// 将客户端注册到服务器，并启动消息读取循环
 	ws.registerChan <- client
 	go client.readMessage()
 }

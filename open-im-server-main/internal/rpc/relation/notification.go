@@ -41,9 +41,9 @@ import (
 
 type FriendNotificationSender struct {
 	*notification.NotificationSender
-	// Target not found err
+	// 用户信息查询函数，目标用户不存在时返回错误
 	getUsersInfo func(ctx context.Context, userIDs []string) ([]common_user.CommonUser, error)
-	// db controller
+	// 好友数据库控制器
 	db controller.FriendDatabase
 }
 
