@@ -57,8 +57,8 @@ type ContextMsg struct {
 	ctx     context.Context
 }
 
-// This structure is used for asynchronously writing the sender’s read sequence (seq) regarding a message into MongoDB.
-// For example, if the sender sends a message with a seq of 10, then their own read seq for this conversation should be set to 10.
+// 该结构用于将发送方对某条消息的已读序号（seq）异步写入 MongoDB。
+// 例如：发送方发出了一条 seq 为 10 的消息，那么其本人在该会话中的已读序号就应被置为 10。
 type userHasReadSeq struct {
 	conversationID string
 	userHasReadMap map[string]int64
@@ -143,7 +143,7 @@ func (och *OnlineHistoryRedisConsumerHandler) do(ctx context.Context, channelID 
 
 func (och *OnlineHistoryRedisConsumerHandler) doSetReadSeq(ctx context.Context, msgs []*ContextMsg) {
 
-	// Outer map: conversationID -> (userID -> maxHasReadSeq)
+	// 外层 map 结构：conversationID -> (userID -> 最大已读序号)
 	conversationUserSeq := make(map[string]map[string]int64)
 
 	for _, msg := range msgs {
@@ -164,7 +164,7 @@ func (och *OnlineHistoryRedisConsumerHandler) doSetReadSeq(ctx context.Context, 
 			continue
 		}
 
-		// Calculate the max seq from tips.Seqs
+		// 从 tips.Seqs 中计算最大 seq
 		for _, seq := range tips.Seqs {
 			if tips.HasReadSeq < seq {
 				tips.HasReadSeq = seq
@@ -180,7 +180,7 @@ func (och *OnlineHistoryRedisConsumerHandler) doSetReadSeq(ctx context.Context, 
 	}
 	log.ZInfo(ctx, "doSetReadSeq", "conversationUserSeq", conversationUserSeq)
 
-	// persist to db
+	// 持久化到数据库
 	for convID, userSeqMap := range conversationUserSeq {
 		if err := och.msgTransferDatabase.SetHasReadSeqToDB(ctx, convID, userSeqMap); err != nil {
 			log.ZWarn(ctx, "SetHasReadSeqToDB error", err, "conversationID", convID, "userSeqMap", userSeqMap)
@@ -207,16 +207,16 @@ func (och *OnlineHistoryRedisConsumerHandler) parseConsumerMessages(ctx context.
 	return ctxMessages
 }
 
-// Get messages/notifications stored message list, not stored and pushed message list.
+// 将消息/通知分流为四类：需存储消息、不存储仅推送消息、需存储通知、不存储通知。
 func (och *OnlineHistoryRedisConsumerHandler) categorizeMessageLists(totalMsgs []*ContextMsg) (storageMsgList,
 	notStorageMsgList, storageNotificationList, notStorageNotificationList []*ContextMsg) {
 	for _, v := range totalMsgs {
 		options := msgprocessor.Options(v.message.Options)
 		if !options.IsNotNotification() {
-			// clone msg from notificationMsg
+			// 从通知消息中克隆一条用于存储的消息
 			if options.IsSendMsg() {
 				msg := proto.Clone(v.message).(*sdkws.MsgData)
-				// message
+				// 消息副本：保留离线推送与未读计数开关
 				if v.message.Options != nil {
 					msg.Options = msgprocessor.NewMsgOptions()
 				}
@@ -396,7 +396,7 @@ func withAggregationCtx(ctx context.Context, values []*ContextMsg) context.Conte
 	return mcontext.SetOperationID(ctx, allMessageOperationID)
 }
 
-func (och *OnlineHistoryRedisConsumerHandler) HandlerRedisMessage(msg mq.Message) error { // a instance in the consumer group
+func (och *OnlineHistoryRedisConsumerHandler) HandlerRedisMessage(msg mq.Message) error { // 消费组中的一个实例
 	err := och.redisMessageBatches.Put(msg.Context(), &ConsumerMessage{Ctx: msg.Context(), Key: msg.Key(), Value: msg.Value(), Raw: msg})
 	if err != nil {
 		log.ZWarn(msg.Context(), "put msg to  error", err, "key", msg.Key(), "value", msg.Value())

@@ -88,7 +88,7 @@ func filterAfterMsg(msg *sdkws.MsgData, after *config.AfterConfig) bool {
 }
 
 func filterMsg(msg *sdkws.MsgData, attentionIds []string, deniedTypes []int32) bool {
-	// According to the attentionIds configuration, only some users are sent
+	// 根据 attentionIds 配置，只对列表中的部分用户发送
 	if len(attentionIds) != 0 && msg.ContentType == constant.SingleChatType && !datautil.Contain(msg.RecvID, attentionIds...) {
 		return false
 	}

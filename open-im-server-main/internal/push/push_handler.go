@@ -123,7 +123,7 @@ func (c *ConsumerHandler) WaitCache() {
 	c.onlineCache.WaitCache()
 }
 
-// Push2User Suitable for two types of conversations, one is SingleChatType and the other is NotificationChatType.
+// Push2User 适用于单聊（SingleChatType）与通知（NotificationChatType）两类会话。
 func (c *ConsumerHandler) Push2User(ctx context.Context, userIDs []string, msg *sdkws.MsgData) (err error) {
 	log.ZInfo(ctx, "Get msg from msg_transfer And push msg", "userIDs", userIDs, "msg", msg.String())
 	defer func(duration time.Time) {
@@ -148,11 +148,11 @@ func (c *ConsumerHandler) Push2User(ctx context.Context, userIDs []string, msg *
 	log.ZInfo(ctx, "pushOffline start")
 
 	for _, v := range wsResults {
-		//message sender do not need offline push
+		// 消息发送者无需离线推送
 		if msg.SendID == v.UserID {
 			continue
 		}
-		//receiver online push success
+		// 接收方在线推送已成功
 		if v.OnlinePush {
 			return nil
 		}
@@ -160,7 +160,7 @@ func (c *ConsumerHandler) Push2User(ctx context.Context, userIDs []string, msg *
 	needOfflinePushUserID := []string{msg.RecvID}
 	var offlinePushUserID []string
 
-	//receiver offline push
+	// 接收方离线推送
 	if err = c.webhookBeforeOfflinePush(ctx, &c.config.WebhooksConfig.BeforeOfflinePush, needOfflinePushUserID, msg, &offlinePushUserID); err != nil {
 		return err
 	}
@@ -247,14 +247,14 @@ func (c *ConsumerHandler) Push2Group(ctx context.Context, groupID string, msg *s
 		return nil
 	}
 	needOfflinePushUserIDs := c.onlinePusher.GetOnlinePushFailedUserIDs(ctx, msg, wsResults, &pushToUserIDs)
-	//filter some user, like don not disturb or don't need offline push etc.
+	// 过滤部分用户，如免打扰或无需离线推送的用户
 	needOfflinePushUserIDs, err = c.filterGroupMessageOfflinePush(ctx, groupID, msg, needOfflinePushUserIDs)
 	if err != nil {
 		return err
 	}
 	log.ZInfo(ctx, "filterGroupMessageOfflinePush end")
 
-	// Use offline push messaging
+	// 对剩余用户使用离线推送
 	if len(needOfflinePushUserIDs) > 0 {
 		c.asyncOfflinePush(ctx, needOfflinePushUserIDs, msg)
 	}

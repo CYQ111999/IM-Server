@@ -90,7 +90,7 @@ func (d *DefaultAllNode) GetConnsAndOnlinePush(ctx context.Context, msg *sdkws.M
 
 	wg.SetLimit(maxWorkers)
 
-	// Online push message
+	// 在线推送消息
 	for _, conn := range conns {
 		conn := conn // loop var safe
 		ctx := ctx
@@ -115,7 +115,7 @@ func (d *DefaultAllNode) GetConnsAndOnlinePush(ctx context.Context, msg *sdkws.M
 
 	_ = wg.Wait()
 
-	// always return nil
+	// 始终返回 nil（错误已在内部记录）
 	return wsResults, nil
 }
 
@@ -124,11 +124,11 @@ func (d *DefaultAllNode) GetOnlinePushFailedUserIDs(_ context.Context, msg *sdkw
 
 	onlineSuccessUserIDs := []string{msg.SendID}
 	for _, v := range wsResults {
-		//message sender do not need offline push
+		// 消息发送者无需离线推送
 		if msg.SendID == v.UserID {
 			continue
 		}
-		// mobile online push success
+		// 移动端在线推送成功
 		if v.OnlinePush {
 			onlineSuccessUserIDs = append(onlineSuccessUserIDs, v.UserID)
 		}

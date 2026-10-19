@@ -36,11 +36,11 @@ import (
 type MsgTransfer struct {
 	historyConsumer      mq.Consumer
 	historyMongoConsumer mq.Consumer
-	// This consumer aggregated messages, subscribed to the topic:toRedis,
-	//  the message is stored in redis, Incr Redis, and then the message is sent to toPush topic for push,
-	// and the message is sent to toMongo topic for persistence
+	// 该消费者负责聚合消息，订阅 toRedis topic：
+	// 消息先写入 Redis 并递增序号，随后再被发送到 toPush topic 进行推送，
+	// 并发送到 toMongo topic 进行持久化
 	historyHandler *OnlineHistoryRedisConsumerHandler
-	//This consumer handle message to mongo
+	// 该消费者负责将消息写入 MongoDB
 	historyMongoHandler *OnlineHistoryMongoConsumerHandler
 	ctx                 context.Context
 	//cancel              context.CancelFunc
