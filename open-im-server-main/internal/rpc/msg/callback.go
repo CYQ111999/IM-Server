@@ -89,7 +89,7 @@ func (m *msgServer) webhookBeforeSendSingleMsg(ctx context.Context, before *conf
 	})
 }
 
-// Move to msgtransfer
+// 相关逻辑已迁移至 msgtransfer
 func (m *msgServer) webhookAfterSendSingleMsg(ctx context.Context, after *config.AfterConfig, msg *pbchat.SendMsgReq) {
 	if msg.MsgData.ContentType == constant.Typing {
 		return

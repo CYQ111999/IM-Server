@@ -138,7 +138,7 @@ func (m *msgServer) GetMaxSeq(ctx context.Context, req *sdkws.GetMaxSeqReq) (*sd
 		log.ZWarn(ctx, "GetMaxSeqs error", err, "conversationIDs", conversationIDs, "maxSeqs", maxSeqs)
 		return nil, err
 	}
-	// avoid pulling messages from sessions with a large number of max seq values of 0
+	// 过滤掉 max seq 为 0 的会话，避免拉取大量空会话的消息
 	for conversationID, seq := range maxSeqs {
 		if seq == 0 {
 			delete(maxSeqs, conversationID)
@@ -179,7 +179,7 @@ func (m *msgServer) SearchMessage(ctx context.Context, req *msg.SearchMessageReq
 		}
 	}
 
-	// Retrieve sender and receiver information
+	// 查询发送者与接收者信息
 	if len(sendIDs) != 0 {
 		sendInfos, err := m.UserLocalCache.GetUsersInfo(ctx, sendIDs)
 		if err != nil {
@@ -200,7 +200,7 @@ func (m *msgServer) SearchMessage(ctx context.Context, req *msg.SearchMessageReq
 		}
 	}
 
-	// Retrieve group information including member counts
+	// 查询群组信息（包括成员数量）
 	if len(groupIDs) != 0 {
 		groupInfos, err := m.GroupLocalCache.GetGroupInfos(ctx, groupIDs)
 		if err != nil {
@@ -208,15 +208,15 @@ func (m *msgServer) SearchMessage(ctx context.Context, req *msg.SearchMessageReq
 		}
 		for _, groupInfo := range groupInfos {
 			groupMap[groupInfo.GroupID] = groupInfo
-			// Get actual member count
+			// 获取实际成员数量
 			memberIDs, err := m.GroupLocalCache.GetGroupMemberIDs(ctx, groupInfo.GroupID)
 			if err == nil {
-				groupInfo.MemberCount = uint32(len(memberIDs)) // Update the member count with actual number
+				groupInfo.MemberCount = uint32(len(memberIDs)) // 用实际成员数更新成员数量
 			}
 		}
 	}
 
-	// Construct response with updated information
+	// 组装包含补充信息后的响应
 	for _, chatLog := range chatLogs {
 		pbchatLog := &msg.ChatLog{}
 		datautil.CopyStructFields(pbchatLog, chatLog.MsgData)
@@ -231,7 +231,7 @@ func (m *msgServer) SearchMessage(ctx context.Context, req *msg.SearchMessageReq
 		case constant.ReadGroupChatType:
 			groupInfo := groupMap[chatLog.MsgData.GroupID]
 			pbchatLog.SenderFaceURL = groupInfo.FaceURL
-			pbchatLog.GroupMemberCount = groupInfo.MemberCount // Reflects actual member count
+			pbchatLog.GroupMemberCount = groupInfo.MemberCount // 反映实际成员数量
 			pbchatLog.RecvID = groupInfo.GroupID
 			pbchatLog.GroupName = groupInfo.GroupName
 			pbchatLog.GroupOwner = groupInfo.OwnerUserID

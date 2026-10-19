@@ -9,7 +9,7 @@ import (
 	"github.com/openimsdk/tools/log"
 )
 
-// DestructMsgs hard delete in Database.
+// DestructMsgs 在数据库中硬删除（物理删除）消息。
 func (m *msgServer) DestructMsgs(ctx context.Context, req *msg.DestructMsgsReq) (*msg.DestructMsgsResp, error) {
 	if err := authverify.CheckAdmin(ctx); err != nil {
 		return nil, err

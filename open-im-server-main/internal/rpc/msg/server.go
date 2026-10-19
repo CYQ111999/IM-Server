@@ -39,7 +39,7 @@ import (
 
 type MessageInterceptorFunc func(ctx context.Context, globalConfig *Config, req *msg.SendMsgReq) (*sdkws.MsgData, error)
 
-// MessageInterceptorChain defines a chain of message interceptor functions.
+// MessageInterceptorChain 定义由多个消息拦截器函数组成的责任链。
 type MessageInterceptorChain []MessageInterceptorFunc
 
 type Config struct {
@@ -54,19 +54,19 @@ type Config struct {
 	Discovery          config.Discovery
 }
 
-// MsgServer encapsulates dependencies required for message handling.
+// msgServer 封装了消息处理所需的各项依赖。
 type msgServer struct {
 	msg.UnimplementedMsgServer
-	RegisterCenter         discovery.Conn                   // Service discovery registry for service registration.
-	MsgDatabase            controller.CommonMsgDatabase     // Interface for message database operations.
-	UserLocalCache         *rpccache.UserLocalCache         // Local cache for user data.
-	FriendLocalCache       *rpccache.FriendLocalCache       // Local cache for friend data.
-	GroupLocalCache        *rpccache.GroupLocalCache        // Local cache for group data.
-	ConversationLocalCache *rpccache.ConversationLocalCache // Local cache for conversation data.
-	Handlers               MessageInterceptorChain          // Chain of handlers for processing messages.
-	notificationSender     *notification.NotificationSender // RPC client for sending notifications.
-	msgNotificationSender  *MsgNotificationSender           // RPC client for sending msg notifications.
-	config                 *Config                          // Global configuration settings.
+	RegisterCenter         discovery.Conn                   // 服务注册中心，用于服务注册与发现。
+	MsgDatabase            controller.CommonMsgDatabase     // 消息数据库操作接口。
+	UserLocalCache         *rpccache.UserLocalCache         // 用户信息本地缓存。
+	FriendLocalCache       *rpccache.FriendLocalCache       // 好友信息本地缓存。
+	GroupLocalCache        *rpccache.GroupLocalCache        // 群组信息本地缓存。
+	ConversationLocalCache *rpccache.ConversationLocalCache // 会话信息本地缓存。
+	Handlers               MessageInterceptorChain          // 消息处理拦截器链。
+	notificationSender     *notification.NotificationSender // 用于发送通知的 RPC 客户端。
+	msgNotificationSender  *MsgNotificationSender           // 用于发送消息通知的 RPC 客户端。
+	config                 *Config                          // 全局配置。
 	webhookClient          *webhook.Client
 	conversationClient     *rpcli.ConversationClient
 

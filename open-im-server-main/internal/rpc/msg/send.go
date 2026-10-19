@@ -128,9 +128,9 @@ func (m *msgServer) setConversationAtInfo(nctx context.Context, msg *sdkws.MsgDa
 
 		atUserID = datautil.Single([]string{constant.AtAllString}, msg.AtUserIDList)
 
-		if len(atUserID) == 0 { // just @everyone
+		if len(atUserID) == 0 { // 仅 @所有人
 			conversation.GroupAtType = &wrapperspb.Int32Value{Value: constant.AtAll}
-		} else { // @Everyone and @other people
+		} else { // @所有人并且 @了其他人
 			conversation.GroupAtType = &wrapperspb.Int32Value{Value: constant.AtAllAtMe}
 			atUserID = datautil.SliceIntersectFuncs(atUserID, memberUserIDList, func(a string) string { return a }, func(b string) string {
 				return b

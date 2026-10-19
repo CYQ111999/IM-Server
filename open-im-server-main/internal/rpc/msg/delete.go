@@ -140,7 +140,7 @@ func (m *msgServer) clearConversation(ctx context.Context, conversationIDs []str
 				return err
 			}
 		}
-		// notification 2 self
+		// 给自己发通知
 		if isSyncSelf {
 			tips := &sdkws.ClearConversationTips{UserID: userID, ConversationIDs: existConversationIDs}
 			m.notificationSender.NotificationWithSessionType(ctx, userID, userID, constant.ClearConversationNotification, constant.SingleChatType, tips)
