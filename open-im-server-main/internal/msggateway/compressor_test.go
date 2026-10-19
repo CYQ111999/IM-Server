@@ -35,21 +35,21 @@ func TestCompressDecompress(t *testing.T) {
 	for range 2000 {
 		src := mockRandom()
 
-		// compress
+		// 压缩
 		dest, err := compressor.CompressWithPool(src)
 		if err != nil {
 			t.Log(err)
 		}
 		assert.Equal(t, nil, err)
 
-		// decompress
+		// 解压
 		res, err := compressor.DecompressWithPool(dest)
 		if err != nil {
 			t.Log(err)
 		}
 		assert.Equal(t, nil, err)
 
-		// check
+		// 校验
 		assert.EqualValues(t, src, res)
 	}
 }
@@ -62,21 +62,21 @@ func TestCompressDecompressWithConcurrency(t *testing.T) {
 		wg.Go(func() {
 			src := mockRandom()
 
-			// compress
+			// 压缩
 			dest, err := compressor.CompressWithPool(src)
 			if err != nil {
 				t.Log(err)
 			}
 			assert.Equal(t, nil, err)
 
-			// decompress
+			// 解压
 			res, err := compressor.DecompressWithPool(dest)
 			if err != nil {
 				t.Log(err)
 			}
 			assert.Equal(t, nil, err)
 
-			// check
+			// 校验
 			assert.EqualValues(t, src, res)
 		})
 	}

@@ -41,7 +41,7 @@ const (
 )
 
 const (
-	// Websocket Protocol.
+	// WebSocket 协议指令码。
 	WSGetNewestSeq        = 1001
 	WSPullMsgBySeqList    = 1002
 	WSSendMsg             = 1003
@@ -58,15 +58,15 @@ const (
 )
 
 const (
-	// Time allowed to write a message to the peer.
+	// 向对端写入消息的超时时间。
 	writeWait = 10 * time.Second
 
-	// Time allowed to read the next pong message from the peer.
+	// 读取对端下一个 pong 消息的超时时间。
 	pongWait = 30 * time.Second
 
-	// Send pings to peer with this period. Must be less than pongWait.
+	// 向对端发送 ping 的周期，必须小于 pongWait。
 	pingPeriod = (pongWait * 9) / 10
 
-	// Maximum message size allowed from peer.
+	// 允许接收的对端最大消息大小。
 	maxMessageSize = 51200
 )

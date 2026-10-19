@@ -146,8 +146,8 @@ func (g *GrpcHandler) GetSeq(ctx context.Context, data *Req) ([]byte, error) {
 	return c, nil
 }
 
-// SendMessage handles the sending of messages through gRPC. It unmarshals the request data,
-// validates the message, and then sends it using the message RPC client.
+// SendMessage 处理通过 gRPC 发送的消息：先反序列化请求数据，
+// 校验消息，再通过消息 RPC 客户端发送。
 func (g *GrpcHandler) SendMessage(ctx context.Context, data *Req) ([]byte, error) {
 	var msgData sdkws.MsgData
 	if err := proto.Unmarshal(data.Data, &msgData); err != nil {

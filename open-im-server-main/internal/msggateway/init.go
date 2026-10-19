@@ -39,7 +39,7 @@ type Config struct {
 	Index          config.Index
 }
 
-// Start run ws server.
+// Start 启动 WebSocket 服务。
 func Start(ctx context.Context, conf *Config, client discovery.SvcDiscoveryRegistry, server grpc.ServiceRegistrar) error {
 	log.CInfo(ctx, "MSG-GATEWAY server is initializing", "runtimeEnv", runtimeenv.RuntimeEnvironment(),
 		"rpcPorts", conf.MsgGateway.RPC.Ports,
