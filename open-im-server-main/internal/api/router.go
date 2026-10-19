@@ -102,7 +102,7 @@ func newGinRouter(ctx context.Context, client discovery.SvcDiscoveryRegistry, cf
 		r.Use(gzip.Gzip(gzip.BestSpeed))
 	}
 
-	// Use rate limiter middleware
+	// 使用限流中间件
 	if cfg.API.RateLimiter.Enable {
 		rl := &RateLimiter{
 			Enable:       cfg.API.RateLimiter.Enable,
@@ -153,7 +153,7 @@ func newGinRouter(ctx context.Context, client discovery.SvcDiscoveryRegistry, cf
 		userRouterGroup.POST("/del_user_client_config", u.DelUserClientConfig)
 		userRouterGroup.POST("/page_user_client_config", u.PageUserClientConfig)
 	}
-	// friend routing group
+	// 好友路由组
 	{
 		f := NewFriendApi(relation.NewFriendClient(friendConn))
 		friendRouterGroup := r.Group("/friend")
@@ -217,7 +217,7 @@ func newGinRouter(ctx context.Context, client discovery.SvcDiscoveryRegistry, cf
 		groupRouterGroup.POST("/get_full_join_group_ids", g.GetFullJoinGroupIDs)
 		groupRouterGroup.POST("/get_group_application_unhandled_count", g.GetGroupApplicationUnhandledCount)
 	}
-	// certificate
+	// 证书
 	{
 		a := NewAuthApi(pbAuth.NewAuthClient(authConn))
 		authRouterGroup := r.Group("/auth")
@@ -227,7 +227,7 @@ func newGinRouter(ctx context.Context, client discovery.SvcDiscoveryRegistry, cf
 		authRouterGroup.POST("/force_logout", a.ForceLogout)
 
 	}
-	// Third service
+	// 第三方服务
 	{
 		t := NewThirdApi(third.NewThirdClient(thirdConn), cfg.API.Prometheus.GrafanaURL)
 		thirdGroup := r.Group("/third")
@@ -252,7 +252,7 @@ func newGinRouter(ctx context.Context, client discovery.SvcDiscoveryRegistry, cf
 		objectGroup.POST("/complete_form_data", t.CompleteFormData)
 		objectGroup.GET("/*name", t.ObjectRedirect)
 	}
-	// Message
+	// 消息
 	m := NewMessageApi(msg.NewMsgClient(msgConn), rpcli.NewUserClient(userConn), cfg.Share.IMAdminUser.UserIDs)
 	{
 		msgGroup := r.Group("/msg")
@@ -278,7 +278,7 @@ func newGinRouter(ctx context.Context, client discovery.SvcDiscoveryRegistry, cf
 		msgGroup.POST("/check_msg_is_send_success", m.CheckMsgIsSendSuccess)
 		msgGroup.POST("/get_server_time", m.GetServerTime)
 	}
-	// Conversation
+	// 会话
 	{
 		c := NewConversationApi(conversation.NewConversationClient(conversationConn))
 		conversationGroup := r.Group("/conversation")
@@ -364,8 +364,7 @@ func (x *internalApi) RpcInvoke(c *gin.Context) {
 		apiresp.GinError(c, err)
 		return
 	}
-	// Request length is deliberately not validated: a proto request whose fields
-	// are all default values marshals to zero bytes.
+	// 此处有意不校验请求长度：字段全为默认值的 proto 请求序列化后为零字节
 	if req.Service == "" || req.Method == "" || req.Secret == "" {
 		apiresp.GinError(c, servererrs.ErrArgs)
 		return
@@ -431,10 +430,10 @@ func setGinIsAdmin(imAdminUserID []string) gin.HandlerFunc {
 	}
 }
 
-// Whitelist api not parse token
+// 白名单 API：不解析 token
 var Whitelist = []string{
 	"/auth/get_admin_token",
 	"/auth/parse_token",
-	// cross-instance rpc invoke authenticates with share.secret instead of token
+	// 跨实例 RPC 调用使用 share.secret 鉴权，而非 token
 	inprocess.BroadcastPath,
 }

@@ -262,8 +262,8 @@ func (x *JSSdk) filterConversationSeqs(conversations []*conversation.Conversatio
 	return conversationSeqs
 }
 
-// This function checks whether the latest MaxSeq message is valid.
-// If not, it needs to fetch a valid message again.
+// 该函数检查 MaxSeq 最大的消息是否有效，
+// 若无效则需要重新获取一条有效消息。
 func (x *JSSdk) checkMessagesAndGetLastMessage(ctx context.Context, userID string, messages map[string]*sdkws.PullMsgs) {
 	var conversationIDs []string
 

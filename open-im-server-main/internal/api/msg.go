@@ -276,59 +276,59 @@ func (m *MessageApi) ginRespSendMsg(c *gin.Context, req *msg.SendMsgReq, resp *m
 	})
 }
 
-// SendMessage handles the sending of a message. It's an HTTP handler function to be used with Gin framework.
+// SendMessage 处理消息发送，是配合 Gin 框架使用的 HTTP 处理函数。
 func (m *MessageApi) SendMessage(c *gin.Context) {
-	// Initialize a request struct for sending a message.
+	// 初始化发送消息的请求结构体
 	req := apistruct.SendMsgReq{}
 
-	// Bind the JSON request body to the request struct.
+	// 将 JSON 请求体绑定到请求结构体
 	if err := c.BindJSON(&req); err != nil {
-		// Respond with an error if request body binding fails.
+		// 请求体绑定失败时返回错误
 		apiresp.GinError(c, errs.ErrArgs.WithDetail(err.Error()).Wrap())
 		return
 	}
 
-	// Check if the user has the app manager role.
+	// 检查调用者是否拥有 app manager 角色
 	if !authverify.IsAdmin(c) {
-		// Respond with a permission error if the user is not an app manager.
+		// 非 app manager 时返回权限错误
 		apiresp.GinError(c, errs.ErrNoPermission.WrapMsg("only app manager can send message"))
 		return
 	}
 
-	// Prepare the message request with additional required data.
+	// 准备消息请求，补充必要的附加数据
 	sendMsgReq, err := m.getSendMsgReq(c, req.SendMsg)
 	if err != nil {
-		// Log and respond with an error if preparation fails.
+		// 准备失败时记录日志并返回错误
 		apiresp.GinError(c, err)
 		return
 	}
 
-	// Set the receiver ID in the message data.
+	// 在消息数据中设置接收者 ID
 	sendMsgReq.MsgData.RecvID = req.RecvID
 
-	// Attempt to send the message using the client.
+	// 尝试通过客户端发送消息
 	respPb, err := m.Client.SendMsg(c, sendMsgReq)
 	if err != nil {
-		// Set the status to failed and respond with an error if sending fails.
+		// 发送失败时设置状态为失败并返回错误
 		apiresp.GinError(c, err)
 		return
 	}
 
-	// Set the status to successful if the message is sent.
+	// 消息发送成功，设置状态为成功
 	var status = constant.MsgSendSuccessed
 
-	// Attempt to update the message sending status in the system.
+	// 尝试在系统中更新消息发送状态
 	_, err = m.Client.SetSendMsgStatus(c, &msg.SetSendMsgStatusReq{
 		Status: int32(status),
 	})
 
 	if err != nil {
-		// Log the error if updating the status fails.
+		// 更新状态失败时记录日志并返回错误
 		apiresp.GinError(c, err)
 		return
 	}
 
-	// Respond with a success message and the response payload.
+	// 返回成功响应及响应数据
 	m.ginRespSendMsg(c, sendMsgReq, respPb)
 }
 
@@ -492,7 +492,7 @@ func (m *MessageApi) SendSimpleMessage(c *gin.Context) {
 		sendID = keyMsgData.RecvID
 		recvID = keyMsgData.SendID
 	}
-	// check param
+	// 校验参数
 	if keyMsgData.SendID == "" {
 		apiresp.GinError(c, errs.ErrArgs.WithDetail("missing recvID or GroupID").Wrap())
 		return

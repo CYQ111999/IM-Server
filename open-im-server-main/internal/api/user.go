@@ -41,7 +41,7 @@ func (u *UserApi) UserRegister(c *gin.Context) {
 	a2r.Call(c, user.UserClient.UserRegister, u.Client)
 }
 
-// UpdateUserInfo is deprecated. Use UpdateUserInfoEx
+// UpdateUserInfo 已废弃，请使用 UpdateUserInfoEx
 func (u *UserApi) UpdateUserInfo(c *gin.Context) {
 	a2r.Call(c, user.UserClient.UpdateUserInfo, u.Client)
 }
@@ -69,7 +69,7 @@ func (u *UserApi) GetUsers(c *gin.Context) {
 	a2r.Call(c, user.UserClient.GetPaginationUsers, u.Client)
 }
 
-// GetUsersOnlineStatus Get user online status.
+// GetUsersOnlineStatus 获取用户在线状态。
 func (u *UserApi) GetUsersOnlineStatus(c *gin.Context) {
 	var req msggateway.GetUsersOnlineStatusReq
 	if err := c.BindJSON(&req); err != nil {
@@ -86,7 +86,7 @@ func (u *UserApi) GetUsersOnlineStatus(c *gin.Context) {
 	var respResult []*msggateway.GetUsersOnlineStatusResp_SuccessResult
 	flag := false
 
-	// Online push message
+	// 在线推送消息
 	for _, v := range conns {
 		msgClient := msggateway.NewMsgGatewayClient(v)
 		reply, err := msgClient.GetUsersOnlineStatus(c, &req)
@@ -102,13 +102,13 @@ func (u *UserApi) GetUsersOnlineStatus(c *gin.Context) {
 			wsResult = append(wsResult, reply.SuccessResult...)
 		}
 	}
-	// Traversing the userIDs in the api request body
+	// 遍历 API 请求体中的 userIDs
 	for _, v1 := range req.UserIDs {
 		flag = false
 		res := new(msggateway.GetUsersOnlineStatusResp_SuccessResult)
-		// Iterate through the online results fetched from various gateways
+		// 遍历从各个网关获取的在线结果
 		for _, v2 := range wsResult {
-			// If matches the above description on the line, and vice versa
+			// 若请求中的用户与网关返回结果中的 userID 相互匹配
 			if v2.UserID == v1 {
 				flag = true
 				res.UserID = v1
@@ -130,7 +130,7 @@ func (u *UserApi) UserRegisterCount(c *gin.Context) {
 	a2r.Call(c, user.UserClient.UserRegisterCount, u.Client)
 }
 
-// GetUsersOnlineTokenDetail Get user online token details.
+// GetUsersOnlineTokenDetail 获取用户在线 Token 详情。
 func (u *UserApi) GetUsersOnlineTokenDetail(c *gin.Context) {
 	var wsResult []*msggateway.GetUsersOnlineStatusResp_SuccessResult
 	var respResult []*msggateway.SingleDetail
@@ -145,7 +145,7 @@ func (u *UserApi) GetUsersOnlineTokenDetail(c *gin.Context) {
 		apiresp.GinError(c, err)
 		return
 	}
-	// Online push message
+	// 在线推送消息
 	for _, v := range conns {
 		msgClient := msggateway.NewMsgGatewayClient(v)
 		reply, err := msgClient.GetUsersOnlineStatus(c, &req)
@@ -191,42 +191,42 @@ func (u *UserApi) GetUsersOnlineTokenDetail(c *gin.Context) {
 	apiresp.GinSuccess(c, respResult)
 }
 
-// SubscriberStatus Presence status of subscribed users.
+// SubscriberStatus 被订阅用户的存在状态。
 func (u *UserApi) SubscriberStatus(c *gin.Context) {
 	a2r.Call(c, user.UserClient.SubscribeOrCancelUsersStatus, u.Client)
 }
 
-// GetUserStatus Get the online status of the user.
+// GetUserStatus 获取用户的在线状态。
 func (u *UserApi) GetUserStatus(c *gin.Context) {
 	a2r.Call(c, user.UserClient.GetUserStatus, u.Client)
 }
 
-// GetSubscribeUsersStatus Get the online status of subscribers.
+// GetSubscribeUsersStatus 获取订阅者的在线状态。
 func (u *UserApi) GetSubscribeUsersStatus(c *gin.Context) {
 	a2r.Call(c, user.UserClient.GetSubscribeUsersStatus, u.Client)
 }
 
-// ProcessUserCommandAdd user general function add.
+// ProcessUserCommandAdd 新增用户指令。
 func (u *UserApi) ProcessUserCommandAdd(c *gin.Context) {
 	a2r.Call(c, user.UserClient.ProcessUserCommandAdd, u.Client)
 }
 
-// ProcessUserCommandDelete user general function delete.
+// ProcessUserCommandDelete 删除用户指令。
 func (u *UserApi) ProcessUserCommandDelete(c *gin.Context) {
 	a2r.Call(c, user.UserClient.ProcessUserCommandDelete, u.Client)
 }
 
-// ProcessUserCommandUpdate  user general function update.
+// ProcessUserCommandUpdate 更新用户指令。
 func (u *UserApi) ProcessUserCommandUpdate(c *gin.Context) {
 	a2r.Call(c, user.UserClient.ProcessUserCommandUpdate, u.Client)
 }
 
-// ProcessUserCommandGet user general function get.
+// ProcessUserCommandGet 获取用户指令。
 func (u *UserApi) ProcessUserCommandGet(c *gin.Context) {
 	a2r.Call(c, user.UserClient.ProcessUserCommandGet, u.Client)
 }
 
-// ProcessUserCommandGet user general function get all.
+// ProcessUserCommandGetAll 获取全部用户指令。
 func (u *UserApi) ProcessUserCommandGetAll(c *gin.Context) {
 	a2r.Call(c, user.UserClient.ProcessUserCommandGetAll, u.Client)
 }

@@ -21,7 +21,7 @@ import (
 )
 
 const (
-	// wait for Restart http call return
+	// 等待 Restart HTTP 调用返回
 	waitHttp = time.Millisecond * 200
 )
 

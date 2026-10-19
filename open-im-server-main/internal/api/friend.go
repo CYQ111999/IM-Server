@@ -105,8 +105,8 @@ func (o *FriendApi) GetIncrementalFriends(c *gin.Context) {
 	a2r.Call(c, relation.FriendClient.GetIncrementalFriends, o.Client)
 }
 
-// GetIncrementalBlacks is temporarily unused.
-// Deprecated: This function is currently unused and may be removed in future versions.
+// GetIncrementalBlacks 暂时未使用。
+// 已废弃：该函数当前未被使用，未来版本可能移除。
 func (o *FriendApi) GetIncrementalBlacks(c *gin.Context) {
 	a2r.Call(c, relation.FriendClient.GetIncrementalBlacks, o.Client)
 }

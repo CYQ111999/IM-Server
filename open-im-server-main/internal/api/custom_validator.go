@@ -19,7 +19,7 @@ import (
 	"github.com/openimsdk/protocol/constant"
 )
 
-// RequiredIf validates if the specified field is required based on the session type.
+// RequiredIf 根据会话类型校验指定字段是否为必填。
 func RequiredIf(fl validator.FieldLevel) bool {
 	sessionType := fl.Parent().FieldByName("SessionType").Int()
 
