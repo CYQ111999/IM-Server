@@ -33,100 +33,111 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
+// GroupDatabase 群组数据库操作接口（群/群成员/群申请，Mongo 持久化 + Redis 缓存）
 type GroupDatabase interface {
-	// CreateGroup creates new groups along with their members.
+	// CreateGroup 创建群组及其成员
 	CreateGroup(ctx context.Context, groups []*model.Group, groupMembers []*model.GroupMember) error
-	// TakeGroup retrieves a single group by its ID.
+	// TakeGroup 按群 ID 获取单个群
 	TakeGroup(ctx context.Context, groupID string) (group *model.Group, err error)
-	// FindGroup retrieves multiple groups by their IDs.
+	// FindGroup 按群 ID 批量获取群
 	FindGroup(ctx context.Context, groupIDs []string) (groups []*model.Group, err error)
-	// SearchGroup searches for groups based on a keyword and pagination settings, returns total count and groups.
+	// SearchGroup 按关键字搜索群，返回总数与群列表
 	SearchGroup(ctx context.Context, keyword string, pagination pagination.Pagination) (int64, []*model.Group, error)
-	// UpdateGroup updates the properties of a group identified by its ID.
+	// UpdateGroup 按群 ID 更新群属性
 	UpdateGroup(ctx context.Context, groupID string, data map[string]any) error
-	// DismissGroup disbands a group and optionally removes its members based on the deleteMember flag.
+	// DismissGroup 解散群；deleteMember 为 true 时同步删除成员记录
 	DismissGroup(ctx context.Context, groupID string, deleteMember bool) error
 
-	// TakeGroupMember retrieves a specific group member by group ID and user ID.
+	// TakeGroupMember 按群 ID + 用户 ID 获取单个群成员
 	TakeGroupMember(ctx context.Context, groupID string, userID string) (groupMember *model.GroupMember, err error)
-	// TakeGroupOwner retrieves the owner of a group by group ID.
+	// TakeGroupOwner 获取群的群主
 	TakeGroupOwner(ctx context.Context, groupID string) (*model.GroupMember, error)
-	// FindGroupMembers retrieves members of a group filtered by user IDs.
+	// FindGroupMembers 按用户 ID 过滤获取群成员
 	FindGroupMembers(ctx context.Context, groupID string, userIDs []string) (groupMembers []*model.GroupMember, err error)
-	// FindGroupMemberUser retrieves groups that a user is a member of, filtered by group IDs.
+	// FindGroupMemberUser 获取某用户加入的群（按群 ID 过滤）中的成员记录
 	FindGroupMemberUser(ctx context.Context, groupIDs []string, userID string) (groupMembers []*model.GroupMember, err error)
-	// FindGroupMemberRoleLevels retrieves group members filtered by their role levels within a group.
+	// FindGroupMemberRoleLevels 按群内角色等级过滤获取群成员
 	FindGroupMemberRoleLevels(ctx context.Context, groupID string, roleLevels []int32) (groupMembers []*model.GroupMember, err error)
-	// FindGroupMemberAll retrieves all members of a group.
+	// FindGroupMemberAll 获取群的全部成员
 	FindGroupMemberAll(ctx context.Context, groupID string) (groupMembers []*model.GroupMember, err error)
-	// FindGroupsOwner retrieves the owners for multiple groups.
+	// FindGroupsOwner 批量获取多个群的群主
 	FindGroupsOwner(ctx context.Context, groupIDs []string) ([]*model.GroupMember, error)
-	// FindGroupMemberUserID retrieves the user IDs of all members in a group.
+	// FindGroupMemberUserID 获取群内所有成员的用户 ID
 	FindGroupMemberUserID(ctx context.Context, groupID string) ([]string, error)
-	// FindGroupMemberNum retrieves the number of members in a group.
+	// FindGroupMemberNum 获取群成员数量
 	FindGroupMemberNum(ctx context.Context, groupID string) (uint32, error)
-	// FindGroupMemberNums retrieves the number of members for multiple groups.
+	// FindGroupMemberNums 批量获取多个群的成员数量
 	FindGroupMemberNums(ctx context.Context, groupIDs []string) (map[string]uint32, error)
-	// FindUserManagedGroupID retrieves group IDs managed by a user.
+	// FindUserManagedGroupID 获取某用户管理（群主/管理员）的群 ID
 	FindUserManagedGroupID(ctx context.Context, userID string) (groupIDs []string, err error)
-	// PageGroupRequest paginates through group requests for specified groups.
+	// PageGroupRequest 分页获取指定群的入群申请
 	PageGroupRequest(ctx context.Context, groupIDs []string, handleResults []int, pagination pagination.Pagination) (int64, []*model.GroupRequest, error)
-	// GetGroupRoleLevelMemberIDs retrieves user IDs of group members with a specific role level.
+	// GetGroupRoleLevelMemberIDs 获取群内指定角色等级的用户 ID
 	GetGroupRoleLevelMemberIDs(ctx context.Context, groupID string, roleLevel int32) ([]string, error)
 
-	// PageGetJoinGroup paginates through groups that a user has joined.
+	// PageGetJoinGroup 分页获取某用户已加入的群
 	PageGetJoinGroup(ctx context.Context, userID string, pagination pagination.Pagination) (total int64, totalGroupMembers []*model.GroupMember, err error)
-	// PageGetGroupMember paginates through members of a group.
+	// PageGetGroupMember 分页获取群成员
 	PageGetGroupMember(ctx context.Context, groupID string, pagination pagination.Pagination) (total int64, totalGroupMembers []*model.GroupMember, err error)
-	// SearchGroupMember searches for group members based on a keyword, group ID, and pagination settings.
+	// SearchGroupMember 按关键字 + 群 ID 搜索群成员
 	SearchGroupMember(ctx context.Context, keyword string, groupID string, pagination pagination.Pagination) (int64, []*model.GroupMember, error)
-	// HandlerGroupRequest processes a group join request with a specified result.
+	// HandlerGroupRequest 按指定结果处理一条入群申请
 	HandlerGroupRequest(ctx context.Context, groupID string, userID string, handledMsg string, handleResult int32, member *model.GroupMember) error
-	// DeleteGroupMember removes specified users from a group.
+	// DeleteGroupMember 将指定用户移出群
 	DeleteGroupMember(ctx context.Context, groupID string, userIDs []string) error
-	// MapGroupMemberUserID maps group IDs to their members' simplified user IDs.
+	// MapGroupMemberUserID 将群 ID 映射到其成员的精简用户 ID 列表
 	MapGroupMemberUserID(ctx context.Context, groupIDs []string) (map[string]*common.GroupSimpleUserID, error)
-	// MapGroupMemberNum maps group IDs to their member count.
+	// MapGroupMemberNum 将群 ID 映射到其成员数量
 	MapGroupMemberNum(ctx context.Context, groupIDs []string) (map[string]uint32, error)
-	// TransferGroupOwner transfers the ownership of a group to another user.
+	// TransferGroupOwner 将群主转让给其他用户
 	TransferGroupOwner(ctx context.Context, groupID string, oldOwnerUserID, newOwnerUserID string, roleLevel int32) error
-	// UpdateGroupMember updates properties of a group member.
+	// UpdateGroupMember 更新单个群成员属性
 	UpdateGroupMember(ctx context.Context, groupID string, userID string, data map[string]any) error
-	// UpdateGroupMembers batch updates properties of group members.
+	// UpdateGroupMembers 批量更新群成员属性
 	UpdateGroupMembers(ctx context.Context, data []*common.BatchUpdateGroupMember) error
 
-	// CreateGroupRequest creates new group join requests.
+	// CreateGroupRequest 创建入群申请
 	CreateGroupRequest(ctx context.Context, requests []*model.GroupRequest) error
-	// TakeGroupRequest retrieves a specific group join request.
+	// TakeGroupRequest 获取单条入群申请
 	TakeGroupRequest(ctx context.Context, groupID string, userID string) (*model.GroupRequest, error)
-	// FindGroupRequests retrieves multiple group join requests.
+	// FindGroupRequests 批量获取入群申请
 	FindGroupRequests(ctx context.Context, groupID string, userIDs []string) ([]*model.GroupRequest, error)
-	// PageGroupRequestUser paginates through group join requests made by a user.
+	// PageGroupRequestUser 分页获取某用户发出的入群申请
 	PageGroupRequestUser(ctx context.Context, userID string, groupIDs []string, handleResults []int, pagination pagination.Pagination) (int64, []*model.GroupRequest, error)
 
-	// CountTotal counts the total number of groups as of a certain date.
+	// CountTotal 统计某时间点前的群总数
 	CountTotal(ctx context.Context, before *time.Time) (count int64, err error)
-	// CountRangeEverydayTotal counts the daily group creation total within a specified date range.
+	// CountRangeEverydayTotal 统计指定日期范围内每天的建群总数
 	CountRangeEverydayTotal(ctx context.Context, start time.Time, end time.Time) (map[string]int64, error)
-	// DeleteGroupMemberHash deletes the hash entries for group members in specified groups.
+	// DeleteGroupMemberHash 删除指定群的群成员 hash 缓存
 	DeleteGroupMemberHash(ctx context.Context, groupIDs []string) error
 
+	// FindMemberIncrVersion 查找群成员增量版本日志
 	FindMemberIncrVersion(ctx context.Context, groupID string, version uint, limit int) (*model.VersionLog, error)
+	// BatchFindMemberIncrVersion 批量查找多个群的成员增量版本日志
 	BatchFindMemberIncrVersion(ctx context.Context, groupIDs []string, versions []uint64, limits []int) (map[string]*model.VersionLog, error)
+	// FindJoinIncrVersion 查找用户入群信息的增量版本日志
 	FindJoinIncrVersion(ctx context.Context, userID string, version uint, limit int) (*model.VersionLog, error)
+	// MemberGroupIncrVersion 递增群成员侧版本号
 	MemberGroupIncrVersion(ctx context.Context, groupID string, userIDs []string, state int32) error
 
 	//FindSortGroupMemberUserIDs(ctx context.Context, groupID string) ([]string, error)
 	//FindSortJoinGroupIDs(ctx context.Context, userID string) ([]string, error)
 
+	// FindMaxGroupMemberVersionCache 从缓存查找群成员最大版本号
 	FindMaxGroupMemberVersionCache(ctx context.Context, groupID string) (*model.VersionLog, error)
+	// BatchFindMaxGroupMemberVersionCache 从缓存批量查找群成员最大版本号
 	BatchFindMaxGroupMemberVersionCache(ctx context.Context, groupIDs []string) (map[string]*model.VersionLog, error)
+	// FindMaxJoinGroupVersionCache 从缓存查找用户入群信息最大版本号
 	FindMaxJoinGroupVersionCache(ctx context.Context, userID string) (*model.VersionLog, error)
 
+	// SearchJoinGroup 在用户已加入的群中按关键字搜索
 	SearchJoinGroup(ctx context.Context, userID string, keyword string, pagination pagination.Pagination) (int64, []*model.Group, error)
 
+	// FindJoinGroupID 获取用户已加入的群 ID 列表
 	FindJoinGroupID(ctx context.Context, userID string) ([]string, error)
 
+	// GetGroupApplicationUnhandledCount 统计未处理的入群申请数量
 	GetGroupApplicationUnhandledCount(ctx context.Context, groupIDs []string, ts int64) (int64, error)
 }
 
@@ -195,6 +206,7 @@ func (g *groupDatabase) CreateGroup(ctx context.Context, groups []*model.Group, 
 				return err
 			}
 			for _, group := range groups {
+				// 建群后清理该群的各类缓存
 				c = c.DelGroupsInfo(group.GroupID).
 					DelGroupMembersHash(group.GroupID).
 					DelGroupsMemberNum(group.GroupID).
@@ -208,6 +220,7 @@ func (g *groupDatabase) CreateGroup(ctx context.Context, groups []*model.Group, 
 				return err
 			}
 			for _, groupMember := range groupMembers {
+				// 群成员写入后清理群侧与用户侧缓存
 				c = c.DelGroupMembersHash(groupMember.GroupID).
 					DelGroupsMemberNum(groupMember.GroupID).
 					DelGroupMemberIDs(groupMember.GroupID).
@@ -263,6 +276,7 @@ func (g *groupDatabase) UpdateGroup(ctx context.Context, groupID string, data ma
 		if err := g.groupDB.UpdateMap(ctx, groupID, data); err != nil {
 			return err
 		}
+		// 群信息变更：递增群成员版本号，触发多端同步
 		if err := g.groupMemberDB.MemberGroupIncrVersion(ctx, groupID, []string{""}, model.VersionStateUpdate); err != nil {
 			return err
 		}
@@ -277,6 +291,7 @@ func (g *groupDatabase) DismissGroup(ctx context.Context, groupID string, delete
 			return err
 		}
 		if deleteMember {
+			// 解散并删除成员：逐个递增成员的入群版本号
 			userIDs, err := g.cache.GetGroupMemberIDs(ctx, groupID)
 			if err != nil {
 				return err
@@ -298,6 +313,7 @@ func (g *groupDatabase) DismissGroup(ctx context.Context, groupID string, delete
 				}
 			}
 		} else {
+			// 仅解散群，保留成员记录
 			if err := g.groupMemberDB.MemberGroupIncrVersion(ctx, groupID, []string{""}, model.VersionStateUpdate); err != nil {
 				return err
 			}
@@ -364,6 +380,7 @@ func (g *groupDatabase) HandlerGroupRequest(ctx context.Context, groupID string,
 			return err
 		}
 		if member != nil {
+			// 申请通过：写入群成员记录并清理缓存
 			c := g.cache.CloneGroupCache()
 			if err := g.groupMemberDB.Create(ctx, []*model.GroupMember{member}); err != nil {
 				return err
@@ -443,6 +460,7 @@ func (g *groupDatabase) UpdateGroupMember(ctx context.Context, groupID string, u
 		}
 		c := g.cache.CloneGroupCache()
 		c = c.DelGroupMembersInfo(groupID, userID)
+		// 角色等级发生变化时，角色分档缓存与成员 ID 列表也要失效
 		if g.groupMemberDB.IsUpdateRoleLevel(data) {
 			c = c.DelGroupAllRoleLevel(groupID).DelGroupMemberIDs(groupID)
 		}
@@ -470,6 +488,7 @@ func (g *groupDatabase) UpdateGroupMembers(ctx context.Context, data []*common.B
 func (g *groupDatabase) CreateGroupRequest(ctx context.Context, requests []*model.GroupRequest) error {
 	return g.ctxTx.Transaction(ctx, func(ctx context.Context) error {
 		for _, request := range requests {
+			// 先删旧申请再建新申请，保证同一用户对同一群只有一条有效申请
 			if err := g.groupRequestDB.Delete(ctx, request.GroupID, request.UserID); err != nil {
 				return err
 			}
@@ -518,7 +537,7 @@ func (g *groupDatabase) BatchFindMemberIncrVersion(ctx context.Context, groupIDs
 		return nil, errs.Wrap(errs.New("groupIDs is nil."))
 	}
 
-	// convert []uint64 to []uint
+	// 将 []uint64 转换为 []uint
 	var uintVersions []uint
 	for _, version := range versions {
 		uintVersions = append(uintVersions, uint(version))

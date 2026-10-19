@@ -20,13 +20,14 @@ import (
 	"github.com/openimsdk/tools/utils/datautil"
 )
 
+// MsgTransferDatabase 消息分发落库数据库操作接口（msgtransfer 服务专用）
 type MsgTransferDatabase interface {
-	// BatchInsertChat2DB inserts a batch of messages into the database for a specific conversation.
+	// BatchInsertChat2DB 将一批消息插入指定会话的数据库
 	BatchInsertChat2DB(ctx context.Context, conversationID string, msgs []*sdkws.MsgData, currentMaxSeq int64) error
-	// DeleteMessagesFromCache deletes message caches from Redis by sequence numbers.
+	// DeleteMessagesFromCache 按序号从 Redis 删除消息缓存
 	DeleteMessagesFromCache(ctx context.Context, conversationID string, seqs []int64) error
 
-	// BatchInsertChat2Cache increments the sequence number and then batch inserts messages into the cache.
+	// BatchInsertChat2Cache 先递增序号，再批量插入消息缓存
 	BatchInsertChat2Cache(ctx context.Context, conversationID string, msgs []*sdkws.MsgData) (seq int64, isNewConversation bool, userHasReadMap map[string]int64, err error)
 
 	SetHasReadSeqs(ctx context.Context, conversationID string, userSeqMap map[string]int64) error
@@ -100,7 +101,7 @@ func (db *msgTransferDatabase) BatchInsertBlock(ctx context.Context, conversatio
 	}
 	num := db.msgTable.GetSingleGocMsgNum()
 	// num = 100
-	for i, field := range fields { // Check the type of the field
+	for i, field := range fields { // 检查字段类型
 		var ok bool
 		switch key {
 		case updateKeyMsg:
@@ -118,7 +119,7 @@ func (db *msgTransferDatabase) BatchInsertBlock(ctx context.Context, conversatio
 			return errs.ErrInternalServer.WrapMsg("field type is invalid")
 		}
 	}
-	// Returns true if the document exists in the database, false if the document does not exist in the database
+	// 文档在数据库中已存在则返回 true，不存在返回 false
 	updateMsgModel := func(seq int64, i int) (bool, error) {
 		var (
 			res *mongo.UpdateResult
@@ -140,21 +141,21 @@ func (db *msgTransferDatabase) BatchInsertBlock(ctx context.Context, conversatio
 	}
 	tryUpdate := true
 	for i := 0; i < len(fields); i++ {
-		seq := firstSeq + int64(i) // Current sequence number
+		seq := firstSeq + int64(i) // 当前序号
 		if tryUpdate {
 			matched, err := updateMsgModel(seq, i)
 			if err != nil {
 				return err
 			}
 			if matched {
-				continue // The current data has been updated, skip the current data
+				continue // 当前数据已更新过，跳过
 			}
 		}
 		doc := model.MsgDocModel{
 			DocID: db.msgTable.GetDocID(conversationID, seq),
 			Msg:   make([]*model.MsgInfoModel, num),
 		}
-		var insert int // Inserted data number
+		var insert int // 已插入的数据条数
 		for j := i; j < len(fields); j++ {
 			seq = firstSeq + int64(j)
 			if db.msgTable.GetDocID(conversationID, seq) != doc.DocID {
@@ -183,14 +184,14 @@ func (db *msgTransferDatabase) BatchInsertBlock(ctx context.Context, conversatio
 		}
 		if err := db.msgDocDatabase.Create(ctx, &doc); err != nil {
 			if mongo.IsDuplicateKeyError(err) {
-				i--              // already inserted
-				tryUpdate = true // next block use update mode
+				i--              // 已被并发插入
+				tryUpdate = true // 下一个块改用更新模式
 				continue
 			}
 			return err
 		}
-		tryUpdate = false // The current block is inserted successfully, and the next block is inserted preferentially
-		i += insert - 1   // Skip the inserted data
+		tryUpdate = false // 当前块插入成功，下一块优先继续尝试插入
+		i += insert - 1   // 跳过已插入的数据
 	}
 	return nil
 }
@@ -207,8 +208,9 @@ func (db *msgTransferDatabase) BatchInsertChat2Cache(ctx context.Context, conver
 	if lenList < 1 {
 		return 0, false, nil, errs.New("no messages to insert", "minCount", 1).Wrap()
 	}
-	//force to lead time as same
+	// 强制同一批次消息的发送时间一致
 	sendTime := time.Now().UnixMilli()
+	// 从序号分配器申请一段连续序号
 	currentMaxSeq, err := db.seqConversation.Malloc(ctx, conversationID, int64(len(msgs)))
 	if err != nil {
 		log.ZError(ctx, "storage.seq.Malloc", err)
@@ -254,6 +256,7 @@ func (db *msgTransferDatabase) SetHasReadSeqToDB(ctx context.Context, conversati
 	return nil
 }
 
+// MsgToPushMQ 将消息投递到推送 MQ，供 push 服务消费
 func (db *msgTransferDatabase) MsgToPushMQ(ctx context.Context, key, conversationID string, msg2mq *sdkws.MsgData) error {
 	data, err := proto.Marshal(&pbmsg.PushMsgDataToMQ{MsgData: msg2mq, ConversationID: conversationID})
 	if err != nil {
@@ -266,6 +269,7 @@ func (db *msgTransferDatabase) MsgToPushMQ(ctx context.Context, key, conversatio
 	return nil
 }
 
+// MsgToMongoMQ 将一批消息投递到落库 MQ，供 msgtransfer 落库消费
 func (db *msgTransferDatabase) MsgToMongoMQ(ctx context.Context, key, conversationID string, messages []*sdkws.MsgData, lastSeq int64) error {
 	if len(messages) > 0 {
 		data, err := proto.Marshal(&pbmsg.MsgDataToMongoByMQ{LastSeq: lastSeq, ConversationID: conversationID, MsgData: messages})

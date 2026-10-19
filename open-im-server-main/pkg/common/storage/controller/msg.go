@@ -48,21 +48,21 @@ const (
 	updateKeyRevoke
 )
 
-// CommonMsgDatabase defines the interface for message database operations.
+// CommonMsgDatabase 消息数据库操作接口（消息读写、序号、已读、撤回，Mongo + Redis + MQ 组合）
 type CommonMsgDatabase interface {
-	// RevokeMsg revokes a message in a conversation.
+	// RevokeMsg 撤回会话中的一条消息
 	RevokeMsg(ctx context.Context, conversationID string, seq int64, revoke *model.RevokeModel) error
-	// MarkSingleChatMsgsAsRead marks messages as read for a single chat by sequence numbers.
+	// MarkSingleChatMsgsAsRead 按序号将单聊消息标记为已读
 	MarkSingleChatMsgsAsRead(ctx context.Context, userID string, conversationID string, seqs []int64) error
-	// GetMsgBySeqsRange retrieves messages from MongoDB by a range of sequence numbers.
+	// GetMsgBySeqsRange 从 MongoDB 按序号范围拉取消息
 	GetMsgBySeqsRange(ctx context.Context, userID string, conversationID string, begin, end, num, userMaxSeq int64) (minSeq int64, maxSeq int64, seqMsg []*sdkws.MsgData, err error)
-	// GetMsgBySeqs retrieves messages for large groups from MongoDB by sequence numbers.
+	// GetMsgBySeqs 从 MongoDB 按序号拉取消息（大群场景）
 	GetMsgBySeqs(ctx context.Context, userID string, conversationID string, seqs []int64) (minSeq int64, maxSeq int64, seqMsg []*sdkws.MsgData, err error)
 
 	GetMessagesBySeqWithBounds(ctx context.Context, userID string, conversationID string, seqs []int64, pullOrder sdkws.PullOrder) (bool, int64, []*sdkws.MsgData, error)
-	// DeleteUserMsgsBySeqs allows a user to delete messages based on sequence numbers.
+	// DeleteUserMsgsBySeqs 用户按序号删除消息（软删除，仅对自己生效）
 	DeleteUserMsgsBySeqs(ctx context.Context, userID string, conversationID string, seqs []int64) error
-	// DeleteMsgsPhysicalBySeqs physically deletes messages by emptying them based on sequence numbers.
+	// DeleteMsgsPhysicalBySeqs 按序号物理删除消息（清空内容）
 	DeleteMsgsPhysicalBySeqs(ctx context.Context, conversationID string, seqs []int64) error
 	//SetMaxSeq(ctx context.Context, conversationID string, maxSeq int64) error
 	GetMaxSeqs(ctx context.Context, conversationIDs []string) (map[string]int64, error)
@@ -122,6 +122,7 @@ type commonMsgDatabase struct {
 	producer        mq.Producer
 }
 
+// MsgToMQ 将消息序列化后投递到消息队列（Kafka），由 msgtransfer 消费分发
 func (db *commonMsgDatabase) MsgToMQ(ctx context.Context, key string, msg2mq *sdkws.MsgData) error {
 	data, err := proto.Marshal(msg2mq)
 	if err != nil {
@@ -136,7 +137,7 @@ func (db *commonMsgDatabase) batchInsertBlock(ctx context.Context, conversationI
 	}
 	num := db.msgTable.GetSingleGocMsgNum()
 	// num = 100
-	for i, field := range fields { // Check the type of the field
+	for i, field := range fields { // 检查字段类型
 		var ok bool
 		switch key {
 		case updateKeyMsg:
@@ -154,7 +155,7 @@ func (db *commonMsgDatabase) batchInsertBlock(ctx context.Context, conversationI
 			return errs.ErrInternalServer.WrapMsg("field type is invalid")
 		}
 	}
-	// Returns true if the document exists in the database, false if the document does not exist in the database
+	// 文档在数据库中已存在则返回 true，不存在返回 false
 	updateMsgModel := func(seq int64, i int) (bool, error) {
 		var (
 			res *mongo.UpdateResult
@@ -176,21 +177,21 @@ func (db *commonMsgDatabase) batchInsertBlock(ctx context.Context, conversationI
 	}
 	tryUpdate := true
 	for i := 0; i < len(fields); i++ {
-		seq := firstSeq + int64(i) // Current sequence number
+		seq := firstSeq + int64(i) // 当前序号
 		if tryUpdate {
 			matched, err := updateMsgModel(seq, i)
 			if err != nil {
 				return err
 			}
 			if matched {
-				continue // The current data has been updated, skip the current data
+				continue // 当前数据已更新过，跳过
 			}
 		}
 		doc := model.MsgDocModel{
 			DocID: db.msgTable.GetDocID(conversationID, seq),
 			Msg:   make([]*model.MsgInfoModel, num),
 		}
-		var insert int // Inserted data number
+		var insert int // 已插入的数据条数
 		for j := i; j < len(fields); j++ {
 			seq = firstSeq + int64(j)
 			if db.msgTable.GetDocID(conversationID, seq) != doc.DocID {
@@ -219,14 +220,14 @@ func (db *commonMsgDatabase) batchInsertBlock(ctx context.Context, conversationI
 		}
 		if err := db.msgDocDatabase.Create(ctx, &doc); err != nil {
 			if mongo.IsDuplicateKeyError(err) {
-				i--              // already inserted
-				tryUpdate = true // next block use update mode
+				i--              // 已被并发插入
+				tryUpdate = true // 下一个块改用更新模式
 				continue
 			}
 			return err
 		}
-		tryUpdate = false // The current block is inserted successfully, and the next block is inserted preferentially
-		i += insert - 1   // Skip the inserted data
+		tryUpdate = false // 当前块插入成功，下一块优先继续尝试插入
+		i += insert - 1   // 跳过已插入的数据
 	}
 
 	return nil
@@ -258,6 +259,7 @@ func (db *commonMsgDatabase) getMsgBySeqs(ctx context.Context, userID, conversat
 	return db.GetMessageBySeqs(ctx, conversationID, userID, seqs)
 }
 
+// handlerDBMsg 处理从库中读出的消息：填充已读状态、修复引用消息（被引用消息已撤回时展示撤回提示）
 func (db *commonMsgDatabase) handlerDBMsg(ctx context.Context, cache map[int64][]*model.MsgInfoModel, userID, conversationID string, msg *model.MsgInfoModel) {
 	if msg == nil || msg.Msg == nil {
 		return
@@ -337,6 +339,7 @@ func (db *commonMsgDatabase) handlerDBMsg(ctx context.Context, cache map[int64][
 	if len(msgs) != 0 && msgs[0].Msg.ContentType != constant.MsgRevokeNotification {
 		return
 	}
+	// 被引用的原消息已撤回：把引用内容替换为撤回提示
 	quoteMsg.QuoteMessage.ContentType = constant.MsgRevokeNotification
 	if len(msgs) > 0 {
 		quoteMsg.QuoteMessage.Content = msgs[0].Msg.Content
@@ -363,25 +366,21 @@ func (db *commonMsgDatabase) findMsgInfoBySeq(ctx context.Context, userID, docID
 	return msgs, err
 }
 
-// GetMsgBySeqsRange In the context of group chat, we have the following parameters:
+// GetMsgBySeqsRange 群聊场景下按序号范围拉取消息，参数语义如下：
 //
-// "maxSeq" of a conversation: It represents the maximum value of messages in the group conversation.
-// "minSeq" of a conversation (default: 1): It represents the minimum value of messages in the group conversation.
+// 会话的 "maxSeq"：群会话中消息序号的最大值。
+// 会话的 "minSeq"（默认 1）：群会话中消息序号的最小值。
 //
-// For a user's perspective regarding the group conversation, we have the following parameters:
+// 从用户视角看群会话，还有两个参数：
 //
-// "userMaxSeq": It represents the user's upper limit for message retrieval in the group. If not set (default: 0),
-// it means the upper limit is the same as the conversation's "maxSeq".
-// "userMinSeq": It represents the user's starting point for message retrieval in the group. If not set (default: 0),
-// it means the starting point is the same as the conversation's "minSeq".
+// "userMaxSeq"：用户在群内可拉取的消息序号上限。未设置（默认 0）时，与会话的 "maxSeq" 相同。
+// "userMinSeq"：用户在群内拉取消息的起始序号。未设置（默认 0）时，与会话的 "minSeq" 相同。
 //
-// The scenarios for these parameters are as follows:
+// 典型场景：
 //
-// For users who have been kicked out of the group, "userMaxSeq" can be set as the maximum value they had before
-// being kicked out. This limits their ability to retrieve messages up to a certain point.
-// For new users joining the group, if they don't need to receive old messages,
-// "userMinSeq" can be set as the same value as the conversation's "maxSeq" at the moment they join the group.
-// This ensures that their message retrieval starts from the point they joined.
+// 被踢出群的用户，"userMaxSeq" 可设为其被踢出前的最大序号，限制其只能拉到某个时间点之前的消息。
+// 新入群用户如果不需要历史消息，"userMinSeq" 可设为入群那一刻会话的 "maxSeq"，
+// 保证其消息拉取从入群时刻开始。
 func (db *commonMsgDatabase) GetMsgBySeqsRange(ctx context.Context, userID string, conversationID string, begin, end, num, userMaxSeq int64) (int64, int64, []*sdkws.MsgData, error) {
 	userMinSeq, err := db.seqUser.GetUserMinSeq(ctx, conversationID, userID)
 	if err != nil && !errors.Is(err, redis.Nil) {
@@ -394,7 +393,7 @@ func (db *commonMsgDatabase) GetMsgBySeqsRange(ctx context.Context, userID strin
 	if userMinSeq > minSeq {
 		minSeq = userMinSeq
 	}
-	// "minSeq" represents the startSeq value that the user can retrieve.
+	// "minSeq" 表示该用户可拉取的起始序号
 	if minSeq > end {
 		log.ZWarn(ctx, "minSeq > end", errs.New("minSeq>end"), "minSeq", minSeq, "end", end)
 		return 0, 0, nil, nil
@@ -409,7 +408,7 @@ func (db *commonMsgDatabase) GetMsgBySeqsRange(ctx context.Context, userID strin
 			maxSeq = userMaxSeq
 		}
 	}
-	// "maxSeq" represents the endSeq value that the user can retrieve.
+	// "maxSeq" 表示该用户可拉取的结束序号
 
 	if begin < minSeq {
 		begin = minSeq
@@ -417,7 +416,7 @@ func (db *commonMsgDatabase) GetMsgBySeqsRange(ctx context.Context, userID strin
 	if end > maxSeq {
 		end = maxSeq
 	}
-	// "begin" and "end" represent the actual startSeq and endSeq values that the user can retrieve.
+	// "begin" 与 "end" 表示该用户实际可拉取的起止序号
 	if end < begin {
 		return 0, 0, nil, errs.ErrArgs.WrapMsg("seq end < begin")
 	}
@@ -507,17 +506,17 @@ func (db *commonMsgDatabase) GetMessagesBySeqWithBounds(ctx context.Context, use
 		if seq <= 0 {
 			continue
 		}
-		// The normal range and can fetch messages
+		// 正常范围内，可以拉取消息
 		if seq >= minSeq && seq <= maxSeq {
 			newSeqs = append(newSeqs, seq)
 			continue
 		}
-		// If the requested seq is smaller than the minimum seq and the pull order is descending (pulling older messages)
+		// 请求的序号小于最小序号且拉取顺序为降序（拉更早的消息）→ 已到边界
 		if seq < minSeq && pullOrder == sdkws.PullOrder_PullOrderDesc {
 			isEnd = true
 			endSeq = minSeq
 		}
-		// If the requested seq is larger than the maximum seq and the pull order is ascending (pulling newer messages)
+		// 请求的序号大于最大序号且拉取顺序为升序（拉更新的消息）→ 已到边界
 		if seq > maxSeq && pullOrder == sdkws.PullOrder_PullOrderAsc {
 			isEnd = true
 			endSeq = maxSeq
@@ -716,7 +715,7 @@ func (db *commonMsgDatabase) GetMaxSeqWithTime(ctx context.Context, conversation
 }
 
 func (db *commonMsgDatabase) GetMaxSeqsWithTime(ctx context.Context, conversationIDs []string) (map[string]database.SeqTime, error) {
-	// todo: only the time in the redis cache will be taken, not the message time
+	// todo: 目前只取 Redis 缓存中的时间，未取消息时间
 	return db.seqConversation.GetMaxSeqsWithTime(ctx, conversationIDs)
 }
 
@@ -745,6 +744,7 @@ func (db *commonMsgDatabase) GetLastMessageSeqByTime(ctx context.Context, conver
 	return db.msgDocDatabase.GetLastMessageSeqByTime(ctx, conversationID, time)
 }
 
+// handlerDeleteAndRevoked 处理删除与撤回标记：把库中的 del_list/revoke 转换为客户端可读的消息状态
 func (db *commonMsgDatabase) handlerDeleteAndRevoked(ctx context.Context, userID string, msgs []*model.MsgInfoModel) {
 	for i := range msgs {
 		msg := msgs[i]
@@ -753,12 +753,14 @@ func (db *commonMsgDatabase) handlerDeleteAndRevoked(ctx context.Context, userID
 		}
 		msg.Msg.IsRead = msg.IsRead
 		if datautil.Contain(userID, msg.DelList...) {
+			// 当前用户删除了该消息：内容置空并标记为已删除
 			msg.Msg.Content = ""
 			msg.Msg.Status = constant.MsgDeleted
 		}
 		if msg.Revoke == nil {
 			continue
 		}
+		// 消息已撤回：改写为撤回通知消息
 		msg.Msg.ContentType = constant.MsgRevokeNotification
 		revokeContent := sdkws.MessageRevokedContent{
 			RevokerID:                   msg.Revoke.UserID,
@@ -797,6 +799,7 @@ func (db *commonMsgDatabase) handlerQuote(ctx context.Context, userID, conversat
 	}
 }
 
+// GetMessageBySeqs 按序号批量获取消息：先查缓存，再处理删除/撤回/引用，最后按请求顺序组装
 func (db *commonMsgDatabase) GetMessageBySeqs(ctx context.Context, conversationID string, userID string, seqs []int64) ([]*sdkws.MsgData, error) {
 	msgs, err := db.msgCache.GetMessageBySeqs(ctx, conversationID, seqs)
 	if err != nil {
@@ -816,6 +819,7 @@ func (db *commonMsgDatabase) GetMessageBySeqs(ctx context.Context, conversationI
 		if v, ok := seqMsgs[seq]; ok {
 			res = append(res, convert.MsgDB2Pb(v.Msg))
 		} else {
+			// 缓存未命中：返回占位消息，状态为已删除
 			res = append(res, &sdkws.MsgData{Seq: seq, Status: constant.MsgStatusHasDeleted})
 		}
 	}
@@ -839,6 +843,7 @@ func (db *commonMsgDatabase) GetLastMessage(ctx context.Context, conversationIDs
 			continue
 		}
 		if userID != "" {
+			// 校验最新消息是否在该用户可见的序号范围内
 			userMinSeq, err := db.seqUser.GetUserMinSeq(ctx, conversationID, userID)
 			if err != nil {
 				return nil, err

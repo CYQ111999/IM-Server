@@ -14,16 +14,20 @@ import (
 	"github.com/openimsdk/tools/tokenverify"
 )
 
+// AuthDatabase 鉴权数据库操作接口（token 的创建/校验/多端互踢，全部走 Redis）
 type AuthDatabase interface {
-	// If the result is empty, no error is returned.
+	// GetTokensWithoutError 获取用户的 token  map，结果为空不返回错误
 	GetTokensWithoutError(ctx context.Context, userID string, platformID int) (map[string]int, error)
 
+	// GetTemporaryTokensWithoutError 校验临时 token 是否存在
 	GetTemporaryTokensWithoutError(ctx context.Context, userID string, platformID int, token string) error
-	// Create token
+	// CreateToken 创建 token
 	CreateToken(ctx context.Context, userID string, platformID int) (string, error)
 
+	// BatchSetTokenMapByUidPid 批量将 token 标记为已踢出
 	BatchSetTokenMapByUidPid(ctx context.Context, tokens []string) error
 
+	// SetTokenMapByUidPid 覆盖写入某用户某平台的 token map
 	SetTokenMapByUidPid(ctx context.Context, userID string, platformID int, m map[string]int) error
 }
 
@@ -49,7 +53,7 @@ func NewAuthDatabase(cache cache.TokenModel, accessSecret string, accessExpire i
 	}
 }
 
-// If the result is empty.
+// GetTokensWithoutError 获取用户的 token map，结果为空不返回错误。
 func (a *authDatabase) GetTokensWithoutError(ctx context.Context, userID string, platformID int) (map[string]int, error) {
 	return a.cache.GetTokensWithoutError(ctx, userID, platformID)
 }
@@ -62,6 +66,7 @@ func (a *authDatabase) SetTokenMapByUidPid(ctx context.Context, userID string, p
 	return a.cache.SetTokenMapByUidPid(ctx, userID, platformID, m)
 }
 
+// BatchSetTokenMapByUidPid 批量把 token 置为已踢出状态（解析失败的直接跳过）
 func (a *authDatabase) BatchSetTokenMapByUidPid(ctx context.Context, tokens []string) error {
 	setMap := make(map[string]map[string]any)
 	for _, token := range tokens {
@@ -84,7 +89,7 @@ func (a *authDatabase) BatchSetTokenMapByUidPid(ctx context.Context, tokens []st
 	return nil
 }
 
-// Create Token.
+// CreateToken 创建 token：先按多端登录策略清理/踢出旧 token，再签发新 JWT 并写入缓存
 func (a *authDatabase) CreateToken(ctx context.Context, userID string, platformID int) (string, error) {
 	tokens, err := a.cache.GetAllTokensWithoutError(ctx, userID)
 	if err != nil {
@@ -118,6 +123,7 @@ func (a *authDatabase) CreateToken(ctx context.Context, userID string, platformI
 		}
 	}
 
+	// 签发 JWT（HS256，有效期由 accessExpire 控制）
 	claims := tokenverify.BuildClaims(userID, platformID, a.accessExpire)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := token.SignedString([]byte(a.accessSecret))
@@ -132,17 +138,18 @@ func (a *authDatabase) CreateToken(ctx context.Context, userID string, platformI
 	return tokenString, nil
 }
 
-// checkToken will check token by tokenPolicy and return deleteToken,kickToken,deleteAdminToken
+// checkToken 按多端登录策略检查现有 token，返回（待删除 token、待踢出 token、管理员 token 三类）
 func (a *authDatabase) checkToken(ctx context.Context, tokens map[int]map[string]int, platformID int) (map[int][]string, map[int][]string, []string, error) {
-	// todo: Asynchronous deletion of old data.
+	// todo: 旧数据异步删除
 	var (
-		loginTokenMap  = make(map[int][]string) // The length of the value of the map must be greater than 0
+		loginTokenMap  = make(map[int][]string) // map 的 value 长度必须大于 0
 		deleteToken    = make(map[int][]string)
 		kickToken      = make(map[int][]string)
 		adminToken     = make([]string, 0)
 		unkickTerminal = ""
 	)
 
+	// 第一轮：分离出无效 token（解析失败或已被踢出）与有效登录 token
 	for plfID, tks := range tokens {
 		for k, v := range tks {
 			_, err := tokenverify.GetClaimFromToken(k, authverify.Secret(a.accessSecret))
@@ -158,8 +165,10 @@ func (a *authDatabase) checkToken(ctx context.Context, tokens map[int]map[string
 		}
 	}
 
+	// 第二轮：按多端登录策略计算需要踢出的 token
 	switch a.multiLogin.Policy {
 	case constant.DefalutNotKick:
+		// 默认不互踢：仅同端数量超过上限时踢最早的
 		for plt, ts := range loginTokenMap {
 			l := len(ts)
 			if platformID == plt {
@@ -171,6 +180,7 @@ func (a *authDatabase) checkToken(ctx context.Context, tokens map[int]map[string
 			}
 		}
 	case constant.AllLoginButSameTermKick:
+		// 同端互踢：同端只保留最新一个，其他端不受影响
 		for plt, ts := range loginTokenMap {
 			kickToken[plt] = ts[:len(ts)-1]
 
@@ -179,6 +189,7 @@ func (a *authDatabase) checkToken(ctx context.Context, tokens map[int]map[string
 			}
 		}
 	case constant.PCAndOther:
+		// PC 端互不踢，其他端合计只保留一个（优先保留 Android）
 		unkickTerminal = constant.TerminalPC
 		if constant.PlatformIDToClass(platformID) != unkickTerminal {
 			for plt, ts := range loginTokenMap {
@@ -194,7 +205,7 @@ func (a *authDatabase) checkToken(ctx context.Context, tokens map[int]map[string
 			)
 			for plt, ts := range loginTokenMap {
 				if constant.PlatformIDToClass(plt) != unkickTerminal {
-					// Keep a token from another end
+					// 保留一个其他端的 token
 					if !reserveToken {
 						reserveToken = true
 						kickToken[plt] = ts[:len(ts)-1]
@@ -202,7 +213,7 @@ func (a *authDatabase) checkToken(ctx context.Context, tokens map[int]map[string
 						preKickPlt = plt
 						continue
 					} else {
-						// Prioritize keeping Android
+						// 优先保留 Android
 						if plt == constant.AndroidPlatformID {
 							if preKickToken != "" {
 								kickToken[preKickPlt] = append(kickToken[preKickPlt], preKickToken)
@@ -216,6 +227,7 @@ func (a *authDatabase) checkToken(ctx context.Context, tokens map[int]map[string
 			}
 		}
 	case constant.AllLoginButSameClassKick:
+		// 同类端互踢：同类别端全部踢出，其他类别各保留一个
 		var (
 			reserved = make(map[string]struct{})
 		)
@@ -245,6 +257,7 @@ func (a *authDatabase) checkToken(ctx context.Context, tokens map[int]map[string
 	//if l > adminTokenMaxNum {
 	//	kickToken = append(kickToken, adminToken[:l-adminTokenMaxNum]...)
 	//}
+	// 新登录的是管理端时，旧管理端 token 全部作废
 	var deleteAdminToken []string
 	if platformID == constant.AdminPlatformID {
 		deleteAdminToken = adminToken

@@ -30,43 +30,44 @@ import (
 	"github.com/openimsdk/open-im-server/v3/pkg/common/storage/cache"
 )
 
+// UserDatabase 用户数据库操作接口
 type UserDatabase interface {
-	// FindWithError Get the information of the specified user. If the userID is not found, it will also return an error
+	// FindWithError 获取指定用户信息，userID 不存在时也返回错误
 	FindWithError(ctx context.Context, userIDs []string) (users []*model.User, err error)
-	// Find Get the information of the specified user If the userID is not found, no error will be returned
+	// Find 获取指定用户信息，userID 不存在时不返回错误
 	Find(ctx context.Context, userIDs []string) (users []*model.User, err error)
-	// Find userInfo By Nickname
+	// FindByNickname 按昵称查找用户
 	FindByNickname(ctx context.Context, nickname string) (users []*model.User, err error)
-	// FindNotification find system account by level
+	// FindNotification 按等级查找系统账号
 	FindNotification(ctx context.Context, level int64) (users []*model.User, err error)
-	// FindSystemAccount find all system account
+	// FindSystemAccount 查找所有系统账号
 	FindSystemAccount(ctx context.Context) (users []*model.User, err error)
-	// Create Insert multiple external guarantees that the userID is not repeated and does not exist in the storage
+	// Create 批量插入用户，调用方保证 userID 不重复且不存在于存储中
 	Create(ctx context.Context, users []*model.User) (err error)
-	// UpdateByMap update (zero value) external guarantee userID exists
+	// UpdateByMap 按 map 更新用户字段（支持零值），调用方保证 userID 存在
 	UpdateByMap(ctx context.Context, userID string, args map[string]any) (err error)
-	// FindUser
+	// PageFindUser 按等级区间分页查找用户
 	PageFindUser(ctx context.Context, level1 int64, level2 int64, pagination pagination.Pagination) (count int64, users []*model.User, err error)
-	// FindUser with keyword
+	// PageFindUserWithKeyword 按等级区间 + 关键字分页查找用户
 	PageFindUserWithKeyword(ctx context.Context, level1 int64, level2 int64, userID string, nickName string, pagination pagination.Pagination) (count int64, users []*model.User, err error)
-	// Page If not found, no error is returned
+	// Page 分页获取用户，查不到不返回错误
 	Page(ctx context.Context, pagination pagination.Pagination) (count int64, users []*model.User, err error)
-	// IsExist true as long as one exists
+	// IsExist 只要有一个存在就返回 true
 	IsExist(ctx context.Context, userIDs []string) (exist bool, err error)
-	// GetAllUserID Get all user IDs
+	// GetAllUserID 获取所有用户 ID
 	GetAllUserID(ctx context.Context, pagination pagination.Pagination) (int64, []string, error)
-	// Get user by userID
+	// GetUserByID 按 userID 获取用户
 	GetUserByID(ctx context.Context, userID string) (user *model.User, err error)
-	// InitOnce Inside the function, first query whether it exists in the storage, if it exists, do nothing; if it does not exist, insert it
+	// InitOnce 函数内部先查存储中是否已存在，存在则不动，不存在则插入
 	InitOnce(ctx context.Context, users []*model.User) (err error)
-	// CountTotal Get the total number of users
+	// CountTotal 获取用户总数
 	CountTotal(ctx context.Context, before *time.Time) (int64, error)
-	// CountRangeEverydayTotal Get the user increment in the range
+	// CountRangeEverydayTotal 获取区间内每天的用户增量
 	CountRangeEverydayTotal(ctx context.Context, start time.Time, end time.Time) (map[string]int64, error)
 
 	SortQuery(ctx context.Context, userIDName map[string]string, asc bool) ([]*model.User, error)
 
-	// CRUD user command
+	// 用户自定义指令（command）CRUD
 	AddUserCommand(ctx context.Context, userID string, Type int32, UUID string, value string, ex string) error
 	DeleteUserCommand(ctx context.Context, userID string, Type int32, UUID string) error
 	UpdateUserCommand(ctx context.Context, userID string, Type int32, UUID string, val map[string]any) error
@@ -84,19 +85,20 @@ func NewUserDatabase(userDB database.User, cache cache.UserCache, tx tx.Tx) User
 	return &userDatabase{userDB: userDB, cache: cache, tx: tx}
 }
 
+// InitOnce 幂等初始化：已存在的用户跳过，昵称不一致的更新，缺失的插入
 func (u *userDatabase) InitOnce(ctx context.Context, users []*model.User) error {
-	// Extract user IDs from the given user models.
+	// 从用户模型中提取 userID
 	userIDs := datautil.Slice(users, func(e *model.User) string {
 		return e.UserID
 	})
 
-	// Find existing users in the database.
+	// 查询数据库中已存在的用户
 	existingUsers, err := u.userDB.Find(ctx, userIDs)
 	if err != nil {
 		return err
 	}
 
-	// Determine which users are missing from the database.
+	// 找出数据库中缺失的用户
 	var (
 		missing, update []*model.User
 	)
@@ -112,7 +114,7 @@ func (u *userDatabase) InitOnce(ctx context.Context, users []*model.User) error 
 		}
 	}
 
-	// Create records for missing users.
+	// 为缺失的用户创建记录
 	if len(missing) > 0 {
 		if err := u.userDB.Create(ctx, missing); err != nil {
 			return err
@@ -129,11 +131,11 @@ func (u *userDatabase) InitOnce(ctx context.Context, users []*model.User) error 
 	return nil
 }
 
-// FindWithError Get the information of the specified user and return an error if the userID is not found.
+// FindWithError 获取指定用户信息，userID 不存在时返回错误。
 func (u *userDatabase) FindWithError(ctx context.Context, userIDs []string) (users []*model.User, err error) {
 	userIDs = datautil.Distinct(userIDs)
 
-	// TODO: Add logic to identify which user IDs are distinct and which user IDs were not found.
+	// TODO: 补充逻辑，识别哪些 userID 是重复的、哪些没找到
 
 	users, err = u.cache.GetUsersInfo(ctx, userIDs)
 	if err != nil {
@@ -146,7 +148,7 @@ func (u *userDatabase) FindWithError(ctx context.Context, userIDs []string) (use
 	return
 }
 
-// Find Get the information of the specified user. If the userID is not found, no error will be returned.
+// Find 获取指定用户信息。userID 不存在时不返回错误。
 func (u *userDatabase) Find(ctx context.Context, userIDs []string) (users []*model.User, err error) {
 	return u.cache.GetUsersInfo(ctx, userIDs)
 }
@@ -163,7 +165,7 @@ func (u *userDatabase) FindSystemAccount(ctx context.Context) (users []*model.Us
 	return u.userDB.TakeGTEAppManagerLevel(ctx, constant.AppNotificationAdmin)
 }
 
-// Create Insert multiple external guarantees that the userID is not repeated and does not exist in the storage.
+// Create 批量插入用户，调用方保证 userID 不重复且不存在于存储中。
 func (u *userDatabase) Create(ctx context.Context, users []*model.User) (err error) {
 	return u.tx.Transaction(ctx, func(ctx context.Context) error {
 		if err = u.userDB.Create(ctx, users); err != nil {
@@ -175,7 +177,7 @@ func (u *userDatabase) Create(ctx context.Context, users []*model.User) (err err
 	})
 }
 
-// UpdateByMap update (zero value) externally guarantees that userID exists.
+// UpdateByMap 按 map 更新用户字段（支持零值），调用方保证 userID 存在。
 func (u *userDatabase) UpdateByMap(ctx context.Context, userID string, args map[string]any) (err error) {
 	return u.tx.Transaction(ctx, func(ctx context.Context) error {
 		if err := u.userDB.UpdateByMap(ctx, userID, args); err != nil {
@@ -185,7 +187,7 @@ func (u *userDatabase) UpdateByMap(ctx context.Context, userID string, args map[
 	})
 }
 
-// Page Gets, returns no error if not found.
+// Page 分页获取用户，查不到不返回错误。
 func (u *userDatabase) Page(ctx context.Context, pagination pagination.Pagination) (count int64, users []*model.User, err error) {
 	return u.userDB.Page(ctx, pagination)
 }
@@ -198,7 +200,7 @@ func (u *userDatabase) PageFindUserWithKeyword(ctx context.Context, level1 int64
 	return u.userDB.PageFindUserWithKeyword(ctx, level1, level2, userID, nickName, pagination)
 }
 
-// IsExist Does userIDs exist? As long as there is one, it will be true.
+// IsExist 用户是否存在？只要有一个存在就返回 true。
 func (u *userDatabase) IsExist(ctx context.Context, userIDs []string) (exist bool, err error) {
 	users, err := u.userDB.Find(ctx, userIDs)
 	if err != nil {
@@ -210,7 +212,7 @@ func (u *userDatabase) IsExist(ctx context.Context, userIDs []string) (exist boo
 	return false, nil
 }
 
-// GetAllUserID Get all user IDs.
+// GetAllUserID 获取所有用户 ID。
 func (u *userDatabase) GetAllUserID(ctx context.Context, pagination pagination.Pagination) (total int64, userIDs []string, err error) {
 	return u.userDB.GetAllUserID(ctx, pagination)
 }
@@ -219,12 +221,12 @@ func (u *userDatabase) GetUserByID(ctx context.Context, userID string) (user *mo
 	return u.cache.GetUserInfo(ctx, userID)
 }
 
-// CountTotal Get the total number of users.
+// CountTotal 获取用户总数。
 func (u *userDatabase) CountTotal(ctx context.Context, before *time.Time) (count int64, err error) {
 	return u.userDB.CountTotal(ctx, before)
 }
 
-// CountRangeEverydayTotal Get the user increment in the range.
+// CountRangeEverydayTotal 获取区间内的用户增量。
 func (u *userDatabase) CountRangeEverydayTotal(ctx context.Context, start time.Time, end time.Time) (map[string]int64, error) {
 	return u.userDB.CountRangeEverydayTotal(ctx, start, end)
 }
