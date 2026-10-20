@@ -8,7 +8,7 @@ data:
     kubernetes:
       namespace: default
     etcd:
-      rootDirectory: openim
+      rootDirectory: im
       address: [ localhost:12379 ]
       username: ''
       password: ''
@@ -46,13 +46,13 @@ data:
     # MongoDB 服务器地址列表
     address: [ mongo-service:37017 ]
     # 数据库名称
-    database: openim_v3
+    database: im_v3
     # 数据库认证用户名
-    username: ''  # openIM
+    username: ''  # 业务账号，由 Secret 注入
     # 数据库认证密码
-    password: '' # openIM123
+    password: ''  # 业务账号密码，由 Secret 注入
     # 数据库认证源；使用 root 用户时填 admin
-    authSource: openim_v3
+    authSource: im_v3
     # 连接池最大连接数
     maxPoolSize: 100
     # 数据库连接失败时的最大重试次数
@@ -373,7 +373,7 @@ data:
         publicRead: false
 
   share.yml: |
-    secret: openIM123
+    secret: yiF2sIaAayrDRPDGbkfjftb80MdUbHbh
 
     imAdminUserID: ["imAdmin"]
 
@@ -427,7 +427,7 @@ data:
   redis.yml: |
     address: [ "redis-service:16379" ]
     username:
-    password:  # openIM123
+    password: DobuFNo6JREDRSbfo4OVHq7E  # Redis 密码
     clusterMode: false
     db: 0
     maxRetry: 10
@@ -435,11 +435,11 @@ data:
 
   minio.yml: |
     # MinIO 的 bucket 名称
-    bucket: openim
+    bucket: im-files
     # MinIO 认证用的 Access Key ID
-    accessKeyID: root   
+    accessKeyID: im_minio
     # MinIO 认证用的 Secret Access Key
-    secretAccessKey:    # openIM123
+    secretAccessKey: pg44FwzC5yhwlP75LhJnFMPX
     # MinIO 认证用的 Session Token（可选）
     sessionToken:
     # MinIO 服务的内网地址

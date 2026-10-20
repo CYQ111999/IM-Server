@@ -101,8 +101,8 @@ metadata:
   name: openim-mongo-init-secret
 type: Opaque
 data:
-  mongo_initdb_root_username: cm9vdA== # "root" 的 base64 编码
-  mongo_initdb_root_password: b3BlbklNMTIz # "openIM123" 的 base64 编码
-  mongo_initdb_database: b3BlbmltX3Yz # "openim_v3" 的 base64 编码
-  mongo_openim_username: b3BlbklN # "openIM" 的 base64 编码
-  mongo_openim_password: b3BlbklNMTIz # "openIM123" 的 base64 编码
+  mongo_initdb_root_username: aW1fcm9vdA== # root 账号的 Base64 编码
+  mongo_initdb_root_password: VU1XNXl3WENyQ1NJT0V3Y283cFdUREp5 # root 密码的 Base64 编码
+  mongo_initdb_database: aW1fdjM= # 数据库名的 Base64 编码
+  mongo_openim_username: aW1fYXBw # 业务账号的 Base64 编码
+  mongo_openim_password: WjFUekROdm1Dd0hhY0szQTlOMlpyQ3Bs # 业务账号密码的 Base64 编码

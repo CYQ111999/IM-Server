@@ -2,7 +2,7 @@
 enable: etcd
 etcd:
   # rootDirectory: etcd 中的根目录
-  rootDirectory: openim
+  rootDirectory: im
   # address: etcd 地址列表
   address: [localhost:12379]
   ## 注意：如果 etcd 开启了认证

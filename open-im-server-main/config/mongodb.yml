@@ -3,13 +3,13 @@ uri:
 # address: MongoDB 服务器地址列表
 address: [localhost:37017]
 # database: 数据库名
-database: openim_v3
+database: im_v3
 # username: 数据库认证用户名
-username: openIM
+username: im_app
 # password: 数据库认证密码
-password: openIM123
+password: Z1TzDNvmCwHacK3A9N2ZrCpl
 # authSource: 认证库；使用 root 用户时设为 admin
-authSource: openim_v3
+authSource: im_v3
 # maxPoolSize: 连接池最大连接数
 maxPoolSize: 100
 # maxRetry: 数据库连接失败的最大重试次数

@@ -53,7 +53,7 @@ GITHUB_TOKEN=
 
 # redis、mysql、mongo 的默认密码，同时也是 config/config.yaml 中的 accessSecret。
 # 注意：密码需为 8 位以上的数字与字母组合；如需自定义，取消注释并替换。
-# PASSWORD=openIM123
+# PASSWORD=<在此填写你自己的密码>
 
 # minio 对外服务的默认 IP 与端口；如需其他地址，取消注释并替换。
 # ENDPOINT=http://127.0.0.1:10005 
@@ -236,11 +236,11 @@ function set_openim_env() {
         debug "OPENIM_USER is not set. Defaulting to 'root'."
     fi
 
-    # 若未设置 PASSWORD 环境变量，默认为 'openIM123'
+    # 若未设置 PASSWORD 环境变量，则给出提示；密码不再内置默认值
     # 该密码用于 redis、mysql、mongo，以及 config/config.yaml 中的 accessSecret
     if [ -z "$PASSWORD" ]; then
-        PASSWORD="openIM123"
-        debug "PASSWORD is not set. Defaulting to 'openIM123'."
+        warn "PASSWORD is not set. Specify your own with -p/--password."
+        debug "PASSWORD is not set; no default is provided."
     fi
 
     # 若未设置 ENDPOINT 环境变量，默认为 'http://127.0.0.1:10005'
@@ -286,7 +286,7 @@ function cmd_help() {
     echo
     color_echo ${BLUE_PREFIX} "-i,  --install       ${CYAN_PREFIX}Execute the installation logic of the script${COLOR_SUFFIX}"
     color_echo ${BLUE_PREFIX} "-u,  --user          ${CYAN_PREFIX}set user (default: root)${COLOR_SUFFIX}"
-    color_echo ${BLUE_PREFIX} "-p,  --password      ${CYAN_PREFIX}set password (default: openIM123)${COLOR_SUFFIX}"
+    color_echo ${BLUE_PREFIX} "-p,  --password      ${CYAN_PREFIX}set password (no built-in default)${COLOR_SUFFIX}"
     color_echo ${BLUE_PREFIX} "-e,  --endpoint      ${CYAN_PREFIX}set endpoint (default: http://127.0.0.1:10005)${COLOR_SUFFIX}"
     color_echo ${BLUE_PREFIX} "-a,  --api           ${CYAN_PREFIX}set API URL (default: http://127.0.0.1:10002/object/)${COLOR_SUFFIX}"
     color_echo ${BLUE_PREFIX} "-d,  --directory     ${CYAN_PREFIX}set directory for large disk space (default: ./)${COLOR_SUFFIX}"
@@ -308,7 +308,7 @@ function cmd_help() {
 function parseinput() {
     # 设置默认值
     # OPENIM_USER=root
-    # PASSWORD=openIM123
+    # PASSWORD=<在此填写你自己的密码>
     # ENDPOINT=http://127.0.0.1:10005
     # API=http://127.0.0.1:10002/object/
     # DIRECTORY=./

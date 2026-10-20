@@ -1,9 +1,9 @@
 # bucket: MinIO 中的存储桶名称
-bucket: openim
+bucket: im-files
 # accessKeyID: MinIO 认证的 Access Key ID
-accessKeyID: root
+accessKeyID: im_minio
 # secretAccessKey: MinIO 认证的 Secret Access Key
-secretAccessKey: openIM123
+secretAccessKey: pg44FwzC5yhwlP75LhJnFMPX
 # sessionToken: MinIO 认证的 Session Token（可选）
 sessionToken:
 # internalAddress: MinIO 服务的内网地址

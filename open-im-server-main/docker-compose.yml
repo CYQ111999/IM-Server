@@ -41,11 +41,11 @@ services:
     environment:
       - TZ=Asia/Shanghai
       - wiredTigerCacheSizeGB=1
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=openIM123
-      - MONGO_INITDB_DATABASE=openim_v3
-      - MONGO_OPENIM_USERNAME=openIM
-      - MONGO_OPENIM_PASSWORD=openIM123
+      - MONGO_INITDB_ROOT_USERNAME=im_root
+      - MONGO_INITDB_ROOT_PASSWORD=UMW5ywXCrCSIOEwco7pWTDJy
+      - MONGO_INITDB_DATABASE=im_v3
+      - MONGO_OPENIM_USERNAME=im_app
+      - MONGO_OPENIM_PASSWORD=Z1TzDNvmCwHacK3A9N2ZrCpl
     restart: always
     networks:
       - openim
@@ -65,7 +65,7 @@ services:
       net.core.somaxconn: 1024
     command: >
       redis-server
-      --requirepass openIM123
+      --requirepass DobuFNo6JREDRSbfo4OVHq7E
       --appendonly yes
       --aof-use-rdb-preamble yes
       --save ""
@@ -94,9 +94,9 @@ services:
 
       ## 可选：通过下面的凭据开启 etcd 认证
       # - ETCD_ROOT_USER=root
-      # - ETCD_ROOT_PASSWORD=openIM123
+      # - ETCD_ROOT_PASSWORD=<你的 etcd root 密码>
       # - ETCD_USERNAME=openIM
-      # - ETCD_PASSWORD=openIM123
+      # - ETCD_PASSWORD=<你的 etcd 密码>
     volumes:
       - "${DATA_DIR}/components/etcd:/etcd-data"
     command:
@@ -213,7 +213,7 @@ services:
 
       # 认证相关配置；注释掉即可关闭认证
       # KAFKA_USERNAME: "openIM"
-      # KAFKA_PASSWORD: "openIM123"
+      # KAFKA_PASSWORD: "<你的 kafka 密码>"
     command: >
       /bin/sh -c '
         if [ -n "$${KAFKA_USERNAME}" ] && [ -n "$${KAFKA_PASSWORD}" ]; then
@@ -249,8 +249,8 @@ services:
       - "${DATA_DIR}/components/mnt/config:/root/.minio"
     environment:
       TZ: Asia/Shanghai
-      MINIO_ROOT_USER: root
-      MINIO_ROOT_PASSWORD: openIM123
+      MINIO_ROOT_USER: im_minio
+      MINIO_ROOT_PASSWORD: pg44FwzC5yhwlP75LhJnFMPX
     restart: always
     command: minio server /data --console-address ':9090'
     networks:
