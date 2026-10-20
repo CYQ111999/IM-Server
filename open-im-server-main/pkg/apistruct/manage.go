@@ -19,102 +19,102 @@ import (
 	"github.com/openimsdk/protocol/sdkws"
 )
 
-// SendMsg defines the structure for sending messages with various metadata.
+// SendMsg 定义发送消息的结构体，包含各类元数据。
 type SendMsg struct {
-	// SendID uniquely identifies the sender.
+	// SendID 发送者的唯一标识。
 	SendID string `json:"sendID" binding:"required"`
 
-	// GroupID is the identifier for the group, required if SessionType is 2 or 3.
+	// GroupID 群组标识，SessionType 为 2 或 3 时必填。
 	GroupID string `json:"groupID" binding:"required_if=SessionType 2|required_if=SessionType 3"`
 
-	// SenderNickname is the nickname of the sender.
+	// SenderNickname 发送者昵称。
 	SenderNickname string `json:"senderNickname"`
 
-	// SenderFaceURL is the URL to the sender's avatar.
+	// SenderFaceURL 发送者头像 URL。
 	SenderFaceURL string `json:"senderFaceURL"`
 
-	// SenderPlatformID is an integer identifier for the sender's platform.
+	// SenderPlatformID 发送者平台的整数标识。
 	SenderPlatformID int32 `json:"senderPlatformID"`
 
-	// Content is the actual content of the message, required and excluded from Swagger documentation.
+	// Content 消息的实际内容，必填，Swagger 文档中不展示。
 	Content map[string]any `json:"content" binding:"required" swaggerignore:"true"`
 
-	// ContentType is an integer that represents the type of the content.
+	// ContentType 表示内容类型的整数。
 	ContentType int32 `json:"contentType" binding:"required"`
 
-	// SessionType is an integer that represents the type of session for the message.
+	// SessionType 表示消息会话类型的整数。
 	SessionType int32 `json:"sessionType" binding:"required"`
 
-	// IsOnlineOnly specifies if the message is only sent when the receiver is online.
+	// IsOnlineOnly 指定消息是否仅在接收方在线时发送。
 	IsOnlineOnly bool `json:"isOnlineOnly"`
 
-	// NotOfflinePush specifies if the message should not trigger offline push notifications.
+	// NotOfflinePush 指定消息是否不触发离线推送通知。
 	NotOfflinePush bool `json:"notOfflinePush"`
 
-	// SendTime is a timestamp indicating when the message was sent.
+	// SendTime 消息发送时间的时间戳。
 	SendTime int64 `json:"sendTime"`
 
-	// OfflinePushInfo contains information for offline push notifications.
+	// OfflinePushInfo 离线推送通知的相关信息。
 	OfflinePushInfo *sdkws.OfflinePushInfo `json:"offlinePushInfo"`
 
-	// Ex stores extended fields
+	// Ex 扩展字段
 	Ex string `json:"ex"`
 }
 
-// SendMsgReq extends SendMsg with the requirement of RecvID when SessionType indicates a one-on-one or notification chat.
+// SendMsgReq 在 SendMsg 基础上扩展：当 SessionType 为单聊或通知聊天时，要求提供 RecvID。
 type SendMsgReq struct {
-	// RecvID uniquely identifies the receiver and is required for one-on-one or notification chat types.
+	// RecvID 接收者的唯一标识，单聊或通知聊天类型时必填。
 	RecvID string `json:"recvID" binding:"required_if" message:"recvID is required if sessionType is SingleChatType or NotificationChatType"`
 	SendMsg
 }
 
 type GetConversationListReq struct {
-	// userID uniquely identifies the user.
+	// userID 用户的唯一标识。
 	UserID string `protobuf:"bytes,1,opt,name=userID,proto3" json:"userID,omitempty" binding:"required"`
 
-	// ConversationIDs contains a list of unique identifiers for conversations.
+	// ConversationIDs 会话唯一标识列表。
 	ConversationIDs []string `protobuf:"bytes,2,rep,name=conversationIDs,proto3" json:"conversationIDs,omitempty"`
 }
 
 type GetConversationListResp struct {
-	// ConversationElems is a map that associates conversation IDs with their respective details.
+	// ConversationElems 将会话 ID 与其详细信息关联起来的 map。
 	ConversationElems map[string]*ConversationElem `protobuf:"bytes,1,rep,name=conversationElems,proto3" json:"conversationElems,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 }
 
 type ConversationElem struct {
-	// MaxSeq represents the maximum sequence number within the conversation.
+	// MaxSeq 会话内的最大序号。
 	MaxSeq int64 `protobuf:"varint,1,opt,name=maxSeq,proto3" json:"maxSeq,omitempty"`
 
-	// UnreadSeq represents the number of unread messages in the conversation.
+	// UnreadSeq 会话内的未读消息数。
 	UnreadSeq int64 `protobuf:"varint,2,opt,name=unreadSeq,proto3" json:"unreadSeq,omitempty"`
 
-	// LastSeqTime represents the timestamp of the last sequence in the conversation.
+	// LastSeqTime 会话内最后一个序号的时间戳。
 	LastSeqTime int64 `protobuf:"varint,3,opt,name=LastSeqTime,proto3" json:"LastSeqTime,omitempty"`
 }
 
-// BatchSendMsgReq defines the structure for sending a message to multiple recipients.
+// BatchSendMsgReq 定义向多个接收者批量发送消息的结构体。
 type BatchSendMsgReq struct {
 	SendMsg
 
-	// IsSendAll indicates whether the message should be sent to all users.
+	// IsSendAll 指示是否发送给所有用户。
 	IsSendAll bool `json:"isSendAll"`
 
-	// RecvIDs is a slice of receiver identifiers to whom the message will be sent, required field.
+	// RecvIDs 接收者标识切片，消息将发送给这些用户，必填字段。
 	RecvIDs []string `json:"recvIDs" binding:"required"`
 }
 
-// BatchSendMsgResp contains the results of a batch message send operation.
+// BatchSendMsgResp 包含批量消息发送操作的结果。
 type BatchSendMsgResp struct {
-	// Results is a slice of SingleReturnResult, representing the outcome of each message sent.
+	// Results SingleReturnResult 切片，表示每条消息的发送结果。
 	Results []*SingleReturnResult `json:"results"`
 
-	// FailedIDs is a slice of user IDs for whom the message send failed.
+	// FailedIDs 消息发送失败的用户 ID 切片。
 	FailedIDs []string `json:"failedUserIDs"`
 }
 
-// SendSingleMsgReq defines the structure for sending a message to multiple recipients.
+// SendSingleMsgReq 定义单条消息发送的结构体。
 type SendSingleMsgReq struct {
-	// groupMsg should appoint sendID
+	// 群消息需指定 sendID
 	SendID          string                 `json:"sendID"`
 	Content         string                 `json:"content" binding:"required"`
 	OfflinePushInfo *sdkws.OfflinePushInfo `json:"offlinePushInfo"`
@@ -127,28 +127,28 @@ type KeyMsgData struct {
 	GroupID string `json:"groupID"`
 }
 
-// SingleReturnResult encapsulates the result of a single message send attempt.
+// SingleReturnResult 封装单条消息发送的结果。
 type SingleReturnResult struct {
-	// ServerMsgID is the message identifier on the server-side.
+	// ServerMsgID 服务端消息标识。
 	ServerMsgID string `json:"serverMsgID"`
 
-	// ClientMsgID is the message identifier on the client-side.
+	// ClientMsgID 客户端消息标识。
 	ClientMsgID string `json:"clientMsgID"`
 
-	// SendTime is the timestamp of when the message was sent.
+	// SendTime 消息发送时间的时间戳。
 	SendTime int64 `json:"sendTime"`
 
-	// RecvID uniquely identifies the receiver of the message.
+	// RecvID 消息接收者的唯一标识。
 	RecvID string `json:"recvID"`
 
-	// Modify fields modified via webhook.
+	// Modify 通过 webhook 修改的字段。
 	Modify map[string]any `json:"modify,omitempty"`
 }
 
 type SendMsgResp struct {
-	// SendMsgResp original response.
+	// SendMsgResp 原始响应。
 	*pbmsg.SendMsgResp
 
-	// Modify fields modified via webhook.
+	// Modify 通过 webhook 修改的字段。
 	Modify map[string]any `json:"modify,omitempty"`
 }

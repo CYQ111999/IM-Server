@@ -103,30 +103,30 @@ func (u *UserMgo) PageFindUserWithKeyword(
 	nickName string,
 	pagination pagination.Pagination,
 ) (count int64, users []*model.User, err error) {
-	// Initialize the base query with level conditions
+	// 以等级条件初始化基础查询
 	query := bson.M{
 		"$and": []bson.M{
 			{"app_manger_level": bson.M{"$in": []int64{level1, level2}}},
 		},
 	}
 
-	// Add userID and userName conditions to the query if they are provided
+	// 若提供了 userID 和 userName，则将其条件加入查询
 	if userID != "" || nickName != "" {
 		userConditions := []bson.M{}
 		if userID != "" {
-			// Use regex for userID
+			// userID 使用正则匹配
 			regexPattern := primitive.Regex{Pattern: userID, Options: "i"} // 'i' for case-insensitive matching
 			userConditions = append(userConditions, bson.M{"user_id": regexPattern})
 		}
 		if nickName != "" {
-			// Use regex for userName
+			// userName 使用正则匹配
 			regexPattern := primitive.Regex{Pattern: nickName, Options: "i"} // 'i' for case-insensitive matching
 			userConditions = append(userConditions, bson.M{"nickname": regexPattern})
 		}
 		query["$and"] = append(query["$and"].([]bson.M), bson.M{"$or": userConditions})
 	}
 
-	// Perform the paginated search
+	// 执行分页查询
 	return mongoutil.FindPage[*model.User](ctx, u.coll, query, pagination)
 }
 
@@ -152,7 +152,7 @@ func (u *UserMgo) CountTotal(ctx context.Context, before *time.Time) (count int6
 func (u *UserMgo) AddUserCommand(ctx context.Context, userID string, Type int32, UUID string, value string, ex string) error {
 	collection := u.coll.Database().Collection("userCommands")
 
-	// Create a new document instead of updating an existing one
+	// 不更新已有文档，而是创建新文档
 	doc := bson.M{
 		"userID":     userID,
 		"type":       Type,
@@ -172,12 +172,12 @@ func (u *UserMgo) DeleteUserCommand(ctx context.Context, userID string, Type int
 	filter := bson.M{"userID": userID, "type": Type, "uuid": UUID}
 
 	result, err := collection.DeleteOne(ctx, filter)
-	// when err is not nil, result might be nil
+	// 当 err 不为 nil 时，result 可能为 nil
 	if err != nil {
 		return errs.Wrap(err)
 	}
 	if result.DeletedCount == 0 {
-		// No records found to update
+		// 未找到可更新的记录
 		return errs.Wrap(errs.ErrRecordNotFound)
 	}
 	return errs.Wrap(err)
@@ -198,7 +198,7 @@ func (u *UserMgo) UpdateUserCommand(ctx context.Context, userID string, Type int
 	}
 
 	if result.MatchedCount == 0 {
-		// No records found to update
+		// 未找到可更新的记录
 		return errs.Wrap(errs.ErrRecordNotFound)
 	}
 
@@ -215,7 +215,7 @@ func (u *UserMgo) GetUserCommand(ctx context.Context, userID string, Type int32)
 	}
 	defer cursor.Close(ctx)
 
-	// Initialize commands as a slice of pointers
+	// 将 commands 初始化为指针切片
 	commands := []*user.CommandInfoResp{}
 
 	for cursor.Next(ctx) {
@@ -258,7 +258,7 @@ func (u *UserMgo) GetAllUserCommand(ctx context.Context, userID string) ([]*user
 	}
 	defer cursor.Close(ctx)
 
-	// Initialize commands as a slice of pointers
+	// 将 commands 初始化为指针切片
 	commands := []*user.AllCommandInfoResp{}
 
 	for cursor.Next(ctx) {

@@ -17,7 +17,7 @@ const (
 	friendExpireTime = time.Second * 60 * 60 * 12
 )
 
-// FriendCacheRedis is an implementation of the FriendCache interface using Redis.
+// FriendCacheRedis 是基于 Redis 的 FriendCache 接口实现。
 type FriendCacheRedis struct {
 	cache.BatchDeleter
 	friendDB   database.Friend
@@ -26,7 +26,7 @@ type FriendCacheRedis struct {
 	syncCount  int
 }
 
-// NewFriendCacheRedis creates a new instance of FriendCacheRedis.
+// NewFriendCacheRedis 创建 FriendCacheRedis 实例。
 func NewFriendCacheRedis(rdb redis.UniversalClient, localCache *config.LocalCache, friendDB database.Friend) cache.FriendCache {
 	rc := newRocksCacheClient(rdb)
 	return &FriendCacheRedis{
@@ -46,7 +46,7 @@ func (f *FriendCacheRedis) CloneFriendCache() cache.FriendCache {
 	}
 }
 
-// getFriendIDsKey returns the key for storing friend IDs in the cache.
+// getFriendIDsKey 返回缓存中存储好友 ID 的 key。
 func (f *FriendCacheRedis) getFriendIDsKey(ownerUserID string) string {
 	return cachekey.GetFriendIDsKey(ownerUserID)
 }
@@ -55,24 +55,24 @@ func (f *FriendCacheRedis) getFriendMaxVersionKey(ownerUserID string) string {
 	return cachekey.GetFriendMaxVersionKey(ownerUserID)
 }
 
-// getTwoWayFriendsIDsKey returns the key for storing two-way friend IDs in the cache.
+// getTwoWayFriendsIDsKey 返回缓存中存储双向好友 ID 的 key。
 func (f *FriendCacheRedis) getTwoWayFriendsIDsKey(ownerUserID string) string {
 	return cachekey.GetTwoWayFriendsIDsKey(ownerUserID)
 }
 
-// getFriendKey returns the key for storing friend info in the cache.
+// getFriendKey 返回缓存中存储好友信息的 key。
 func (f *FriendCacheRedis) getFriendKey(ownerUserID, friendUserID string) string {
 	return cachekey.GetFriendKey(ownerUserID, friendUserID)
 }
 
-// GetFriendIDs retrieves friend IDs from the cache or the database if not found.
+// GetFriendIDs 从缓存获取好友 ID，未命中时回源到数据库。
 func (f *FriendCacheRedis) GetFriendIDs(ctx context.Context, ownerUserID string) (friendIDs []string, err error) {
 	return getCache(ctx, f.rcClient, f.getFriendIDsKey(ownerUserID), f.expireTime, func(ctx context.Context) ([]string, error) {
 		return f.friendDB.FindFriendUserIDs(ctx, ownerUserID)
 	})
 }
 
-// DelFriendIDs deletes friend IDs from the cache.
+// DelFriendIDs 从缓存删除好友 ID。
 func (f *FriendCacheRedis) DelFriendIDs(ownerUserIDs ...string) cache.FriendCache {
 	newFriendCache := f.CloneFriendCache()
 	keys := make([]string, 0, len(ownerUserIDs))
@@ -84,7 +84,7 @@ func (f *FriendCacheRedis) DelFriendIDs(ownerUserIDs ...string) cache.FriendCach
 	return newFriendCache
 }
 
-// GetTwoWayFriendIDs retrieves two-way friend IDs from the cache.
+// GetTwoWayFriendIDs 从缓存获取双向好友 ID。
 func (f *FriendCacheRedis) GetTwoWayFriendIDs(ctx context.Context, ownerUserID string) (twoWayFriendIDs []string, err error) {
 	friendIDs, err := f.GetFriendIDs(ctx, ownerUserID)
 	if err != nil {
@@ -103,7 +103,7 @@ func (f *FriendCacheRedis) GetTwoWayFriendIDs(ctx context.Context, ownerUserID s
 	return twoWayFriendIDs, nil
 }
 
-// DelTwoWayFriendIDs deletes two-way friend IDs from the cache.
+// DelTwoWayFriendIDs 从缓存删除双向好友 ID。
 func (f *FriendCacheRedis) DelTwoWayFriendIDs(ctx context.Context, ownerUserID string) cache.FriendCache {
 	newFriendCache := f.CloneFriendCache()
 	newFriendCache.AddKeys(f.getTwoWayFriendsIDsKey(ownerUserID))
@@ -111,7 +111,7 @@ func (f *FriendCacheRedis) DelTwoWayFriendIDs(ctx context.Context, ownerUserID s
 	return newFriendCache
 }
 
-// GetFriend retrieves friend info from the cache or the database if not found.
+// GetFriend 从缓存获取好友信息，未命中时回源到数据库。
 func (f *FriendCacheRedis) GetFriend(ctx context.Context, ownerUserID, friendUserID string) (friend *model.Friend, err error) {
 	return getCache(ctx, f.rcClient, f.getFriendKey(ownerUserID,
 		friendUserID), f.expireTime, func(ctx context.Context) (*model.Friend, error) {
@@ -119,7 +119,7 @@ func (f *FriendCacheRedis) GetFriend(ctx context.Context, ownerUserID, friendUse
 	})
 }
 
-// DelFriend deletes friend info from the cache.
+// DelFriend 从缓存删除好友信息。
 func (f *FriendCacheRedis) DelFriend(ownerUserID, friendUserID string) cache.FriendCache {
 	newFriendCache := f.CloneFriendCache()
 	newFriendCache.AddKeys(f.getFriendKey(ownerUserID, friendUserID))
@@ -127,7 +127,7 @@ func (f *FriendCacheRedis) DelFriend(ownerUserID, friendUserID string) cache.Fri
 	return newFriendCache
 }
 
-// DelFriends deletes multiple friend infos from the cache.
+// DelFriends 从缓存批量删除好友信息。
 func (f *FriendCacheRedis) DelFriends(ownerUserID string, friendUserIDs []string) cache.FriendCache {
 	newFriendCache := f.CloneFriendCache()
 

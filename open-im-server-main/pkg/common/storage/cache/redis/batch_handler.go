@@ -19,7 +19,7 @@ const (
 	rocksCacheTimeout = 11 * time.Second
 )
 
-// BatchDeleterRedis is a concrete implementation of the BatchDeleter interface based on Redis and RocksCache.
+// BatchDeleterRedis 是基于 Redis 和 RocksCache 的 BatchDeleter 接口具体实现。
 type BatchDeleterRedis struct {
 	redisClient    redis.UniversalClient
 	keys           []string
@@ -27,7 +27,7 @@ type BatchDeleterRedis struct {
 	redisPubTopics []string
 }
 
-// NewBatchDeleterRedis creates a new BatchDeleterRedis instance.
+// NewBatchDeleterRedis 创建 BatchDeleterRedis 实例。
 func NewBatchDeleterRedis(rcClient *rocksCacheClient, redisPubTopics []string) *BatchDeleterRedis {
 	return &BatchDeleterRedis{
 		redisClient:    rcClient.GetRedis(),
@@ -36,13 +36,13 @@ func NewBatchDeleterRedis(rcClient *rocksCacheClient, redisPubTopics []string) *
 	}
 }
 
-// ExecDelWithKeys directly takes keys for batch deletion and publishes deletion information.
+// ExecDelWithKeys 直接传入 key 执行批量删除并发布删除信息。
 func (c *BatchDeleterRedis) ExecDelWithKeys(ctx context.Context, keys []string) error {
 	distinctKeys := datautil.Distinct(keys)
 	return c.execDel(ctx, distinctKeys)
 }
 
-// ChainExecDel is used for chain calls for batch deletion. It must call Clone to prevent memory pollution.
+// ChainExecDel 用于链式调用的批量删除，必须先调用 Clone 以防内存污染。
 func (c *BatchDeleterRedis) ChainExecDel(ctx context.Context) error {
 	distinctKeys := datautil.Distinct(c.keys)
 	return c.execDel(ctx, distinctKeys)

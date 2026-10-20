@@ -20,11 +20,11 @@ import (
 	relationtb "github.com/openimsdk/open-im-server/v3/pkg/common/storage/model"
 )
 
-// arg fn will exec when no data in msgCache.
+// 当缓存中无数据时，将执行传入的 fn 回源函数。
 type ConversationCache interface {
 	BatchDeleter
 	CloneConversationCache() ConversationCache
-	// get user's conversationIDs from msgCache
+	// 从缓存获取用户的会话 ID 列表
 	GetUserConversationIDs(ctx context.Context, ownerUserID string) ([]string, error)
 	GetUserNotNotifyConversationIDs(ctx context.Context, userID string) ([]string, error)
 	GetPinnedConversationIDs(ctx context.Context, userID string) ([]string, error)
@@ -33,22 +33,22 @@ type ConversationCache interface {
 	GetUserConversationIDsHash(ctx context.Context, ownerUserID string) (hash uint64, err error)
 	DelUserConversationIDsHash(ownerUserIDs ...string) ConversationCache
 
-	// get one conversation from msgCache
+	// 从缓存获取单个会话
 	GetConversation(ctx context.Context, ownerUserID, conversationID string) (*relationtb.Conversation, error)
 	DelConversations(ownerUserID string, conversationIDs ...string) ConversationCache
 	DelUsersConversation(conversationID string, ownerUserIDs ...string) ConversationCache
-	// get one conversation from msgCache
+	// 从缓存获取单个会话
 	GetConversations(ctx context.Context, ownerUserID string,
 		conversationIDs []string) ([]*relationtb.Conversation, error)
-	// get one user's all conversations from msgCache
+	// 从缓存获取一个用户的全部会话
 	GetUserAllConversations(ctx context.Context, ownerUserID string) ([]*relationtb.Conversation, error)
-	// get user conversation recv msg from msgCache
+	// 从缓存获取用户会话的接收消息
 	GetUserRecvMsgOpt(ctx context.Context, ownerUserID, conversationID string) (opt int, err error)
 	DelUserRecvMsgOpt(ownerUserID, conversationID string) ConversationCache
-	// get one super group recv msg but do not notification userID list
+	// 获取超级群中接收消息但无需通知的 userID 列表
 	// GetSuperGroupRecvMsgNotNotifyUserIDs(ctx context.Context, groupID string) (userIDs []string, err error)
 	DelSuperGroupRecvMsgNotNotifyUserIDs(groupID string) ConversationCache
-	// get one super group recv msg but do not notification userID list hash
+	// 获取超级群中接收消息但无需通知的 userID 列表的哈希
 	// GetSuperGroupRecvMsgNotNotifyUserIDsHash(ctx context.Context, groupID string) (hash uint64, err error)
 	DelSuperGroupRecvMsgNotNotifyUserIDsHash(groupID string) ConversationCache
 

@@ -14,7 +14,7 @@ const (
 	defaultConcurrentLimit = 3
 )
 
-// RedisShardManager is a class for sharding and processing keys
+// RedisShardManager 用于对 key 进行分片处理的类型
 type RedisShardManager struct {
 	redisClient redis.UniversalClient
 	config      *Config
@@ -25,15 +25,15 @@ type Config struct {
 	concurrentLimit int
 }
 
-// Option is a function type for configuring Config
+// Option 是用于配置 Config 的函数类型
 type Option func(c *Config)
 
-//// NewRedisShardManager creates a new RedisShardManager instance
+//// NewRedisShardManager 创建新的 RedisShardManager 实例
 //func NewRedisShardManager(redisClient redis.UniversalClient, opts ...Option) *RedisShardManager {
 //	config := &Config{
-//		batchSize:       defaultBatchSize, // Default batch size is 50 keys
+//		batchSize:       defaultBatchSize, // 默认批大小为 50 个 key
 //		continueOnError: false,
-//		concurrentLimit: defaultConcurrentLimit, // Default concurrent limit is 3
+//		concurrentLimit: defaultConcurrentLimit, // 默认并发限制为 3
 //	}
 //	for _, opt := range opts {
 //		opt(config)
@@ -45,35 +45,35 @@ type Option func(c *Config)
 //	return rsm
 //}
 //
-//// WithBatchSize sets the number of keys to process per batch
+//// WithBatchSize 设置每批处理的 key 数量
 //func WithBatchSize(size int) Option {
 //	return func(c *Config) {
 //		c.batchSize = size
 //	}
 //}
 //
-//// WithContinueOnError sets whether to continue processing on error
+//// WithContinueOnError 设置出错时是否继续处理
 //func WithContinueOnError(continueOnError bool) Option {
 //	return func(c *Config) {
 //		c.continueOnError = continueOnError
 //	}
 //}
 //
-//// WithConcurrentLimit sets the concurrency limit
+//// WithConcurrentLimit 设置并发限制
 //func WithConcurrentLimit(limit int) Option {
 //	return func(c *Config) {
 //		c.concurrentLimit = limit
 //	}
 //}
 //
-//// ProcessKeysBySlot groups keys by their Redis cluster hash slots and processes them using the provided function.
+//// ProcessKeysBySlot 按 Redis 集群哈希槽对 key 分组，并使用传入的函数并发处理。
 //func (rsm *RedisShardManager) ProcessKeysBySlot(
 //	ctx context.Context,
 //	keys []string,
 //	processFunc func(ctx context.Context, slot int64, keys []string) error,
 //) error {
 //
-//	// Group keys by slot
+//	// 按槽分组
 //	slots, err := groupKeysBySlot(ctx, rsm.redisClient, keys)
 //	if err != nil {
 //		return err
@@ -82,11 +82,11 @@ type Option func(c *Config)
 //	g, ctx := errgroup.WithContext(ctx)
 //	g.SetLimit(rsm.config.concurrentLimit)
 //
-//	// Process keys in each slot using the provided function
+//	// 对每个槽中的 key 使用传入的函数处理
 //	for slot, singleSlotKeys := range slots {
 //		batches := splitIntoBatches(singleSlotKeys, rsm.config.batchSize)
 //		for _, batch := range batches {
-//			slot, batch := slot, batch // Avoid closure capture issue
+//			slot, batch := slot, batch // 避免闭包捕获问题
 //			g.Go(func() error {
 //				err := processFunc(ctx, slot, batch)
 //				if err != nil {
@@ -106,7 +106,7 @@ type Option func(c *Config)
 //	return nil
 //}
 
-// groupKeysBySlot groups keys by their Redis cluster hash slots.
+// groupKeysBySlot 按 Redis 集群哈希槽（hash slot）对 key 分组。
 func groupKeysBySlot(ctx context.Context, redisClient redis.UniversalClient, keys []string) (map[int64][]string, error) {
 	slots := make(map[int64][]string)
 	clusterClient, isCluster := redisClient.(*redis.ClusterClient)
@@ -130,14 +130,14 @@ func groupKeysBySlot(ctx context.Context, redisClient redis.UniversalClient, key
 			slots[slot] = append(slots[slot], keys[i])
 		}
 	} else {
-		// If not a cluster client, put all keys in the same slot (0)
+		// 非集群客户端时，将所有 key 放入同一个槽（0）
 		slots[0] = keys
 	}
 
 	return slots, nil
 }
 
-// splitIntoBatches splits keys into batches of the specified size
+// splitIntoBatches 将 key 按指定大小切分为多个批次
 func splitIntoBatches(keys []string, batchSize int) [][]string {
 	var batches [][]string
 	for batchSize < len(keys) {
@@ -146,7 +146,7 @@ func splitIntoBatches(keys []string, batchSize int) [][]string {
 	return append(batches, keys)
 }
 
-// ProcessKeysBySlot groups keys by their Redis cluster hash slots and processes them using the provided function.
+// ProcessKeysBySlot 按 Redis 集群哈希槽对 key 分组，并使用传入的函数并发处理。
 func ProcessKeysBySlot(
 	ctx context.Context,
 	redisClient redis.UniversalClient,
@@ -164,7 +164,7 @@ func ProcessKeysBySlot(
 		opt(config)
 	}
 
-	// Group keys by slot
+	// 按槽分组
 	slots, err := groupKeysBySlot(ctx, redisClient, keys)
 	if err != nil {
 		return err
@@ -173,11 +173,11 @@ func ProcessKeysBySlot(
 	g, ctx := errgroup.WithContext(ctx)
 	g.SetLimit(config.concurrentLimit)
 
-	// Process keys in each slot using the provided function
+	// 对每个槽中的 key 使用传入的函数处理
 	for slot, singleSlotKeys := range slots {
 		batches := splitIntoBatches(singleSlotKeys, config.batchSize)
 		for _, batch := range batches {
-			slot, batch := slot, batch // Avoid closure capture issue
+			slot, batch := slot, batch // 避免闭包捕获问题
 			g.Go(func() error {
 				err := processFunc(ctx, slot, batch)
 				if err != nil {

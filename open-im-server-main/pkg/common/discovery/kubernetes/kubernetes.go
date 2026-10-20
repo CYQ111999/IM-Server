@@ -30,7 +30,7 @@ type KubernetesConnManager struct {
 	connMap map[string][]*grpc.ClientConn
 }
 
-// NewKubernetesConnManager creates a new connection manager that uses Kubernetes services for service discovery.
+// NewKubernetesConnManager 创建基于 Kubernetes 服务的连接管理器，用于服务发现。
 func NewKubernetesConnManager(namespace string, options ...grpc.DialOption) (*KubernetesConnManager, error) {
 	config, err := rest.InClusterConfig()
 	if err != nil {
@@ -87,7 +87,7 @@ func (k *KubernetesConnManager) initializeConns(serviceName string) error {
 	return nil
 }
 
-// GetConns returns gRPC client connections for a given Kubernetes service name.
+// GetConns 返回指定 Kubernetes 服务名的所有 gRPC 客户端连接。
 func (k *KubernetesConnManager) GetConns(ctx context.Context, serviceName string, opts ...grpc.DialOption) ([]*grpc.ClientConn, error) {
 	k.mu.RLock()
 
@@ -98,7 +98,7 @@ func (k *KubernetesConnManager) GetConns(ctx context.Context, serviceName string
 	}
 
 	k.mu.Lock()
-	// Check if another goroutine has already initialized the connections when we released the read lock
+	// 释放读锁后，检查是否有其他协程已完成连接初始化
 	conns, exists = k.connMap[serviceName]
 	if exists {
 		return conns, nil
@@ -113,7 +113,7 @@ func (k *KubernetesConnManager) GetConns(ctx context.Context, serviceName string
 	return k.connMap[serviceName], nil
 }
 
-// GetConn returns a single gRPC client connection for a given Kubernetes service name.
+// GetConn 返回指定 Kubernetes 服务名的单个 gRPC 客户端连接。
 func (k *KubernetesConnManager) GetConn(ctx context.Context, serviceName string, opts ...grpc.DialOption) (*grpc.ClientConn, error) {
 	var target string
 
@@ -142,7 +142,7 @@ func (k *KubernetesConnManager) GetConn(ctx context.Context, serviceName string,
 	)
 }
 
-// GetSelfConnTarget returns the connection target for the current service.
+// GetSelfConnTarget 返回当前服务的连接目标。
 func (k *KubernetesConnManager) GetSelfConnTarget() string {
 	if k.selfTarget == "" {
 		hostName := os.Getenv("HOSTNAME")
@@ -176,19 +176,19 @@ func (k *KubernetesConnManager) GetSelfConnTarget() string {
 	return k.selfTarget
 }
 
-// AddOption appends gRPC dial options to the existing options.
+// AddOption 在现有选项后追加 gRPC dial 选项。
 func (k *KubernetesConnManager) AddOption(opts ...grpc.DialOption) {
 	k.mu.Lock()
 	defer k.mu.Unlock()
 	k.dialOptions = append(k.dialOptions, opts...)
 }
 
-// CloseConn closes a given gRPC client connection.
+// CloseConn 关闭指定的 gRPC 客户端连接。
 func (k *KubernetesConnManager) CloseConn(conn *grpc.ClientConn) {
 	conn.Close()
 }
 
-// Close closes all gRPC connections managed by KubernetesConnManager.
+// Close 关闭 KubernetesConnManager 管理的所有 gRPC 连接。
 func (k *KubernetesConnManager) Close() {
 	k.mu.Lock()
 	defer k.mu.Unlock()
@@ -236,12 +236,12 @@ func (k *KubernetesConnManager) getServicePort(serviceName string) (int32, error
 	return svcPort, nil
 }
 
-// watchEndpoints listens for changes in Pod resources.
+// watchEndpoints 监听 Pod 资源变化。
 func (k *KubernetesConnManager) watchEndpoints() {
 	informerFactory := informers.NewSharedInformerFactory(k.clientset, time.Minute*10)
 	informer := informerFactory.Core().V1().Pods().Informer()
 
-	// Watch for Pod changes (add, update, delete)
+	// 监听 Pod 变化（新增、更新、删除）
 	informer.AddEventHandler(cache.ResourceEventHandlerFuncs{
 		AddFunc: func(obj interface{}) {
 			k.handleEndpointChange(obj)

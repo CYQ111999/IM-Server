@@ -28,13 +28,13 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// FriendMgo implements Friend using MongoDB as the storage backend.
+// FriendMgo 基于 MongoDB 实现 Friend 接口。
 type FriendMgo struct {
 	coll  *mongo.Collection
 	owner database.VersionLog
 }
 
-// NewFriendMongo creates a new instance of FriendMgo with the provided MongoDB database.
+// NewFriendMongo 使用传入的 MongoDB 数据库创建 FriendMgo 实例。
 func NewFriendMongo(db *mongo.Database) (database.Friend, error) {
 	coll := db.Collection(database.FriendName)
 	_, err := coll.Indexes().CreateOne(context.Background(), mongo.IndexModel{
@@ -58,7 +58,7 @@ func (f *FriendMgo) friendSort() any {
 	return bson.D{{"is_pinned", -1}, {"_id", 1}}
 }
 
-// Create inserts multiple friend records.
+// Create 插入多条好友记录。
 func (f *FriendMgo) Create(ctx context.Context, friends []*model.Friend) error {
 	for i, friend := range friends {
 		if friend.ID.IsZero() {
@@ -84,7 +84,7 @@ func (f *FriendMgo) Create(ctx context.Context, friends []*model.Friend) error {
 	})
 }
 
-// Delete removes specified friends of the owner user.
+// Delete 删除指定用户的若干好友。
 func (f *FriendMgo) Delete(ctx context.Context, ownerUserID string, friendUserIDs []string) error {
 	filter := bson.M{
 		"owner_user_id":  ownerUserID,
@@ -97,7 +97,7 @@ func (f *FriendMgo) Delete(ctx context.Context, ownerUserID string, friendUserID
 	})
 }
 
-// UpdateByMap updates specific fields of a friend document using a map.
+// UpdateByMap 使用 map 更新好友文档的指定字段。
 func (f *FriendMgo) UpdateByMap(ctx context.Context, ownerUserID string, friendUserID string, args map[string]any) error {
 	if len(args) == 0 {
 		return nil
@@ -119,7 +119,7 @@ func (f *FriendMgo) UpdateByMap(ctx context.Context, ownerUserID string, friendU
 	})
 }
 
-// UpdateRemark updates the remark for a specific friend.
+// UpdateRemark 更新指定好友的备注。
 func (f *FriendMgo) UpdateRemark(ctx context.Context, ownerUserID, friendUserID, remark string) error {
 	return f.UpdateByMap(ctx, ownerUserID, friendUserID, map[string]any{"remark": remark})
 }
@@ -154,7 +154,7 @@ func (f *FriendMgo) findPage(ctx context.Context, filter any, pagination paginat
 	return mongoutil.FindPage[*model.Friend](ctx, f.coll, filter, pagination, opts...)
 }
 
-// Take retrieves a single friend document. Returns an error if not found.
+// Take 获取单条好友文档，不存在时返回错误。
 func (f *FriendMgo) Take(ctx context.Context, ownerUserID, friendUserID string) (*model.Friend, error) {
 	filter := bson.M{
 		"owner_user_id":  ownerUserID,
@@ -163,7 +163,7 @@ func (f *FriendMgo) Take(ctx context.Context, ownerUserID, friendUserID string) 
 	return f.findOne(ctx, filter)
 }
 
-// FindUserState finds the friendship status between two users.
+// FindUserState 查询两个用户之间的好友状态。
 func (f *FriendMgo) FindUserState(ctx context.Context, userID1, userID2 string) ([]*model.Friend, error) {
 	filter := bson.M{
 		"$or": []bson.M{
@@ -174,7 +174,7 @@ func (f *FriendMgo) FindUserState(ctx context.Context, userID1, userID2 string) 
 	return f.find(ctx, filter)
 }
 
-// FindFriends retrieves a list of friends for a given owner. Missing friends do not cause an error.
+// FindFriends 获取指定用户的好友列表，部分好友缺失不会报错。
 func (f *FriendMgo) FindFriends(ctx context.Context, ownerUserID string, friendUserIDs []string) ([]*model.Friend, error) {
 	filter := bson.M{
 		"owner_user_id":  ownerUserID,
@@ -183,7 +183,7 @@ func (f *FriendMgo) FindFriends(ctx context.Context, ownerUserID string, friendU
 	return f.find(ctx, filter)
 }
 
-// FindReversalFriends finds users who have added the specified user as a friend.
+// FindReversalFriends 查找将指定用户加为好友的用户（反向好友）。
 func (f *FriendMgo) FindReversalFriends(ctx context.Context, friendUserID string, ownerUserIDs []string) ([]*model.Friend, error) {
 	filter := bson.M{
 		"owner_user_id":  bson.M{"$in": ownerUserIDs},
@@ -192,7 +192,7 @@ func (f *FriendMgo) FindReversalFriends(ctx context.Context, friendUserID string
 	return f.find(ctx, filter)
 }
 
-// FindOwnerFriends retrieves a paginated list of friends for a given owner.
+// FindOwnerFriends 分页获取指定用户的好友列表。
 func (f *FriendMgo) FindOwnerFriends(ctx context.Context, ownerUserID string, pagination pagination.Pagination) (int64, []*model.Friend, error) {
 	filter := bson.M{"owner_user_id": ownerUserID}
 	opt := options.Find().SetSort(f.friendSort())
@@ -205,32 +205,32 @@ func (f *FriendMgo) FindOwnerFriendUserIds(ctx context.Context, ownerUserID stri
 	return mongoutil.Find[string](ctx, f.coll, filter, opt)
 }
 
-// FindInWhoseFriends finds users who have added the specified user as a friend, with pagination.
+// FindInWhoseFriends 分页查找将指定用户加为好友的用户。
 func (f *FriendMgo) FindInWhoseFriends(ctx context.Context, friendUserID string, pagination pagination.Pagination) (int64, []*model.Friend, error) {
 	filter := bson.M{"friend_user_id": friendUserID}
 	opt := options.Find().SetSort(f.friendSort())
 	return f.findPage(ctx, filter, pagination, opt)
 }
 
-// FindFriendUserIDs retrieves a list of friend user IDs for a given owner.
+// FindFriendUserIDs 获取指定用户的好友 userID 列表。
 func (f *FriendMgo) FindFriendUserIDs(ctx context.Context, ownerUserID string) ([]string, error) {
 	filter := bson.M{"owner_user_id": ownerUserID}
 	return mongoutil.Find[string](ctx, f.coll, filter, options.Find().SetProjection(bson.M{"_id": 0, "friend_user_id": 1}).SetSort(f.friendSort()))
 }
 
 func (f *FriendMgo) UpdateFriends(ctx context.Context, ownerUserID string, friendUserIDs []string, val map[string]any) error {
-	// Ensure there are IDs to update
+	// 确保有待更新的 ID
 	if len(friendUserIDs) == 0 || len(val) == 0 {
 		return nil // Or return an error if you expect there to always be IDs
 	}
 
-	// Create a filter to match documents with the specified ownerUserID and any of the friendUserIDs
+	// 创建过滤条件：匹配指定 ownerUserID 且 friendUserIDs 中任意一个的文档
 	filter := bson.M{
 		"owner_user_id":  ownerUserID,
 		"friend_user_id": bson.M{"$in": friendUserIDs},
 	}
 
-	// Create an update document
+	// 创建更新文档
 	update := bson.M{"$set": val}
 
 	return mongoutil.IncrVersion(func() error {
