@@ -33,7 +33,7 @@ type S3Cache interface {
 	DelS3Key(engine string, keys ...string) S3Cache
 }
 
-// TODO integrating minio.Cache and MinioCache interfaces.
+// TODO 待整合 minio.Cache 与 MinioCache 两个接口。
 type MinioCache interface {
 	BatchDeleter
 	GetImageObjectKeyInfo(ctx context.Context, key string, fn func(ctx context.Context) (*MinioImageInfo, error)) (*MinioImageInfo, error)

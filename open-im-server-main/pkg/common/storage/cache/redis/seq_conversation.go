@@ -210,9 +210,9 @@ func (s *seqConversationCacheRedis) setSeq(ctx context.Context, key string, owne
 	if lastSeq < currSeq {
 		return 0, errs.New("lastSeq must be greater than currSeq")
 	}
-	// 0: success
-	// 1: success the lock has expired, but has not been locked by anyone else
-	// 2: already locked, but not by yourself
+	// 0：成功
+	// 1：成功，锁已过期且未被其他实例抢占
+	// 2：已被锁定，但不是自己加的锁
 	script := `
 local key = KEYS[1]
 local lockValue = ARGV[1]
@@ -240,12 +240,12 @@ return 0
 	return result, nil
 }
 
-// malloc size=0 is to get the current seq size>0 is to allocate seq
+// malloc size=0 表示获取当前 seq；size>0 表示分配 seq
 func (s *seqConversationCacheRedis) malloc(ctx context.Context, key string, size int64) ([]int64, error) {
-	// 0: success
-	// 1: need to obtain and lock
-	// 2: already locked
-	// 3: exceeded the maximum value and locked
+	// 0：成功
+	// 1：需要获取并加锁
+	// 2：已被锁定
+	// 3：已超过最大值且处于加锁状态
 	script := `
 local key = KEYS[1]
 local size = tonumber(ARGV[1])
@@ -440,7 +440,7 @@ func (s *seqConversationCacheRedis) SetMinSeqs(ctx context.Context, seqs map[str
 	return DeleteCacheBySlot(ctx, s.rcClient, keys)
 }
 
-// GetCacheMaxSeqWithTime only get the existing cache, if there is no cache, no cache will be generated
+// GetCacheMaxSeqWithTime 只读取已有缓存；若缓存不存在，不会新建缓存
 func (s *seqConversationCacheRedis) GetCacheMaxSeqWithTime(ctx context.Context, conversationIDs []string) (map[string]database.SeqTime, error) {
 	if len(conversationIDs) == 0 {
 		return map[string]database.SeqTime{}, nil

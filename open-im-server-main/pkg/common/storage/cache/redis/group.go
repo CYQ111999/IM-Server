@@ -517,7 +517,7 @@ func (g *GroupCacheRedis) BatchFindMaxGroupMemberVersion(ctx context.Context, gr
 		}, func(versionLog *model.VersionLog) string {
 			return versionLog.DID
 		}, func(ctx context.Context, groupIDs []string) ([]*model.VersionLog, error) {
-			// create two slices with len is groupIDs, just need 0
+			// 创建两个长度为 len(groupIDs) 的切片，只需初始化为零值
 			versions := make([]uint, len(groupIDs))
 			limits := make([]int, len(groupIDs))
 

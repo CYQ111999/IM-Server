@@ -62,13 +62,13 @@ func CheckHealth(ctx context.Context, conf *Config) error {
 	}
 	defer cli.Close()
 
-	// Get broker list
+	// 获取 broker 列表
 	brokers := cli.Brokers()
 	if len(brokers) == 0 {
 		return errs.New("no brokers found").Wrap()
 	}
 
-	// Check if all brokers are reachable
+	// 检查所有 broker 是否可达
 	for _, broker := range brokers {
 		if err := broker.Open(kfk); err != nil {
 			return errs.WrapMsg(err, "failed to open broker", "broker", broker.Addr())

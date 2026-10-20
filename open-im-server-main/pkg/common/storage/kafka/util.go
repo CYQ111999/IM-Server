@@ -10,7 +10,7 @@ import (
 
 var errEmptyMsg = errors.New("kafka binary msg is empty")
 
-// GetMQHeaderWithContext extracts message queue headers from the context.
+// GetMQHeaderWithContext 从 context 中提取消息队列头信息。
 func GetMQHeaderWithContext(ctx context.Context) ([]sarama.RecordHeader, error) {
 	operationID, opUserID, platform, connID, err := mcontext.GetCtxInfos(ctx)
 	if err != nil {
@@ -24,7 +24,7 @@ func GetMQHeaderWithContext(ctx context.Context) ([]sarama.RecordHeader, error) 
 	}, nil
 }
 
-// GetContextWithMQHeader creates a context from message queue headers.
+// GetContextWithMQHeader 根据消息队列头信息构造 context。
 func GetContextWithMQHeader(header []*sarama.RecordHeader) context.Context {
 	var values []string
 	for _, recordHeader := range header {

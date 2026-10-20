@@ -24,7 +24,7 @@ func TestBatcher(t *testing.T) {
 		WithSyncWait(true),
 	)
 
-	// Mock Do function to simply print values for demonstration
+	// 模拟 Do 函数，仅打印数值用于演示
 	b.Do = func(ctx context.Context, channelID int, vals *Msg[string]) {
 		t.Logf("Channel %d Processed batch: %v", channelID, vals)
 	}
@@ -44,7 +44,7 @@ func TestBatcher(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	// Test normal data processing
+	// 测试正常的数据处理流程
 	for i := 0; i < 10000; i++ {
 		data := "data" + fmt.Sprintf("%d", i)
 		if err := b.Put(context.Background(), &data); err != nil {
@@ -54,7 +54,7 @@ func TestBatcher(t *testing.T) {
 
 	time.Sleep(time.Duration(1) * time.Second)
 	start := time.Now()
-	// Wait for all processing to finish
+	// 等待所有处理完成
 	b.Close()
 
 	elapsed := time.Since(start)

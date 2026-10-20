@@ -77,7 +77,7 @@ func UserPb2DBMapEx(user *sdkws.UserInfoWithEx) map[string]any {
 	}
 	val := make(map[string]any)
 
-	// Map fields from UserInfoWithEx to val
+	// 将 UserInfoWithEx 的字段映射到 val
 	if user.Nickname != nil {
 		val["nickname"] = user.Nickname.Value
 	}

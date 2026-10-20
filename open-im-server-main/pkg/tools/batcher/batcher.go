@@ -151,12 +151,10 @@ func (b *Batcher[T]) Put(ctx context.Context, data *T) error {
 
 func (b *Batcher[T]) scheduler() {
 	ticker := time.NewTicker(b.config.interval)
-	// Track whether b.data was closed by an external caller so the
-	// cleanup below does not close it a second time. The only routes
-	// out of this function that leave b.data open are the nil-message
-	// and ticker paths; the ok == false branch means someone already
-	// closed the channel, and calling close(b.data) again there would
-	// panic with "close of closed channel" (#3653).
+	// 记录 b.data 是否已被外部调用方关闭，避免下面的清理逻辑重复关闭。
+	// 本函数中只有 nil 消息分支和 ticker 分支会让 b.data 保持打开状态；
+	// ok == false 分支说明 channel 已被他人关闭，
+	// 若在此再次调用 close(b.data) 会触发 "close of closed channel" panic（见 #3653）。
 	externallyClosed := false
 	defer func() {
 		ticker.Stop()
@@ -177,7 +175,7 @@ func (b *Batcher[T]) scheduler() {
 		select {
 		case data, ok := <-b.data:
 			if !ok {
-				// If the data channel is closed unexpectedly
+				// 数据 channel 被意外关闭时
 				externallyClosed = true
 				return
 			}
@@ -282,6 +280,6 @@ func (b *Batcher[T]) run(channelID int, ch <-chan *Msg[T]) {
 func (b *Batcher[T]) Close() {
 	b.cancel() // Signal to stop put data
 	b.data <- nil
-	//wait all goroutines exit
+	// 等待所有 goroutine 退出
 	b.wait.Wait()
 }

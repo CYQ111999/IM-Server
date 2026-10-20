@@ -22,20 +22,20 @@ import (
 )
 
 type FriendRequest interface {
-	// Insert multiple records
+	// 批量插入记录
 	Create(ctx context.Context, friendRequests []*model.FriendRequest) (err error)
-	// Delete record
+	// 删除记录
 	Delete(ctx context.Context, fromUserID, toUserID string) (err error)
-	// Update with zero values
+	// 更新（允许写入零值）
 	UpdateByMap(ctx context.Context, formUserID string, toUserID string, args map[string]any) (err error)
-	// Update multiple records (non-zero values)
+	// 批量更新记录（忽略零值字段）
 	Update(ctx context.Context, friendRequest *model.FriendRequest) (err error)
-	// Get friend requests sent to a specific user, no error returned if not found
+	// 获取发给指定用户的好友申请；不存在时不返回错误
 	Find(ctx context.Context, fromUserID, toUserID string) (friendRequest *model.FriendRequest, err error)
 	Take(ctx context.Context, fromUserID, toUserID string) (friendRequest *model.FriendRequest, err error)
-	// Get list of friend requests received by toUserID
+	// 获取 toUserID 收到的好友申请列表
 	FindToUserID(ctx context.Context, toUserID string, handleResults []int, pagination pagination.Pagination) (total int64, friendRequests []*model.FriendRequest, err error)
-	// Get list of friend requests sent by fromUserID
+	// 获取 fromUserID 发出的好友申请列表
 	FindFromUserID(ctx context.Context, fromUserID string, handleResults []int, pagination pagination.Pagination) (total int64, friendRequests []*model.FriendRequest, err error)
 	FindBothFriendRequests(ctx context.Context, fromUserID, toUserID string) (friends []*model.FriendRequest, err error)
 	GetUnhandledCount(ctx context.Context, userID string, ts int64) (int64, error)

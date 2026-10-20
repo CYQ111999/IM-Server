@@ -30,7 +30,7 @@ const (
 	DefaultFolderPath = "../config/"
 )
 
-// return absolude path join ../config/, this is k8s container config path.
+// 返回拼接 ../config/ 后的绝对路径，这是 k8s 容器内的配置路径。
 func GetDefaultConfigPath() (string, error) {
 	executablePath, err := os.Executable()
 	if err != nil {
@@ -44,7 +44,7 @@ func GetDefaultConfigPath() (string, error) {
 	return configPath, nil
 }
 
-// getProjectRoot returns the absolute path of the project root directory.
+// getProjectRoot 返回项目根目录的绝对路径。
 func GetProjectRoot() (string, error) {
 	executablePath, err := os.Executable()
 	if err != nil {
@@ -79,9 +79,9 @@ func GetOptionsByNotification(cfg NotificationConfig, sendMessage *bool) msgproc
 	return opts
 }
 
-// initConfig loads configuration from a specified path into the provided config structure.
-// If the specified config file does not exist, it attempts to load from the project's default "config" directory.
-// It logs informative messages regarding the configuration path being used.
+// initConfig 从指定路径加载配置到传入的配置结构体中。
+// 若指定的配置文件不存在，则尝试从项目默认的 "config" 目录加载。
+// 会打印实际使用的配置路径等相关信息。
 func initConfig(config any, configName, configFolderPath string) error {
 	configFolderPath = filepath.Join(configFolderPath, configName)
 	_, err := os.Stat(configFolderPath)

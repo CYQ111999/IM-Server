@@ -31,7 +31,7 @@ import (
 	"github.com/openimsdk/tools/errs"
 )
 
-// NewDiscoveryRegister creates a new service discovery and registry client based on the provided environment type.
+// NewDiscoveryRegister 根据传入的环境类型创建服务发现与注册客户端。
 func NewDiscoveryRegister(discovery *config.Discovery, watchNames []string) (discovery.SvcDiscoveryRegistry, error) {
 	if config.Standalone() {
 		return standalone.GetSvcDiscoveryRegistry(), nil

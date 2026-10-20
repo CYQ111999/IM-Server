@@ -38,12 +38,12 @@ func (s *userServer) getUsersOnlineStatus(ctx context.Context, userIDs []string)
 	return res, nil
 }
 
-// SubscribeOrCancelUsersStatus Subscribe online or cancel online users.
+// SubscribeOrCancelUsersStatus 订阅或取消订阅用户在线状态。
 func (s *userServer) SubscribeOrCancelUsersStatus(ctx context.Context, req *pbuser.SubscribeOrCancelUsersStatusReq) (*pbuser.SubscribeOrCancelUsersStatusResp, error) {
 	return &pbuser.SubscribeOrCancelUsersStatusResp{}, nil
 }
 
-// GetUserStatus Get the online status of the user.
+// GetUserStatus 获取用户在线状态。
 func (s *userServer) GetUserStatus(ctx context.Context, req *pbuser.GetUserStatusReq) (*pbuser.GetUserStatusResp, error) {
 	res, err := s.getUsersOnlineStatus(ctx, req.UserIDs)
 	if err != nil {
@@ -52,7 +52,7 @@ func (s *userServer) GetUserStatus(ctx context.Context, req *pbuser.GetUserStatu
 	return &pbuser.GetUserStatusResp{StatusList: res}, nil
 }
 
-// SetUserStatus Synchronize user's online status.
+// SetUserStatus 同步用户在线状态。
 func (s *userServer) SetUserStatus(ctx context.Context, req *pbuser.SetUserStatusReq) (*pbuser.SetUserStatusResp, error) {
 	var (
 		online  []int32
@@ -70,7 +70,7 @@ func (s *userServer) SetUserStatus(ctx context.Context, req *pbuser.SetUserStatu
 	return &pbuser.SetUserStatusResp{}, nil
 }
 
-// GetSubscribeUsersStatus Get the online status of subscribers.
+// GetSubscribeUsersStatus 获取订阅用户的在线状态。
 func (s *userServer) GetSubscribeUsersStatus(ctx context.Context, req *pbuser.GetSubscribeUsersStatusReq) (*pbuser.GetSubscribeUsersStatusResp, error) {
 	return &pbuser.GetSubscribeUsersStatusResp{}, nil
 }

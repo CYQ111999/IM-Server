@@ -38,8 +38,8 @@ type option struct {
 	localSlotNum  int
 	localSlotSize int
 	linkSlotNum   int
-	// expirationEvict: true means that the cache will be actively cleared when the timer expires,
-	// false means that the cache will be lazily deleted.
+	// expirationEvict 为 true 表示过期定时器到期时主动清理缓存，
+	// 为 false 表示采用惰性删除。
 	expirationEvict bool
 	localSuccessTTL time.Duration
 	localFailedTTL  time.Duration

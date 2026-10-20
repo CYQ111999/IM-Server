@@ -28,9 +28,9 @@ import (
 	"github.com/openimsdk/tools/s3/oss"
 )
 
-// FileConfig is implemented by every config struct that is backed by a config
-// file; GetConfigFileName reports that file's name (e.g. "redis.yml"). It is the
-// single marker used to decide whether a struct field is loaded from a file.
+// FileConfig 由所有以配置文件为数据来源的配置结构体实现；
+// GetConfigFileName 返回该文件名（例如 "redis.yml"）。
+// 它是判断某个结构体字段是否从文件加载的唯一标记。
 type FileConfig interface {
 	GetConfigFileName() string
 }
@@ -472,7 +472,7 @@ func (r *RpcService) GetServiceNames() []string {
 	}
 }
 
-// FullConfig stores all configurations for before and after events
+// FullConfig 保存事件前后回调所需的全部配置
 type Webhooks struct {
 	URL                                 string       `yaml:"url"`
 	BeforeSendSingleMsg                 BeforeConfig `yaml:"beforeSendSingleMsg"`

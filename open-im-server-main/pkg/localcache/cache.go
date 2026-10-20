@@ -72,8 +72,8 @@ type cache[V any] struct {
 
 func (c *cache[V]) onEvict(key string, value V) {
 	if c.link != nil {
-		// Do not delete other keys while the underlying LRU still holds its lock;
-		// defer linked deletions to avoid re-entering the same slot and deadlocking.
+		// 底层 LRU 仍持锁时不要删除其他 key；
+		// 将关联删除延后执行，避免重入同一分片导致死锁。
 		if lks := c.link.Del(key); len(lks) > 0 {
 			go c.delLinked(key, lks)
 		}

@@ -14,7 +14,7 @@ import (
 	"github.com/redis/go-redis/v9"
 ) //
 
-// msgCacheTimeout is  expiration time of message cache, 86400 seconds
+// msgCacheTimeout 是消息缓存的过期时间，86400 秒（1 天）
 const msgCacheTimeout = time.Hour * 24
 
 func NewMsgCache(client redis.UniversalClient, db database.Msg) cache.MsgCache {

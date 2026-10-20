@@ -25,7 +25,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-// MockRootCmd is a mock type for the RootCmd type
+// MockRootCmd 是 RootCmd 类型的 mock 实现
 type MockRootCmd struct {
 	mock.Mock
 }

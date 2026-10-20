@@ -41,7 +41,7 @@ func (c *tokenCache) SetTokenFlag(ctx context.Context, userID string, platformID
 	return nil
 }
 
-// SetTokenFlagEx set token and flag with expire time
+// SetTokenFlagEx 设置 token、标记以及过期时间
 func (c *tokenCache) SetTokenFlagEx(ctx context.Context, userID string, platformID int, token string, flag int) error {
 	key := cachekey.GetTokenKey(userID, platformID)
 	if err := c.rdb.HSet(ctx, key, token, flag).Err(); err != nil {
@@ -175,7 +175,7 @@ func (c *tokenCache) getExpireTime(t int64) time.Duration {
 	return time.Hour * 24 * time.Duration(t)
 }
 
-// DeleteTokenByTokenMap tokens key is platformID, value is token slice
+// DeleteTokenByTokenMap 中 tokens 的 key 为 platformID，value 为 token 列表
 func (c *tokenCache) DeleteTokenByTokenMap(ctx context.Context, userID string, tokens map[int][]string) error {
 	var (
 		keys   = make([]string, 0, len(tokens))
@@ -201,7 +201,7 @@ func (c *tokenCache) DeleteTokenByTokenMap(ctx context.Context, userID string, t
 		return err
 	}
 
-	// Remove local cache for the token
+	// 清除该 token 的本地缓存
 	if c.localCache != nil {
 		c.removeLocalTokenCache(ctx, keys...)
 	}

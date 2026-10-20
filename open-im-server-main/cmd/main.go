@@ -145,8 +145,8 @@ func (x *cmds) initAllConfig() error {
 		}
 		x.conf[x.getTypePath(field.Type())] = field
 		val := field.Addr().Interface()
-		// Fields without a config file (e.g. Timer) are still registered above
-		// for parseConf distribution, but there is nothing to load for them.
+		// 没有配置文件的字段（如 Timer）仍在上方注册，
+		// 以便 parseConf 分发，但它们没有需要加载的内容。
 		fc, ok := val.(config.FileConfig)
 		if !ok {
 			continue

@@ -34,7 +34,7 @@ import (
 
 func newContentTypeConf(conf *config.Notification) map[int32]config.NotificationConfig {
 	return map[int32]config.NotificationConfig{
-		// group
+		// 群组
 		constant.GroupCreatedNotification:                 conf.GroupCreated,
 		constant.GroupInfoSetNotification:                 conf.GroupInfoSet,
 		constant.JoinGroupApplicationNotification:         conf.JoinGroupApplication,
@@ -55,10 +55,10 @@ func newContentTypeConf(conf *config.Notification) map[int32]config.Notification
 		constant.GroupMemberSetToOrdinaryUserNotification: conf.GroupMemberSetToOrdinary,
 		constant.GroupInfoSetAnnouncementNotification:     conf.GroupInfoSetAnnouncement,
 		constant.GroupInfoSetNameNotification:             conf.GroupInfoSetName,
-		// user
+		// 用户
 		constant.UserInfoUpdatedNotification:  conf.UserInfoUpdated,
 		constant.UserStatusChangeNotification: conf.UserStatusChanged,
-		// friend
+		// 好友
 		constant.FriendApplicationNotification:         conf.FriendApplicationAdded,
 		constant.FriendApplicationApprovedNotification: conf.FriendApplicationApproved,
 		constant.FriendApplicationRejectedNotification: conf.FriendApplicationRejected,
@@ -69,11 +69,11 @@ func newContentTypeConf(conf *config.Notification) map[int32]config.Notification
 		constant.BlackDeletedNotification:              conf.BlackDeleted,
 		constant.FriendInfoUpdatedNotification:         conf.FriendInfoUpdated,
 		constant.FriendsInfoUpdateNotification:         conf.FriendInfoUpdated, // use the same FriendInfoUpdated
-		// conversation
+		// 会话
 		constant.ConversationChangeNotification:      conf.ConversationChanged,
 		constant.ConversationUnreadNotification:      conf.ConversationChanged,
 		constant.ConversationPrivateChatNotification: conf.ConversationSetPrivate,
-		// msg
+		// 消息
 		constant.MsgRevokeNotification:  {IsSendMsg: false, ReliabilityLevel: constant.ReliableNotificationNoMsg},
 		constant.HasReadReceipt:         {IsSendMsg: false, ReliabilityLevel: constant.ReliableNotificationNoMsg},
 		constant.DeleteMsgsNotification: {IsSendMsg: false, ReliabilityLevel: constant.ReliableNotificationNoMsg},
@@ -82,7 +82,7 @@ func newContentTypeConf(conf *config.Notification) map[int32]config.Notification
 
 func newSessionTypeConf() map[int32]int32 {
 	return map[int32]int32{
-		// group
+		// 群组
 		constant.GroupCreatedNotification:                 constant.ReadGroupChatType,
 		constant.GroupInfoSetNotification:                 constant.ReadGroupChatType,
 		constant.JoinGroupApplicationNotification:         constant.SingleChatType,
@@ -103,10 +103,10 @@ func newSessionTypeConf() map[int32]int32 {
 		constant.GroupMemberSetToOrdinaryUserNotification: constant.ReadGroupChatType,
 		constant.GroupInfoSetAnnouncementNotification:     constant.ReadGroupChatType,
 		constant.GroupInfoSetNameNotification:             constant.ReadGroupChatType,
-		// user
+		// 用户
 		constant.UserInfoUpdatedNotification:  constant.SingleChatType,
 		constant.UserStatusChangeNotification: constant.SingleChatType,
-		// friend
+		// 好友
 		constant.FriendApplicationNotification:         constant.SingleChatType,
 		constant.FriendApplicationApprovedNotification: constant.SingleChatType,
 		constant.FriendApplicationRejectedNotification: constant.SingleChatType,
@@ -117,11 +117,11 @@ func newSessionTypeConf() map[int32]int32 {
 		constant.BlackDeletedNotification:              constant.SingleChatType,
 		constant.FriendInfoUpdatedNotification:         constant.SingleChatType,
 		constant.FriendsInfoUpdateNotification:         constant.SingleChatType,
-		// conversation
+		// 会话
 		constant.ConversationChangeNotification:      constant.SingleChatType,
 		constant.ConversationUnreadNotification:      constant.SingleChatType,
 		constant.ConversationPrivateChatNotification: constant.SingleChatType,
-		// delete
+		// 删除
 		constant.DeleteMsgsNotification: constant.SingleChatType,
 	}
 }
@@ -241,7 +241,7 @@ func (s *NotificationSender) send(ctx context.Context, sendID, recvID string, co
 	options := config.GetOptionsByNotification(optionsConfig, notificationOpt.SendMessage)
 	s.SetOptionsByContentType(ctx, options, contentType)
 	msg.Options = options
-	// fill Notification OfflinePush by config
+	// 根据配置填充通知的离线推送内容
 	offlineInfo.Title = optionsConfig.OfflinePush.Title
 	offlineInfo.Desc = optionsConfig.OfflinePush.Desc
 	offlineInfo.Ex = optionsConfig.OfflinePush.Ext

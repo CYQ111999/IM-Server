@@ -94,7 +94,7 @@ func TestName(t *testing.T) {
 	// 137.35s
 }
 
-// Test deadlock scenario when eviction callback deletes a linked key that hashes to the same slot.
+// 测试淘汰回调删除映射到同一分片的关联 key 时的死锁场景。
 func TestCacheEvictDeadlock(t *testing.T) {
 	ctx := context.Background()
 	c := New[string](WithLocalSlotNum(1), WithLocalSlotSize(1), WithLazy())
@@ -115,7 +115,7 @@ func TestCacheEvictDeadlock(t *testing.T) {
 
 	select {
 	case <-done:
-		// expected to finish quickly; current implementation deadlocks here.
+		// 预期应快速完成；当前实现在此处会死锁。
 	case <-time.After(time.Second):
 		t.Fatal("GetLink deadlocked during eviction of linked key")
 	}
@@ -144,7 +144,7 @@ func TestExpirationLRUGetBatch(t *testing.T) {
 		}
 	}
 
-	// second batch should hit cache
+	// 第二批应命中缓存
 	values, err = l.GetBatch(keys, func(keys []string) (map[string]string, error) {
 		t.Fatalf("should not fetch on cache hit")
 		return nil, nil

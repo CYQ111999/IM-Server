@@ -25,7 +25,7 @@ import (
 
 const (
 	slashSeparator = "/"
-	// EndpointSepChar is the separator char in endpoints.
+	// EndpointSepChar 是 endpoints 中的分隔符。
 	EndpointSepChar = ','
 
 	subsetSize = 32
@@ -68,7 +68,7 @@ func (rd *ResolverDirect) Scheme() string {
 	return scheme // return your custom scheme name
 }
 
-// GetEndpoints returns the endpoints from the given target.
+// GetEndpoints 从给定 target 中解析出 endpoints。
 func GetEndpoints(target resolver.Target) string {
 	return strings.Trim(target.URL.Path, slashSeparator)
 }

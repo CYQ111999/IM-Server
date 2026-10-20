@@ -65,12 +65,12 @@ func callLua(ctx context.Context, rdb redis.Scripter, script *redis.Script, keys
 }
 
 func LuaSetBatchWithCommonExpire(ctx context.Context, rdb redis.Scripter, keys []string, values []string, expire int) error {
-	// Check if the lengths of keys and values match
+	// 校验 keys 与 values 的长度是否一致
 	if len(keys) != len(values) {
 		return errs.New("keys and values length mismatch").Wrap()
 	}
 
-	// Ensure allocation size does not overflow
+	// 确保申请的内存大小不会溢出
 	maxAllowedLen := (1 << 31) - 1 // 2GB limit (maximum address space for 32-bit systems)
 
 	if len(values) > maxAllowedLen-1 {
@@ -86,12 +86,12 @@ func LuaSetBatchWithCommonExpire(ctx context.Context, rdb redis.Scripter, keys [
 }
 
 func LuaSetBatchWithIndividualExpire(ctx context.Context, rdb redis.Scripter, keys []string, values []string, expires []int) error {
-	// Check if the lengths of keys, values, and expires match
+	// 校验 keys、values 与 expires 的长度是否一致
 	if len(keys) != len(values) || len(keys) != len(expires) {
 		return errs.New("keys and values length mismatch").Wrap()
 	}
 
-	// Ensure the allocation size does not overflow
+	// 确保申请的内存大小不会溢出
 	maxAllowedLen := (1 << 31) - 1 // 2GB limit (maximum address space for 32-bit systems)
 
 	if len(values) > maxAllowedLen-1 {

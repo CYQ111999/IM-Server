@@ -34,7 +34,7 @@ type MsgTransferDatabase interface {
 
 	SetHasReadSeqToDB(ctx context.Context, conversationID string, userSeqMap map[string]int64) error
 
-	// to mq
+	// 投递到 MQ
 	MsgToPushMQ(ctx context.Context, key, conversationID string, msg2mq *sdkws.MsgData) error
 	MsgToMongoMQ(ctx context.Context, key, conversationID string, msgs []*sdkws.MsgData, lastSeq int64) error
 }

@@ -48,18 +48,18 @@ func (c *BatchDeleterRedis) ChainExecDel(ctx context.Context) error {
 	return c.execDel(ctx, distinctKeys)
 }
 
-// execDel performs batch deletion and publishes the keys that have been deleted to update the local cache information of other nodes.
+// execDel 执行批量删除，并把已删除的 key 发布出去，用于更新其他节点的本地缓存。
 func (c *BatchDeleterRedis) execDel(ctx context.Context, keys []string) error {
 	if len(keys) > 0 {
 		log.ZDebug(ctx, "delete cache", "topic", c.redisPubTopics, "keys", keys)
-		// Batch delete keys
+		// 批量删除 key
 		err := ProcessKeysBySlot(ctx, c.redisClient, keys, func(ctx context.Context, slot int64, keys []string) error {
 			return c.rocksClient.TagAsDeletedBatch2(ctx, keys)
 		})
 		if err != nil {
 			return err
 		}
-		// Publish the keys that have been deleted to Redis to update the local cache information of other nodes
+		// 将已删除的 key 发布到 Redis，用于更新其他节点的本地缓存
 		if len(c.redisPubTopics) > 0 && len(keys) > 0 {
 			keysByTopic := localcache.GetPublishKeysByTopic(c.redisPubTopics, keys)
 			for topic, keys := range keysByTopic {
@@ -79,7 +79,7 @@ func (c *BatchDeleterRedis) execDel(ctx context.Context, keys []string) error {
 	return nil
 }
 
-// Clone creates a copy of BatchDeleterRedis for chain calls to prevent memory pollution.
+// Clone 复制一份 BatchDeleterRedis 供链式调用使用，避免内存污染。
 func (c *BatchDeleterRedis) Clone() cache.BatchDeleter {
 	return &BatchDeleterRedis{
 		redisClient:    c.redisClient,
@@ -89,7 +89,7 @@ func (c *BatchDeleterRedis) Clone() cache.BatchDeleter {
 	}
 }
 
-// AddKeys adds keys to be deleted.
+// AddKeys 添加待删除的 key。
 func (c *BatchDeleterRedis) AddKeys(keys ...string) {
 	c.keys = append(c.keys, keys...)
 }

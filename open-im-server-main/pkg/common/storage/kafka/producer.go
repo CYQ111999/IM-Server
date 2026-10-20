@@ -21,7 +21,7 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-// Producer represents a Kafka producer.
+// Producer 表示一个 Kafka 生产者。
 type Producer struct {
 	addr     []string
 	topic    string
@@ -42,9 +42,9 @@ func NewKafkaProducer(config *sarama.Config, addr []string, topic string) (*Prod
 	}, nil
 }
 
-// SendMessage sends a message to the Kafka topic configured in the Producer.
+// SendMessage 将消息发送到 Producer 中配置的 Kafka topic。
 func (p *Producer) SendMessage(ctx context.Context, key string, msg proto.Message) (int32, int64, error) {
-	// Marshal the protobuf message
+	// 序列化 protobuf 消息
 	bMsg, err := proto.Marshal(msg)
 	if err != nil {
 		return 0, 0, errs.WrapMsg(err, "kafka proto Marshal err")
@@ -53,26 +53,26 @@ func (p *Producer) SendMessage(ctx context.Context, key string, msg proto.Messag
 		return 0, 0, errs.WrapMsg(errEmptyMsg, "kafka proto Marshal err")
 	}
 
-	// Prepare Kafka message
+	// 构造 Kafka 消息
 	kMsg := &sarama.ProducerMessage{
 		Topic: p.topic,
 		Key:   sarama.StringEncoder(key),
 		Value: sarama.ByteEncoder(bMsg),
 	}
 
-	// Validate message key and value
+	// 校验消息的 key 与 value
 	if kMsg.Key.Length() == 0 || kMsg.Value.Length() == 0 {
 		return 0, 0, errs.Wrap(errEmptyMsg)
 	}
 
-	// Attach context metadata as headers
+	// 将 context 中的元数据附加为消息头
 	header, err := GetMQHeaderWithContext(ctx)
 	if err != nil {
 		return 0, 0, err
 	}
 	kMsg.Headers = header
 
-	// Send the message
+	// 发送消息
 	partition, offset, err := p.producer.SendMessage(kMsg)
 	if err != nil {
 		return 0, 0, errs.WrapMsg(err, "p.producer.SendMessage error")

@@ -136,8 +136,8 @@ func FriendRequestDB2Pb(ctx context.Context, friendRequests []*model.FriendReque
 	return res, nil
 }
 
-// FriendPb2DBMap converts a FriendInfo protobuf object to a map suitable for database operations.
-// It only includes non-zero or non-empty fields in the map.
+// FriendPb2DBMap 将 FriendInfo 的 protobuf 对象转换为适合数据库操作的 map。
+// map 中只包含非零值或非空字段。
 func FriendPb2DBMap(friend *sdkws.FriendInfo) map[string]any {
 	if friend == nil {
 		return nil
@@ -145,8 +145,8 @@ func FriendPb2DBMap(friend *sdkws.FriendInfo) map[string]any {
 
 	val := make(map[string]any)
 
-	// Assuming FriendInfo has similar fields to those in Friend.
-	// Add or remove fields based on your actual FriendInfo and Friend structures.
+	// 假设 FriendInfo 的字段与 Friend 中的字段类似。
+	// 请根据实际的 FriendInfo 与 Friend 结构体增删字段。
 	if friend.FriendUser != nil {
 		if friend.FriendUser.UserID != "" {
 			val["friend_user_id"] = friend.FriendUser.UserID
@@ -165,7 +165,7 @@ func FriendPb2DBMap(friend *sdkws.FriendInfo) map[string]any {
 		val["create_time"] = friend.CreateTime // You might need to convert this to a proper time format.
 	}
 
-	// Include other fields from FriendInfo as needed, similar to the above pattern.
+	// 按需参照上面的写法补充 FriendInfo 的其他字段。
 
 	return val
 }

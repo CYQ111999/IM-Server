@@ -14,10 +14,10 @@
 
 package servererrs
 
-// UnknownCode represents the error code when code is not parsed or parsed code equals 0.
+// UnknownCode 表示错误码未解析或解析结果为 0 时的错误码。
 const UnknownCode = 1000
 
-// Error codes for various error scenarios.
+// 各类错误场景的错误码。
 const (
 	FormattingError      = 10001 // Error in formatting
 	HasRegistered        = 10002 // user has already registered
@@ -35,7 +35,7 @@ const (
 	InvitationError      = 10014 // Error in invitation
 )
 
-// General error codes.
+// 通用错误码。
 const (
 	NoError = 0 // No error
 
@@ -45,7 +45,7 @@ const (
 
 	CallbackError = 80000
 
-	// General error codes.
+	// 通用错误码。
 	ServerInternalError   = 500  // Server internal error
 	ArgsError             = 1001 // Input parameter error
 	NoPermissionError     = 1002 // Insufficient permission
@@ -53,11 +53,11 @@ const (
 	RecordNotFoundError   = 1004 // Record does not exist
 	SecretNotChangedError = 1050 // secret not changed
 
-	// Account error codes.
+	// 账号相关错误码。
 	UserIDNotFoundError    = 1101 // UserID does not exist or is not registered
 	RegisteredAlreadyError = 1102 // user is already registered
 
-	// Group error codes.
+	// 群组相关错误码。
 	GroupIDNotFoundError  = 1201 // GroupID does not exist
 	GroupIDExisted        = 1202 // GroupID already exists
 	NotInGroupYetError    = 1203 // Not in the group yet
@@ -65,20 +65,20 @@ const (
 	GroupTypeNotSupport   = 1205
 	GroupRequestHandled   = 1206
 
-	// Relationship error codes.
+	// 关系链相关错误码。
 	CanNotAddYourselfError   = 1301 // Cannot add yourself as a friend
 	BlockedByPeer            = 1302 // Blocked by the peer
 	NotPeersFriend           = 1303 // Not the peer's friend
 	RelationshipAlreadyError = 1304 // Already in a friend relationship
 	FriendRequestHandled     = 1305 // Friend request has already been handled
 
-	// Message error codes.
+	// 消息相关错误码。
 	MessageHasReadDisable = 1401
 	MutedInGroup          = 1402 // Member muted in the group
 	MutedGroup            = 1403 // Group is muted
 	MsgAlreadyRevoke      = 1404 // Message already revoked
 
-	// Token error codes.
+	// Token 相关错误码。
 	TokenExpiredError     = 1501
 	TokenInvalidError     = 1502
 	TokenMalformedError   = 1503
@@ -87,12 +87,12 @@ const (
 	TokenKickedError      = 1506
 	TokenNotExistError    = 1507
 
-	// Long connection gateway error codes.
+	// 长连接网关相关错误码。
 	ConnOverMaxNumLimit  = 1601
 	ConnArgsErr          = 1602
 	PushMsgErr           = 1603
 	IOSBackgroundPushErr = 1604
 
-	// S3 error codes.
+	// S3 对象存储相关错误码。
 	FileUploadedExpiredError = 1701 // Upload expired
 )

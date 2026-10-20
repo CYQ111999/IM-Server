@@ -23,7 +23,7 @@ import (
 	"github.com/openimsdk/tools/errs"
 )
 
-// decryptPEM decrypts a PEM block using a password.
+// decryptPEM 使用密码解密 PEM 块。
 func decryptPEM(data []byte, passphrase []byte) ([]byte, error) {
 	if len(passphrase) == 0 {
 		return data, nil
@@ -47,7 +47,7 @@ func readEncryptablePEMBlock(path string, pwd []byte) ([]byte, error) {
 	return decryptPEM(data, pwd)
 }
 
-// newTLSConfig setup the TLS config from general config file.
+// newTLSConfig 根据通用配置文件构建 TLS 配置。
 func newTLSConfig(clientCertFile, clientKeyFile, caCertFile string, keyPwd []byte, insecureSkipVerify bool) (*tls.Config, error) {
 	var tlsConfig tls.Config
 	if clientCertFile != "" && clientKeyFile != "" {

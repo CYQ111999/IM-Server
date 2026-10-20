@@ -19,7 +19,7 @@ import (
 	"time"
 )
 
-// Friend represents the data structure for a friend relationship in MongoDB.
+// Friend 表示 MongoDB 中好友关系的数据结构。
 type Friend struct {
 	ID             primitive.ObjectID `bson:"_id"`
 	OwnerUserID    string             `bson:"owner_user_id"`
