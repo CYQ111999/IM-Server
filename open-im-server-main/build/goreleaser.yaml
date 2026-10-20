@@ -6,7 +6,6 @@ before:
     - make clean
     # 如果不使用 go modules，可以删除此项。
     - make tidy
-    - make copyright.add
     # 如果不需要 go generate，可以删除此项。
     - go generate ./...
 
@@ -212,7 +211,6 @@ archives:
       - deployment/*
       - config/*
       - build/*
-      - scripts/*
       - Makefile
       - install.sh
       - docs/*
@@ -278,51 +276,6 @@ changelog:
       order: 400
     - title: Other work
       order: 9999
-
-# dockers:
-#   - image_templates:
-#       - "openimsdk/open-im-server:{{ .Tag }}-amd64"
-#       - "ghcr.io/goreleaser/goreleaser:{{ .Tag }}-amd64"
-#     dockerfile: build/images/openim-api/Dockerfile.release
-#     ids: 
-#       - openim-api
-#     use: buildx
-#     build_flag_templates:
-#       - "--pull"
-#       - "--label=io.artifacthub.package.readme-url=https://raw.githubusercontent.com/openimsdk/open-im-server/main/README.md"
-#       - "--label=io.artifacthub.package.logo-url=hhttps://github.com/openimsdk/open-im-server/blob/main/assets/logo/openim-logo-green.png"
-#       - '--label=io.artifacthub.package.maintainers=[{"name":"Xinwei Xiong","email":"3293172751nss@gmail.com"}]'
-#       - "--label=io.artifacthub.package.license=Apace-2.0"
-#       - "--label=org.opencontainers.image.description=OpenIM Open source top instant messaging system"
-#       - "--label=org.opencontainers.image.created={{.Date}}"
-#       - "--label=org.opencontainers.image.name={{.ProjectName}}"
-#       - "--label=org.opencontainers.image.revision={{.FullCommit}}"
-#       - "--label=org.opencontainers.image.version={{.Version}}"
-#       - "--label=org.opencontainers.image.source={{.GitURL}}"
-#       - "--platform=linux/amd64"
-#     extra_files:
-#       - scripts/entrypoint.sh
-#   - image_templates:
-#       - "goreleaser/goreleaser:{{ .Tag }}-arm64"
-#       - "ghcr.io/goreleaser/goreleaser:{{ .Tag }}-arm64"
-#     dockerfile: build/images/openim-api/Dockerfile.release
-#     use: buildx
-#     build_flag_templates:
-#       - "--pull"
-#       - "--label=io.artifacthub.package.readme-url=https://raw.githubusercontent.com/openimsdk/open-im-server/main/README.md"
-#       - "--label=io.artifacthub.package.logo-url=hhttps://github.com/openimsdk/open-im-server/blob/main/assets/logo/openim-logo-green.png"
-#       - '--label=io.artifacthub.package.maintainers=[{"name":"Xinwei Xiong","email":"3293172751nss@gmail.com"}]'
-#       - "--label=io.artifacthub.package.license=Apace-2.0"
-#       - "--label=org.opencontainers.image.description=OpenIM Open source top instant messaging system"
-#       - "--label=org.opencontainers.image.created={{.Date}}"
-#       - "--label=org.opencontainers.image.name={{.ProjectName}}"
-#       - "--label=org.opencontainers.image.revision={{.FullCommit}}"
-#       - "--label=org.opencontainers.image.version={{.Version}}"
-#       - "--label=org.opencontainers.image.source={{.GitURL}}"
-#       - "--platform=linux/arm64"
-#     goarch: arm64
-#     extra_files:
-#       - scripts/entrypoint.sh
 
 # docker_manifests:
 #   - name_template: "goreleaser/goreleaser:{{ .Tag }}"

@@ -1,17 +1,24 @@
-## Run the Tests
+# 测试运行说明
 
-read: [Test Docs](./docs/contrib/test.md)
+详细测试规范见：[测试指南](../docs/测试指南.md)
 
-To run a single test or set of tests, you'll need the [Ginkgo](https://github.com/onsi/ginkgo) tool installed on your
-machine:
+## 运行单个测试或一组测试
+
+需要先在本机安装 [Ginkgo](https://github.com/onsi/ginkgo) 命令行工具：
 
 ```console
 go install github.com/onsi/ginkgo/ginkgo@latest
 ```
 
+安装完成后即可用以下命令查看可用参数：
+
 ```shell
 ginkgo --help
   --focus value
-    	If set, ginkgo will only run specs that match this regular expression. Can be specified multiple times, values are ORed.
-
+    	若设置，ginkgo 只运行匹配该正则表达式的用例；可重复指定，多个取值之间为"或"关系。
 ```
+
+## 补充说明
+
+- 跑单个用例：`ginkgo --focus="用例名" ./test/e2e/...`
+- 跑全部单元测试：在模块目录下执行 `go test ./...`

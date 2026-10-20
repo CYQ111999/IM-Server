@@ -1,9 +1,9 @@
 # Alertmanager 全局运行时与 SMTP 配置。
 global:
   resolve_timeout: 5m # 在不再收到更新后，等待多久才认为告警已恢复。
-  smtp_from: alert@openim.io # 告警邮件中显示的发件人地址。
+  smtp_from: alert@example.com # 告警邮件中显示的发件人地址（示例值，按需修改）。
   smtp_smarthost: smtp.163.com:465 # SMTP 中继地址，格式为 host:port。
-  smtp_auth_username: alert@openim.io # SMTP 认证用户名（通常与 smtp_from 相同）。
+  smtp_auth_username: alert@example.com # SMTP 认证用户名（通常与 smtp_from 相同）。
   smtp_auth_password: YOURAUTHPASSWORD # SMTP 授权码或应用专用密码。
   smtp_require_tls: false # 若 SMTP 服务商要求 STARTTLS，则设为 true。
   smtp_hello: xxx # 向 SMTP 服务器出示的 HELO/EHLO 身份。
