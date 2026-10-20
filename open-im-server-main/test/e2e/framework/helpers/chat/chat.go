@@ -135,7 +135,7 @@ func downloadAndExtract(url, destDir string) error {
 		return err
 	}
 
-	// Define the path for the downloaded file
+	// 定义下载文件的保存路径
 	filePath := filepath.Join(destDir, "downloaded_file.tar.gz")
 	file, err := os.Create(filePath)
 	if err != nil {

@@ -290,7 +290,7 @@ func (c *ConversationMgo) FindRandConversation(ctx context.Context, ts int64, li
 						bson.M{
 							"$multiply": []any{
 								"$msg_destruct_time",
-								1000, // convert to milliseconds
+								1000, // 转换为毫秒
 							},
 						},
 					},

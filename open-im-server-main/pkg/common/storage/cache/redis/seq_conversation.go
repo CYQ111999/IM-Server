@@ -333,7 +333,7 @@ func (s *seqConversationCacheRedis) setSeqRetry(ctx context.Context, key string,
 			continue
 		}
 		switch state {
-		case 0: // ideal state
+		case 0: // 理想状态
 		case 1:
 			log.ZWarn(ctx, "set seq cache lock not found", nil, "key", key, "owner", owner, "currSeq", currSeq, "lastSeq", lastSeq)
 		case 2:
@@ -378,7 +378,7 @@ func (s *seqConversationCacheRedis) mallocTime(ctx context.Context, conversation
 		switch states[0] {
 		case 0: // success
 			return states[1], states[3], nil
-		case 1: // not found
+		case 1: // 未找到
 			mallocSize := s.getMallocSize(conversationID, size)
 			seq, err := s.mgo.Malloc(ctx, conversationID, mallocSize)
 			if err != nil {
@@ -391,7 +391,7 @@ func (s *seqConversationCacheRedis) mallocTime(ctx context.Context, conversation
 				return 0, 0, err
 			}
 			continue
-		case 3: // exceeded cache max value
+		case 3: // 超过缓存最大值
 			currSeq := states[1]
 			lastSeq := states[2]
 			mill := states[4]

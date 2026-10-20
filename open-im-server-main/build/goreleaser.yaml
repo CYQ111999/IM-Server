@@ -358,7 +358,7 @@ nfpms:
       - openim-rpc-msg
       - openim-rpc-third
       - openim-rpc-user
-    # Your app's vendor.
+    # 应用的供应商标识。
     vendor: OpenIMSDK
     homepage: https://github.com/openimsdk/open-im-server
     maintainer: kubbot <https://github.com/kubbot>
@@ -383,7 +383,7 @@ nfpms:
 # yaml-language-server: $schema=https://goreleaser.com/static/schema.json
 # vim: set ts=2 sw=2 tw=0 fo=cnqoj
 
-# Default: './dist'
+# 默认值：'./dist'
 dist: ./_output/dist
 
 # .goreleaser.yaml
@@ -404,7 +404,7 @@ milestones:
 
     # milestone 名称
     #
-    # Default: '{{ .Tag }}'
+    # 默认值：'{{ .Tag }}'
     name_template: "Current Release"
 
 # publishers:

@@ -531,7 +531,7 @@ func (m *MsgMgo) RangeUserSendCount(ctx context.Context, start time.Time, end ti
 								"$dateToString": bson.M{
 									"format": "%Y-%m-%d",
 									"date": bson.M{
-										"$toDate": "$$item.msg.send_time", // Millisecond timestamp
+										"$toDate": "$$item.msg.send_time", // 毫秒级时间戳
 									},
 								},
 							},
@@ -768,7 +768,7 @@ func (m *MsgMgo) RangeGroupSendCount(ctx context.Context, start time.Time, end t
 								"$dateToString": bson.M{
 									"format": "%Y-%m-%d",
 									"date": bson.M{
-										"$toDate": "$$item.msg.send_time", // Millisecond timestamp
+										"$toDate": "$$item.msg.send_time", // 毫秒级时间戳
 									},
 								},
 							},

@@ -18,7 +18,7 @@ const (
 	FriendIDsKey        = "FRIEND_IDS:"
 	TwoWayFriendsIDsKey = "COMMON_FRIENDS_IDS:"
 	FriendKey           = "FRIEND_INFO:"
-	IsFriendKey         = "IS_FRIEND:" // local cache key
+	IsFriendKey         = "IS_FRIEND:" // 本地缓存 key
 	//FriendSyncSortUserIDsKey = "FRIEND_SYNC_SORT_USER_IDS:"
 	FriendMaxVersionKey = "FRIEND_MAX_VERSION:"
 )

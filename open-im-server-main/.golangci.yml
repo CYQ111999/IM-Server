@@ -150,7 +150,7 @@ linters-settings:
     forbid:
       # - ^print.*$
       - 'fmt\.Print.*'
-      - fmt.Println.* # too much log noise
+      - fmt.Println.* # 日志噪声太大
       - ^unsafe\..*$
       - ^init$
       - ^os.Exit$
@@ -159,7 +159,7 @@ linters-settings:
       - ^fmt.Println.*$
       - ^panic$
       - painc
-  #     - ginkgo\\.F.* # these are used just for local development
+  #     - ginkgo\\.F.* # 这些仅用于本地开发
   # # 从 forbidigo 检查中排除 godoc 示例，默认 true。
   #   exclude_godoc_examples: false
 
@@ -215,7 +215,7 @@ linters-settings:
     # 设置的 key 为受支持的 gocritic 检查器名称。
     # 受支持的检查器清单见 https://go-critic.github.io/overview。
     settings:
-      captLocal: # must be valid enabled check name
+      captLocal: # 必须是有效的、已启用的检查名
         # 是否只检查参数（默认 true）
         paramsOnly: true
       elseif:
@@ -266,13 +266,13 @@ linters-settings:
   godox:
     # 报告以关键字开头的注释，适合识别被误留在代码中的 TODO / FIXME，
     # 这类注释应在合并前处理掉。
-    keywords: # default keywords are TODO, BUG, and FIXME, these can be overwritten by this setting
+    keywords: # 默认关键字为 TODO、BUG 和 FIXME，可通过此设置覆盖
       #- TODO
       - BUG
       - FIXME
       #- NOTE
-      - OPTIMIZE # marks code that should be optimized before merging
-      - HACK # marks hack-arounds that should be removed before merging
+      - OPTIMIZE # 标记那些应在合并前优化的代码
+      - HACK # 标记那些应在合并前移除的临时绕行写法
   gofmt:
     # 简化代码：使用 `-s` 选项运行 gofmt，默认 true
     simplify: true
@@ -364,14 +364,14 @@ linters-settings:
   gomodguard:
     allowed:
       modules:    
-        - gorm.io/gen                                                    # List of allowed modules
+        - gorm.io/gen                                                    # 允许的模块列表
         - gorm.io/gorm
         - gorm.io/driver/mysql
         - k8s.io/klog
         - github.com/allowed/module
         - go.mongodb.org/mongo-driver/mongo
         # - gopkg.in/yaml.v2
-      domains:                                                        # List of allowed module domains
+      domains:                                                        # 允许的模块域名列表
         - google.golang.org
         - gopkg.in
         - golang.org
@@ -385,7 +385,7 @@ linters-settings:
         - github.com/MakeNowJust/heredoc:
             version: "> 2.0.9"
             reason: "use the latest version"
-      local_replace_directives: false     # Set to true to raise lint issues for packages that are loaded from a local path via replace directive
+      local_replace_directives: false     # 设为 true 时，对通过 replace 指令从本地路径加载的包也报 lint 问题
 
   gosec:
     # 用于选择要运行的部分规则。
@@ -398,7 +398,7 @@ linters-settings:
     # 可用规则见 https://github.com/securego/gosec#available-rules
     excludes:
       - G204
-    # Exclude generated files
+    # 排除自动生成的文件
     exclude-generated: true
     # 过滤掉严重级别低于给定值的问题。可选值：low、medium、high。
     severity: "low"
@@ -424,10 +424,10 @@ linters-settings:
     checks: [ "all" ]
 
   govet:
-    # settings per analyzer
+    # 各 analyzer 的设置
     settings:
-      printf: # analyzer name, run `go tool vet help` to see all analyzers
-        funcs: # run `go tool vet help printf` to see available settings for `printf` analyzer
+      printf: # analyzer 名称；执行 `go tool vet help` 可查看全部 analyzer
+        funcs: # 执行 `go tool vet help printf` 可查看 `printf` analyzer 支持的配置项
           - (github.com/golangci/golangci-lint/pkg/logutils.Log).Infof
           - (github.com/golangci/golangci-lint/pkg/logutils.Log).Warnf
           - (github.com/golangci/golangci-lint/pkg/logutils.Log).Errorf
@@ -444,7 +444,7 @@ linters-settings:
   depguard:
     rules:
       prevent_unmaintained_packages:
-        list-mode: lax # allow unless explicitely denied
+        list-mode: lax # 未显式拒绝即允许
         files:
           - $all
           - "!$test"
@@ -463,7 +463,7 @@ linters-settings:
   importas:
     # 设为 `true` 时强制使用别名。
     no-unaliased: true
-    # List of aliases
+    # 别名列表
     alias:
       # 为 `knative.dev/serving/pkg/apis/serving/v1` 包使用 `servingv1` 别名
       - pkg: knative.dev/serving/pkg/apis/serving/v1
@@ -483,8 +483,8 @@ linters-settings:
     # ireturn 允许同时使用 `allow` 与 `reject` 设置。
     # 这两项都是关键字与正则表达式列表，用于匹配接口名或包名。
     # keywords:
-    # - `empty` for `interface{}`
-    # - `error` for errors
+    # - `empty` 用于 `interface{}`
+    # - `error` 用于 error 类型
     # - `stdlib` 表示标准库
     # - `anon` 表示匿名接口
 
@@ -498,7 +498,7 @@ linters-settings:
     # 可以指定接口名惯用的后缀
     - (or|er)$
 
-    # Reject patterns
+    # 拒绝的正则模式
     reject:
     - github.com\/user\/package\/v4\.Type
 
@@ -552,10 +552,10 @@ linters-settings:
     # 对多数程序而言，使用 prealloc 属于过早优化。
 
     # 仅对不含 return/break/continue/goto 的简单循环给出预分配建议。
-    # True by default.
+    # 默认为 true。
     simple: true
-    range-loops: true # Report preallocation suggestions on range loops, true by default
-    for-loops: false # Report preallocation suggestions on for loops, false by default
+    range-loops: true # 对 range 循环给出预分配建议，默认为 true
+    for-loops: false # 对 for 循环给出预分配建议，默认为 false
 
   promlinter:
     # Promlinter 在静态分析阶段无法推断出全部指标名。
@@ -670,8 +670,8 @@ linters-settings:
     # 当它只针对项目子目录运行时，无法找到函数的使用位置。所有文本编辑器集成
     # 都是以改动文件所在目录来调用 golangci-lint 的。
   whitespace:
-    multi-if: false   # Enforces newlines (or comments) after every multi-line if statement
-    multi-func: false # Enforces newlines (or comments) after every multi-line function signature
+    multi-if: false   # 强制每个跨行的 if 语句后换行（或加注释）
+    multi-func: false # 强制每个跨行的函数签名后换行（或加注释）
 
   wrapcheck:
     # 字符串数组，用于指定需要忽略的签名片段。
@@ -736,10 +736,10 @@ linters:
   # enable-all: true
   disable-all: true
   enable:
-    - typecheck     # Basic type checking
-    - gofmt         # Format check
-    - govet         # Go's standard linting tool
-    - gosimple      # Suggestions for simplifying code
+    - typecheck     # 基础类型检查
+    - gofmt         # 格式检查
+    - govet         # Go 官方静态检查工具
+    - gosimple      # 简化代码的建议
     - errcheck
     - decorder
     - ineffassign
@@ -759,15 +759,15 @@ linters:
     - gomnd
     - goconst
     - gosec
-    - misspell      # Spelling mistakes
-    - staticcheck   # Static analysis
-    - unused        # Checks for unused code
+    - misspell      # 拼写错误检查
+    - staticcheck   # 静态分析
+    - unused        # 检查未使用的代码
     # - goimports     # 检查 import 是否已正确排序与格式化
-    - godot         # Checks for comment punctuation
-    - bodyclose     # Ensures HTTP response body is closed
-    - stylecheck    # Style checker for Go code
-    - unused        # Checks for unused code
-    - errcheck      # Checks for missed error returns
+    - godot         # 检查注释标点
+    - bodyclose     # 确保 HTTP 响应体被关闭
+    - stylecheck    # Go 代码风格检查
+    - unused        # 检查未使用的代码
+    - errcheck      # 检查遗漏的错误返回
   fast: true
 
 issues:
@@ -852,7 +852,7 @@ issues:
 
   # 需要启用或禁用的默认排除规则 ID 列表，默认为空。
   include:
-    - EXC0002 # disable excluding of issues about comments from golint
+    - EXC0002 # 取消对 golint 注释类问题的默认排除
 
   # 单个 linter 输出问题的最大数量，设为 0 表示不限制，默认 50。
   max-issues-per-linter: 0
@@ -865,7 +865,7 @@ issues:
   # 在把 golangci-lint 接入已有大型代码库时，这个选项非常有用，
   # 因为在接入时立刻修完所有历史问题并不现实，
   # 更好的做法是不允许新代码引入问题。
-  # Default is false.
+  # 默认为 false。
   new: false
 
   # 只显示 git 版本 `REV` 之后新增的问题
@@ -882,13 +882,12 @@ severity:
   # 设置问题的默认严重级别。若已定义 severity 规则而问题未匹配规则、
   # 或该规则未指定级别，则应用此默认
   # 级别。级别名称需与所选输出格式支持的名称一致：
-  # selected out format.
   # - Code climate：https://docs.codeclimate.com/docs/issues#issue-severity
   # - Checkstyle：https://checkstyle.sourceforge.io/property_types.html#severity
   # - Github：https://help.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-error-message
   default-severity: error
 
-  # The default value is false.
+  # 默认值为 false。
   # 设为 true 后，severity-rules 中的正则会变为大小写敏感。
   case-sensitive: false
 

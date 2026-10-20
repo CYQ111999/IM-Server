@@ -48,5 +48,5 @@ Keep checking for updates!
 `
 
 	blue.Println(message)
-	printLinks() // Call the function to print the link information
+	printLinks() // 调用函数打印链接信息
 }

@@ -184,7 +184,7 @@ type CallbackBeforeInviteUserToGroupReq struct {
 }
 type CallbackBeforeInviteUserToGroupResp struct {
 	CommonCallbackResp
-	RefusedMembersAccount []string `json:"refusedMembersAccount,omitempty"` // Optional field to list members whose invitation is refused.
+	RefusedMembersAccount []string `json:"refusedMembersAccount,omitempty"` // 可选字段，列出邀请被拒绝的成员。
 }
 
 type CallbackAfterJoinGroupReq struct {

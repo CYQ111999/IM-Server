@@ -34,7 +34,7 @@ func CopyFlags(source *flag.FlagSet, target *flag.FlagSet) {
 	})
 }
 
-// Config defines the configuration structure for the OpenIM components.
+// Config 定义 OpenIM 各组件的配置结构。
 type Config struct {
 	APIHost             string
 	APIPort             string
@@ -71,7 +71,7 @@ func LoadConfig() *Config {
 	}
 }
 
-// getEnv is a helper function to read an environment variable or return a default value.
+// getEnv 是读取环境变量、取不到则返回默认值的辅助函数。
 func getEnv(key, defaultValue string) string {
 	value, exists := os.LookupEnv(key)
 	if !exists {

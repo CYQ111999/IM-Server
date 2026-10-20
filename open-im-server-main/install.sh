@@ -20,7 +20,7 @@
 set -e
 
 
-############################## OpenIM Github ##############################
+############################## OpenIM 项目地址 ##############################
 # …… 脚本其余内容 ……
 
 # TODO
@@ -78,7 +78,7 @@ GITHUB_TOKEN=
 # 默认数据目录；如需指定其他目录，取消注释并替换 "./"。
 # DATA_DIR=./
 
-############################## OpenIM Functions ##############################
+############################## OpenIM 函数定义 ##############################
 # 脚本安装概览
 #
 # 前置依赖：
@@ -290,7 +290,7 @@ function install_openim() {
     success "OpenIM installation completed successfully. Happy chatting!"
 }
 
-############################## OpenIM Help ##############################
+############################## OpenIM 帮助 ##############################
 
 # 显示帮助信息的函数
 function cmd_help() {
@@ -320,7 +320,7 @@ function cmd_help() {
 }
 
 function parseinput() {
-    # set default values
+    # 设置默认值
     # OPENIM_USER=root
     # PASSWORD=openIM123
     # ENDPOINT=http://127.0.0.1:10005
@@ -406,7 +406,7 @@ function parseinput() {
     done
 }
 
-############################## OpenIM LOG ##############################
+############################## OpenIM 日志 ##############################
 # 头部与 URL 使用青色文字
 print_with_delay() {
   text="$1"
@@ -440,21 +440,21 @@ color_echo() {
 
 # 颜色定义
 function openim_color() {
-    COLOR_SUFFIX="\033[0m"      # End all colors and special effects
+    COLOR_SUFFIX="\033[0m"      # 结束所有颜色与特殊效果
 
-    BLACK_PREFIX="\033[30m"     # Black prefix
-    RED_PREFIX="\033[31m"       # Red prefix
-    GREEN_PREFIX="\033[32m"     # Green prefix
-    YELLOW_PREFIX="\033[33m"    # Yellow prefix
-    BLUE_PREFIX="\033[34m"      # Blue prefix
-    SKY_BLUE_PREFIX="\033[36m"  # Sky blue prefix
-    WHITE_PREFIX="\033[37m"     # White prefix
-    BOLD_PREFIX="\033[1m"       # Bold prefix
-    UNDERLINE_PREFIX="\033[4m"  # Underline prefix
-    ITALIC_PREFIX="\033[3m"     # Italic prefix
-    BRIGHT_GREEN_PREFIX='\033[1;32m' # Bright green prefix
+    BLACK_PREFIX="\033[30m"     # Black黑色前缀
+    RED_PREFIX="\033[31m"       # Red红色前缀
+    GREEN_PREFIX="\033[32m"     # Green绿色前缀
+    YELLOW_PREFIX="\033[33m"    # Yellow黄色前缀
+    BLUE_PREFIX="\033[34m"      # Blue蓝色前缀
+    SKY_BLUE_PREFIX="\033[36m"  # Sky blue天蓝色前缀
+    WHITE_PREFIX="\033[37m"     # White白色前缀
+    BOLD_PREFIX="\033[1m"       # Bold加粗前缀
+    UNDERLINE_PREFIX="\033[4m"  # Underline下划线前缀
+    ITALIC_PREFIX="\033[3m"     # Italic斜体前缀
+    BRIGHT_GREEN_PREFIX='\033[1;32m' # Bright green亮绿色前缀
 
-    CYAN_PREFIX="\033[0;36m"     # Cyan prefix
+    CYAN_PREFIX="\033[0;36m"     # Cyan青色前缀
 }
 
 # --- 日志相关的辅助函数 ---

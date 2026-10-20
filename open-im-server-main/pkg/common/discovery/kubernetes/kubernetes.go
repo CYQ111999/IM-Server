@@ -255,7 +255,7 @@ func (k *KubernetesConnManager) watchEndpoints() {
 	})
 
 	informerFactory.Start(context.Background().Done())
-	<-context.Background().Done() // Block forever
+	<-context.Background().Done() // 永久阻塞
 }
 
 func (k *KubernetesConnManager) handleEndpointChange(obj interface{}) {

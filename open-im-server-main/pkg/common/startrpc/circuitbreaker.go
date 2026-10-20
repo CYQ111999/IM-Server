@@ -15,9 +15,9 @@ import (
 type CircuitBreaker struct {
 	Enable  bool          `yaml:"enable"`
 	Success float64       `yaml:"success"` // success rate threshold (0.0-1.0)
-	Request int64         `yaml:"request"` // request threshold
-	Bucket  int           `yaml:"bucket"`  // number of buckets
-	Window  time.Duration `yaml:"window"`  // time window for statistics
+	Request int64         `yaml:"request"` // 请求数阈值
+	Bucket  int           `yaml:"bucket"`  // 桶数量
+	Window  time.Duration `yaml:"window"`  // 统计时间窗口
 }
 
 func NewCircuitBreaker(config *CircuitBreaker) circuitbreaker.CircuitBreaker {

@@ -869,7 +869,7 @@ func (g *groupServer) GroupApplicationResponse(ctx context.Context, req *pbgroup
 	}
 	var inGroup bool
 	if _, err := g.db.TakeGroupMember(ctx, req.GroupID, req.FromUserID); err == nil {
-		inGroup = true // Already in group
+		inGroup = true // 已在群内
 	} else if !g.IsNotFound(err) {
 		return nil, err
 	}
@@ -1700,7 +1700,7 @@ func (g *groupServer) SetGroupMemberInfo(ctx context.Context, req *pbgroup.SetGr
 						return nil, errs.ErrNoPermission.WrapMsg("can not improve role level by self")
 					}
 					if roleLevel == constant.GroupOwner {
-						return nil, errs.ErrArgs.WrapMsg("group owner can not change own role level") // Prevent the absence of a group owner
+						return nil, errs.ErrArgs.WrapMsg("group owner can not change own role level") // 防止出现没有群主的情况
 					}
 				}
 			}

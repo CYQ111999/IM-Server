@@ -44,7 +44,7 @@ type UserTokenResponse struct {
 	ErrCode int    `json:"errCode"`
 }
 
-// User represents user data for registration.
+// User 表示用于注册的用户数据。
 type User struct {
 	UserID   string `json:"userID"`
 	Nickname string `json:"nickname"`

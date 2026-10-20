@@ -1,18 +1,18 @@
 # Prometheus 全局运行时配置。
 global:
-  scrape_interval:     15s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
-  evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
+  scrape_interval:     15s # 抓取间隔设为 15 秒，默认是 1 分钟。
+  evaluation_interval: 15s # 每 15 秒评估一次规则，默认是 1 分钟。
   # scrape_timeout 默认为 10s，除非在具体抓取任务中覆盖。
 
 # Alertmanager 地址，用于接收 Prometheus 推送的告警事件。
 alerting:
   alertmanagers:
     - static_configs:
-        - targets: [127.0.0.1:19093] # Alertmanager address in host:port format.
+        - targets: [127.0.0.1:19093] # Alertmanager 地址，格式为 host:port。
 
 # Prometheus 加载的规则文件。
 rule_files:
-  - instance-down-rules.yml # Default OpenIM alert rules; add more files here if needed.
+  - instance-down-rules.yml # OpenIM 默认告警规则；如有需要可在此追加更多文件。
 # - first_rules.yml
 # - second_rules.yml
 
@@ -21,14 +21,14 @@ scrape_configs:
   # job_name 会作为 “job” 标签附加到采集到的时间序列上。
   - job_name: node_exporter
     static_configs:
-      - targets: [ 127.0.0.1:19100 ] # node_exporter endpoint for host CPU, memory, disk, and network metrics.
+      - targets: [ 127.0.0.1:19100 ] # node_exporter 地址，用于采集主机 CPU、内存、磁盘和网络指标。
 
   # OpenIM 服务通过 admin API 动态发现。
   # 多机部署时，请把 127.0.0.1 换成可访问的内网地址。
 
   - job_name: openimserver-openim-api
     http_sd_configs:
-      - url: "http://127.0.0.1:10002/prometheus_discovery/api" # Service discovery endpoint for OpenIM API instances.
+      - url: "http://127.0.0.1:10002/prometheus_discovery/api" # OpenIM API 实例的服务发现地址。 OpenIM API instances.
 #    static_configs:
 #      - targets: [ 127.0.0.1:12002 ]
 #        labels:
@@ -36,7 +36,7 @@ scrape_configs:
 
   - job_name: openimserver-openim-msggateway
     http_sd_configs:
-      - url: "http://127.0.0.1:10002/prometheus_discovery/msg_gateway" # Service discovery endpoint for msggateway instances.
+      - url: "http://127.0.0.1:10002/prometheus_discovery/msg_gateway" # msggateway 实例的服务发现地址。 msggateway instances.
 #    static_configs:
 #      - targets: [ 127.0.0.1:12140 ]
 #        #      - targets: [ 127.0.0.1:12140, 127.0.0.1:12141, 127.0.0.1:12142, 127.0.0.1:12143, 127.0.0.1:12144, 127.0.0.1:12145, 127.0.0.1:12146, 127.0.0.1:12147, 127.0.0.1:12148, 127.0.0.1:12149, 127.0.0.1:12150, 127.0.0.1:12151, 127.0.0.1:12152, 127.0.0.1:12153, 127.0.0.1:12154, 127.0.0.1:12155 ]
@@ -45,7 +45,7 @@ scrape_configs:
 
   - job_name: openimserver-openim-msgtransfer
     http_sd_configs:
-      - url: "http://127.0.0.1:10002/prometheus_discovery/msg_transfer" # Service discovery endpoint for msgtransfer instances.
+      - url: "http://127.0.0.1:10002/prometheus_discovery/msg_transfer" # msgtransfer 实例的服务发现地址。 msgtransfer instances.
 #    static_configs:
 #      - targets: [ 127.0.0.1:12020, 127.0.0.1:12021, 127.0.0.1:12022, 127.0.0.1:12023, 127.0.0.1:12024, 127.0.0.1:12025, 127.0.0.1:12026, 127.0.0.1:12027 ]
 #        #      - targets: [ 127.0.0.1:12020, 127.0.0.1:12021, 127.0.0.1:12022, 127.0.0.1:12023, 127.0.0.1:12024, 127.0.0.1:12025, 127.0.0.1:12026, 127.0.0.1:12027, 127.0.0.1:12028, 127.0.0.1:12029, 127.0.0.1:12030, 127.0.0.1:12031, 127.0.0.1:12032, 127.0.0.1:12033, 127.0.0.1:12034, 127.0.0.1:12035 ]
@@ -54,7 +54,7 @@ scrape_configs:
 
   - job_name: openimserver-openim-push
     http_sd_configs:
-      - url: "http://127.0.0.1:10002/prometheus_discovery/push" # Service discovery endpoint for push service instances.
+      - url: "http://127.0.0.1:10002/prometheus_discovery/push" # push 服务的服务发现地址。 push service instances.
 #    static_configs:
 #      - targets: [ 127.0.0.1:12170, 127.0.0.1:12171, 127.0.0.1:12172, 127.0.0.1:12173, 127.0.0.1:12174, 127.0.0.1:12175, 127.0.0.1:12176, 127.0.0.1:12177 ]
 ##      - targets: [ 127.0.0.1:12170, 127.0.0.1:12171, 127.0.0.1:12172, 127.0.0.1:12173, 127.0.0.1:12174, 127.0.0.1:12175, 127.0.0.1:12176, 127.0.0.1:12177, 127.0.0.1:12178, 127.0.0.1:12179, 127.0.0.1:12180,  127.0.0.1:12182, 127.0.0.1:12183, 127.0.0.1:12184, 127.0.0.1:12185, 127.0.0.1:12186 ]
@@ -63,7 +63,7 @@ scrape_configs:
 
   - job_name: openimserver-openim-rpc-auth
     http_sd_configs:
-      - url: "http://127.0.0.1:10002/prometheus_discovery/auth" # Service discovery endpoint for auth RPC instances.
+      - url: "http://127.0.0.1:10002/prometheus_discovery/auth" # auth RPC的服务发现地址。 auth RPC instances.
 #    static_configs:
 #      - targets: [ 127.0.0.1:12200 ]
 #        labels:
@@ -71,7 +71,7 @@ scrape_configs:
 
   - job_name: openimserver-openim-rpc-conversation
     http_sd_configs:
-      - url: "http://127.0.0.1:10002/prometheus_discovery/conversation" # Service discovery endpoint for conversation RPC instances.
+      - url: "http://127.0.0.1:10002/prometheus_discovery/conversation" # conversation RPC的服务发现地址。 conversation RPC instances.
 #    static_configs:
 #      - targets: [ 127.0.0.1:12220 ]
 #        labels:
@@ -79,7 +79,7 @@ scrape_configs:
 
   - job_name: openimserver-openim-rpc-friend
     http_sd_configs:
-      - url: "http://127.0.0.1:10002/prometheus_discovery/friend" # Service discovery endpoint for friend RPC instances.
+      - url: "http://127.0.0.1:10002/prometheus_discovery/friend" # friend RPC的服务发现地址。 friend RPC instances.
 #    static_configs:
 #      - targets: [ 127.0.0.1:12240 ]
 #        labels:
@@ -87,7 +87,7 @@ scrape_configs:
 
   - job_name: openimserver-openim-rpc-group
     http_sd_configs:
-      - url: "http://127.0.0.1:10002/prometheus_discovery/group" # Service discovery endpoint for group RPC instances.
+      - url: "http://127.0.0.1:10002/prometheus_discovery/group" # group RPC的服务发现地址。 group RPC instances.
 #    static_configs:
 #      - targets: [ 127.0.0.1:12260 ]
 #        labels:
@@ -95,7 +95,7 @@ scrape_configs:
 
   - job_name: openimserver-openim-rpc-msg
     http_sd_configs:
-      - url: "http://127.0.0.1:10002/prometheus_discovery/msg" # Service discovery endpoint for msg RPC instances.
+      - url: "http://127.0.0.1:10002/prometheus_discovery/msg" # msg RPC的服务发现地址。 msg RPC instances.
 #    static_configs:
 #      - targets: [ 127.0.0.1:12280 ]
 #        labels:
@@ -103,7 +103,7 @@ scrape_configs:
 
   - job_name: openimserver-openim-rpc-third
     http_sd_configs:
-      - url: "http://127.0.0.1:10002/prometheus_discovery/third" # Service discovery endpoint for third-party RPC instances.
+      - url: "http://127.0.0.1:10002/prometheus_discovery/third" # third（第三方）RPC的服务发现地址。 third-party RPC instances.
 #    static_configs:
 #      - targets: [ 127.0.0.1:12300 ]
 #        labels:
@@ -111,7 +111,7 @@ scrape_configs:
 
   - job_name: openimserver-openim-rpc-user
     http_sd_configs:
-      - url: "http://127.0.0.1:10002/prometheus_discovery/user" # Service discovery endpoint for user RPC instances.
+      - url: "http://127.0.0.1:10002/prometheus_discovery/user" # user RPC的服务发现地址。 user RPC instances.
 #    static_configs:
 #      - targets: [ 127.0.0.1:12320 ]
 #        labels:

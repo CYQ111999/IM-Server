@@ -74,7 +74,7 @@ func getGitVersion() string {
 	return version
 }
 
-// // NOTE: You'll need to provide appropriate commands for OpenIM versions.
+// // 注意：需要为不同 OpenIM 版本提供相应的命令。
 // func getOpenIMServerVersion() string {
 // 	// Placeholder
 // 	openimVersion := version.GetSingleVersion()

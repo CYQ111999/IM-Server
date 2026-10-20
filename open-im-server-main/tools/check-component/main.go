@@ -46,7 +46,7 @@ func CheckZookeeper(ctx context.Context, config *config.ZooKeeper) error {
 	// 临时关闭日志输出
 	originalLogger := log.Default().Writer()
 	log.SetOutput(io.Discard)
-	defer log.SetOutput(originalLogger) // Ensure logging is restored
+	defer log.SetOutput(originalLogger) // 确保日志配置被恢复
 	return zookeeper.Check(ctx, config.Address, config.Schema, zookeeper.WithUserNameAndPassword(config.Username, config.Password))
 }
 

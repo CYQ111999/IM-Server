@@ -4,7 +4,7 @@ metadata:
   name: openim-config
 data:
   discovery.yml: |
-    enable: "kubernetes" # "kubernetes" or "etcd"
+    enable: "kubernetes" # 可选 "kubernetes" 或 "etcd"
     kubernetes:
       namespace: default
     etcd:
@@ -195,8 +195,8 @@ data:
       channelName:
     fcm:
       # 优先使用文件路径；文件路径为空时改用 URL
-      filePath:   # File path is concatenated with the parameters passed in through - c(`mage` default pass in `config/`) and filePath.
-      authURL:   #  Must start with https or http.
+      filePath:   # 文件路径由 -c 参数（`mage` 默认传 `config/`）与 filePath 拼接而成。
+      authURL:   #  必须以 https 或 http 开头。
     jpush:
       appKey:
       masterSecret:
@@ -970,8 +970,8 @@ data:
   prometheus.yml: |
     # 全局配置
     global:
-      scrape_interval:     15s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
-      evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
+      scrape_interval:     15s # 抓取间隔设为 15 秒，默认是 1 分钟。
+      evaluation_interval: 15s # 每 15 秒评估一次规则，默认是 1 分钟。
       # scrape_timeout 使用全局默认值（10s）。
 
     # Alertmanager 配置

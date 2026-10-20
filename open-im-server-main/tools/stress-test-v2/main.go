@@ -32,7 +32,7 @@ import (
 // 5. 每分钟向 999 人群发送消息
 
 var (
-	//  Use default userIDs List for testing, need to be created.
+	//  测试用的默认 userIDs 列表，需要提前创建好。
 	TestTargetUserList = []string{
 		// "<need-update-it>",
 	}

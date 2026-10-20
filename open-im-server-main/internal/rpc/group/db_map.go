@@ -70,7 +70,7 @@ func UpdateGroupInfoExMap(ctx context.Context, group *pbgroup.SetGroupInfoExReq)
 
 	if group.Notification != nil {
 		notificationFlag = true
-		group.Notification.Value = strings.TrimSpace(group.Notification.Value) // if Notification only contains spaces, set it to empty string
+		group.Notification.Value = strings.TrimSpace(group.Notification.Value) // 若 Notification 只有空格，则置为空串
 
 		m["notification"] = group.Notification.Value
 		m["notification_user_id"] = mcontext.GetOpUserID(ctx)

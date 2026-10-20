@@ -40,7 +40,7 @@ var (
 	TestTargetUserList = []string{
 		"<need-update-it>",
 	}
-	DefaultGroupID = "<need-update-it>" // Use default group ID for testing, need to be created.
+	DefaultGroupID = "<need-update-it>" // 测试用的默认群 ID，需要提前创建好。
 )
 
 var (
@@ -60,8 +60,8 @@ const (
 	MaxUser  = 10000
 	MaxGroup = 1000
 
-	CreateUserTicker  = 1 * time.Minute // Ticker is 1min in create user
-	SendMessageTicker = 1 * time.Second // Ticker is 1s in send message
+	CreateUserTicker  = 1 * time.Minute // 创建用户的时间间隔为 1 分钟
+	SendMessageTicker = 1 * time.Second // 发送消息的时间间隔为 1 秒
 	CreateGroupTicker = 1 * time.Minute
 )
 

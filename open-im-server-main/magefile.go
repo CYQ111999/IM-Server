@@ -22,10 +22,10 @@ var Aliases = map[string]any{
 
 var (
 	customRootDir   = "."       // workDir in mage, default is "./"(project root directory)
-	customSrcDir    = "cmd"     // source code directory, default is "cmd"
-	customOutputDir = "_output" // output directory, default is "_output"
-	customConfigDir = "config"  // configuration directory, default is "config"
-	customToolsDir  = "tools"   // tools source code directory, default is "tools"
+	customSrcDir    = "cmd"     // 源码目录，默认 "cmd"
+	customOutputDir = "_output" // 输出目录，默认 "_output"
+	customConfigDir = "config"  // 配置目录，默认 "config"
+	customToolsDir  = "tools"   // 工具源码目录，默认 "tools"
 )
 
 // Build 支持只构建指定的二进制。

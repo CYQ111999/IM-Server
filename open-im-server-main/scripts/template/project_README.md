@@ -1,41 +1,41 @@
-# Project myproject
+# 项目 myproject
 
-<!-- Write one paragraph of this project description here -->
+<!-- 在这里用一段话描述本项目 -->
 
-## Features
+## 功能特性
 
-<!-- Tell others the features of this project -->
+<!-- 介绍本项目具备哪些功能 -->
 
-## Getting Started
+## 快速开始
 
-### Prerequisites
+### 前置条件
 
-<!-- Describe packages, tools and everything we needed here -->
+<!-- 描述所需的软件包、工具以及一切必要准备 -->
 
-### Building
+### 构建
 
-<!-- Describe how to build this project -->
+<!-- 描述如何构建本项目 -->
 
-### Running
+### 运行
 
-<!-- Describe how to run this project -->
+<!-- 描述如何运行本项目 -->
 
-## Using
+## 使用说明
 
-<!-- Place user documents here -->
+<!-- 在此放置面向用户的文档 -->
 
-## Contributing
+## 参与贡献
 
-<!-- Tell others how to contribute this project -->
+<!-- 说明其他人如何参与贡献 -->
 
-## Community(optional)
+## 社区（可选）
 
-<!-- Tell something about the community if needed -->
+<!-- 如有需要，在此介绍社区相关信息 -->
 
-## Authors
+## 作者
 
-<!-- Put authors here -->
+<!-- 在此填写作者信息 -->
 
-## License
+## 许可证
 
-<!-- A link to license file -->
+<!-- 在此放许可证文件的链接 -->

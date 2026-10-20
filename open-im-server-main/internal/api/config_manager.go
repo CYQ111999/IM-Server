@@ -347,7 +347,7 @@ func (cm *ConfigManager) Restart(c *gin.Context) {
 }
 
 func (cm *ConfigManager) restart(c *gin.Context) {
-	time.Sleep(waitHttp) // wait for Restart http call return
+	time.Sleep(waitHttp) // 等待 Restart 的 http 调用返回
 	t := time.Now().Unix()
 	_, err := cm.client.Put(c, etcd.BuildKey(etcd.RestartKey), strconv.Itoa(int(t)))
 	if err != nil {
@@ -378,7 +378,7 @@ func (cm *ConfigManager) SetEnableConfigManager(c *gin.Context) {
 	}
 	if !(resp.Count > 0 && string(resp.Kvs[0].Value) == etcd.Enable) && req.Enable {
 		go func() {
-			time.Sleep(waitHttp) // wait for Restart http call return
+			time.Sleep(waitHttp) // 等待 Restart 的 http 调用返回
 			err := cm.resetConfig(c, false, clientv3.OpPut(etcd.BuildKey(etcd.EnableConfigCenterKey), enableStr))
 			if err != nil {
 				log.ZError(c, "resetConfig failed", err)

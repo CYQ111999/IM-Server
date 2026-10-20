@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-// You can specify a tag as a command line argument to generate the changelog for a specific version.
+// 可以通过命令行参数传入 tag，用于生成指定版本的 changelog。
 // 示例：go run tools/changelog/changelog.go v0.0.33
 // 不传 tag 时默认使用最新的 release。
 
@@ -28,7 +28,7 @@ type GitHubRepo struct {
 	FullChangelog string
 }
 
-// ReleaseData represents the JSON structure for release data.
+// ReleaseData 表示发布数据的 JSON 结构。
 type ReleaseData struct {
 	TagName   string `json:"tag_name"`
 	Body      string `json:"body"`
@@ -60,23 +60,23 @@ func (g *GitHubRepo) classifyReleaseNotes(body string) map[string][]string {
 			continue
 		}
 
-		// Use a regular expression to extract Full Changelog link and its title (case insensitive).
+		// 用正则表达式提取 Full Changelog 链接及其标题（不区分大小写）。
 		if strings.Contains(strings.ToLower(line), "**full changelog**") {
 			matches := regexp.MustCompile(`(?i)\*\*full changelog\*\*: (https://github\.com/[^\s]+/compare/([^\s]+))`).FindStringSubmatch(line)
 			if len(matches) > 2 {
 				// 格式化 Full Changelog 链接及其标题
 				g.FullChangelog = fmt.Sprintf("[%s](%s)", matches[2], matches[1])
 			}
-			continue // Skip further processing for this line.
+			continue // 跳过该行的后续处理。
 		}
 
 		if strings.HasPrefix(line, "*") {
 			var category string
 
-			// Use strings.ToLower to make the matching case insensitive
+			// 用 strings.ToLower 让匹配不区分大小写
 			lowerLine := strings.ToLower(line)
 
-			// Determine the category based on the prefix (case insensitive).
+			// 根据前缀判断所属分类（不区分大小写）。
 			if strings.HasPrefix(lowerLine, "* feat") {
 				category = "feat"
 			} else if strings.HasPrefix(lowerLine, "* fix") {
@@ -96,7 +96,7 @@ func (g *GitHubRepo) classifyReleaseNotes(body string) map[string][]string {
 			if len(matches) == 3 {
 				prURL := matches[1]
 				prNumber := matches[2]
-				// Format the line with the PR link and use original content for the final result
+				// 把该行格式化为带 PR 链接的形式，正文沿用原内容
 				formattedLine := fmt.Sprintf("* %s [#%s](%s)", strings.Split(line, " by ")[0][2:], prNumber, prURL)
 				result[category] = append(result[category], formattedLine)
 			} else {
@@ -198,10 +198,10 @@ func main() {
 	repo := &GitHubRepo{Owner: repoOwner, Repo: repoName}
 
 	// 从命令行参数中获取版本号（若已提供）
-	var version string // Default is use latest
+	var version string // 默认使用最新版本
 
 	if len(os.Args) > 1 {
-		version = os.Args[1] // Use the provided version
+		version = os.Args[1] // 使用传入的版本
 	}
 
 	// Fetch release data (either for latest or specific version)

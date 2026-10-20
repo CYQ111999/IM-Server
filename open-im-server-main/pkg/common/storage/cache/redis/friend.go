@@ -133,7 +133,7 @@ func (f *FriendCacheRedis) DelFriends(ownerUserID string, friendUserIDs []string
 
 	for _, friendUserID := range friendUserIDs {
 		key := f.getFriendKey(ownerUserID, friendUserID)
-		newFriendCache.AddKeys(key) // Assuming AddKeys marks the keys for deletion
+		newFriendCache.AddKeys(key) // 这里假定 AddKeys 会把 key 标记为待删除
 	}
 
 	return newFriendCache
@@ -144,7 +144,7 @@ func (f *FriendCacheRedis) DelOwner(friendUserID string, ownerUserIDs []string) 
 
 	for _, ownerUserID := range ownerUserIDs {
 		key := f.getFriendKey(ownerUserID, friendUserID)
-		newFriendCache.AddKeys(key) // Assuming AddKeys marks the keys for deletion
+		newFriendCache.AddKeys(key) // 这里假定 AddKeys 会把 key 标记为待删除
 	}
 
 	return newFriendCache
@@ -154,7 +154,7 @@ func (f *FriendCacheRedis) DelMaxFriendVersion(ownerUserIDs ...string) cache.Fri
 	newFriendCache := f.CloneFriendCache()
 	for _, ownerUserID := range ownerUserIDs {
 		key := f.getFriendMaxVersionKey(ownerUserID)
-		newFriendCache.AddKeys(key) // Assuming AddKeys marks the keys for deletion
+		newFriendCache.AddKeys(key) // 这里假定 AddKeys 会把 key 标记为待删除
 	}
 
 	return newFriendCache

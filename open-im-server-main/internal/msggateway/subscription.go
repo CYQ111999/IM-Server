@@ -53,7 +53,7 @@ type subClient struct {
 
 type Subscription struct {
 	lock    sync.RWMutex
-	userIDs map[string]*subClient // subscribe to the user's client connection
+	userIDs map[string]*subClient // 订阅该用户的客户端连接
 }
 
 func (s *Subscription) DelClient(client *Client) {

@@ -31,12 +31,12 @@ import (
 */
 
 func main() {
-	var conf pkg.Config // Configuration object, '*' denotes required fields
+	var conf pkg.Config // 配置对象，带 * 的表示必填项
 
-	// *Required*: Path for the task log file
+	// 必填：任务日志文件的路径
 	flag.StringVar(&conf.TaskPath, "task", "take.txt", "Path for the task log file")
 
-	// Optional: Path for the progress log file
+	// 可选：进度日志文件的路径
 	flag.StringVar(&conf.ProgressPath, "progress", "", "Path for the progress log file")
 
 	// 并发数
@@ -45,7 +45,7 @@ func main() {
 	// 重试次数
 	flag.IntVar(&conf.Retry, "retry", 1, "Number of retry attempts")
 
-	// Optional: Path for the temporary directory
+	// 可选：临时目录的路径
 	flag.StringVar(&conf.TempDir, "temp", "", "Path for the temporary directory")
 
 	// 缓存大小（字节），超出后下载内容落盘
@@ -54,13 +54,13 @@ func main() {
 	// 请求超时时间（毫秒）
 	flag.Int64Var((*int64)(&conf.Timeout), "timeout", 5000, "Request timeout in milliseconds")
 
-	// *Required*: API endpoint for the IM service
+	// 必填：IM 服务的 API 地址
 	flag.StringVar(&conf.Api, "api", "http://127.0.0.1:10002", "API endpoint for the IM service")
 
 	// IM 管理员的用户 ID
 	flag.StringVar(&conf.UserID, "userID", "openIM123456", "IM administrator's user ID")
 
-	// Secret for the IM configuration
+	// IM 配置的密钥
 	flag.StringVar(&conf.Secret, "secret", "openIM123", "Secret for the IM configuration")
 
 	flag.Parse()

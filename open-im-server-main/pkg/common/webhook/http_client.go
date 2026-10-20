@@ -51,7 +51,7 @@ func NewWebhookClient(url string, options ...*memamq.MemoryQueue) *Client {
 		queue = memamq.NewMemoryQueue(webhookWorkerCount, webhookBufferSize)
 	}
 
-	http.DefaultTransport.(*http.Transport).MaxConnsPerHost = 100 // Enhance the default number of max connections per host
+	http.DefaultTransport.(*http.Transport).MaxConnsPerHost = 100 // 调大默认的每主机最大连接数
 
 	return &Client{
 		client: httputil.NewHTTPClient(httputil.NewClientConfig()),

@@ -16,7 +16,7 @@ package cachekey
 
 const (
 	BlackIDsKey = "BLACK_IDS:"
-	IsBlackKey  = "IS_BLACK:" // local cache
+	IsBlackKey  = "IS_BLACK:" // 本地缓存
 )
 
 func GetBlackIDsKey(ownerUserID string) string {

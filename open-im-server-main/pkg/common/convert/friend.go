@@ -162,7 +162,7 @@ func FriendPb2DBMap(friend *sdkws.FriendInfo) map[string]any {
 		}
 	}
 	if friend.CreateTime != 0 {
-		val["create_time"] = friend.CreateTime // You might need to convert this to a proper time format.
+		val["create_time"] = friend.CreateTime // 这里可能需要转换成合适的时间格式。
 	}
 
 	// 按需参照上面的写法补充 FriendInfo 的其他字段。

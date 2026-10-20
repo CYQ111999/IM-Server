@@ -115,12 +115,12 @@ func (u *UserMgo) PageFindUserWithKeyword(
 		userConditions := []bson.M{}
 		if userID != "" {
 			// userID 使用正则匹配
-			regexPattern := primitive.Regex{Pattern: userID, Options: "i"} // 'i' for case-insensitive matching
+			regexPattern := primitive.Regex{Pattern: userID, Options: "i"} // 加 'i' 表示大小写不敏感匹配
 			userConditions = append(userConditions, bson.M{"user_id": regexPattern})
 		}
 		if nickName != "" {
 			// userName 使用正则匹配
-			regexPattern := primitive.Regex{Pattern: nickName, Options: "i"} // 'i' for case-insensitive matching
+			regexPattern := primitive.Regex{Pattern: nickName, Options: "i"} // 加 'i' 表示大小写不敏感匹配
 			userConditions = append(userConditions, bson.M{"nickname": regexPattern})
 		}
 		query["$and"] = append(query["$and"].([]bson.M), bson.M{"$or": userConditions})
@@ -157,7 +157,7 @@ func (u *UserMgo) AddUserCommand(ctx context.Context, userID string, Type int32,
 		"userID":     userID,
 		"type":       Type,
 		"uuid":       UUID,
-		"createTime": time.Now().Unix(), // assuming you want the creation time in Unix timestamp
+		"createTime": time.Now().Unix(), // 这里假定需要的是 Unix 时间戳形式的创建时间
 		"value":      value,
 		"ex":         ex,
 	}

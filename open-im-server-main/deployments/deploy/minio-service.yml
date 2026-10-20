@@ -9,10 +9,10 @@ spec:
   ports:
     - name: minio
       protocol: TCP
-      port: 10005 # External port for accessing MinIO service
-      targetPort: 9000 # Container port for MinIO service
+      port: 10005 # 访问 MinIO 服务的外部端口
+      targetPort: 9000 # MinIO 服务的容器端口
     - name: minio-console
       protocol: TCP
-      port: 19090 # External port for accessing MinIO console
-      targetPort: 9090 # Container port for MinIO console
+      port: 19090 # 访问 MinIO 控制台的外部端口
+      targetPort: 9090 # MinIO 控制台的容器端口
   type: NodePort

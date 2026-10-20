@@ -32,7 +32,7 @@ type GetUsersOnlineStatusRequest struct {
 	UserIDs []string `json:"userIDs"`
 }
 
-// GetUsersInfo retrieves detailed information for a list of user IDs.
+// GetUsersInfo 批量查询用户 ID 对应的详细信息。
 func GetUsersInfo(token string, userIDs []string) error {
 
 	url := fmt.Sprintf("http://%s:%s/user/get_users_info", config.LoadConfig().APIHost, config.LoadConfig().APIPort)
@@ -43,7 +43,7 @@ func GetUsersInfo(token string, userIDs []string) error {
 	return sendPostRequestWithToken(url, token, requestBody)
 }
 
-// UpdateUserInfo updates the information for a user.
+// UpdateUserInfo 更新某个用户的信息。
 func UpdateUserInfo(token, userID, nickname, faceURL string) error {
 
 	url := fmt.Sprintf("http://%s:%s/user/update_user_info", config.LoadConfig().APIHost, config.LoadConfig().APIPort)
@@ -58,7 +58,7 @@ func UpdateUserInfo(token, userID, nickname, faceURL string) error {
 	return sendPostRequestWithToken(url, token, requestBody)
 }
 
-// GetUsersOnlineStatus retrieves the online status for a list of user IDs.
+// GetUsersOnlineStatus 批量查询用户的在线状态。
 func GetUsersOnlineStatus(token string, userIDs []string) error {
 
 	url := fmt.Sprintf("http://%s:%s/user/get_users_online_status", config.LoadConfig().APIHost, config.LoadConfig().APIPort)

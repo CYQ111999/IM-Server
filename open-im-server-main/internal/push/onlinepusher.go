@@ -92,7 +92,7 @@ func (d *DefaultAllNode) GetConnsAndOnlinePush(ctx context.Context, msg *sdkws.M
 
 	// 在线推送消息
 	for _, conn := range conns {
-		conn := conn // loop var safe
+		conn := conn // 拷贝循环变量，避免闭包捕获同一变量
 		ctx := ctx
 		wg.Go(func() error {
 			msgClient := msggateway.NewMsgGatewayClient(conn)

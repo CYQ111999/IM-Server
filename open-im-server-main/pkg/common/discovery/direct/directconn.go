@@ -113,7 +113,7 @@ package direct
 //}
 //
 //func (cd *ConnDirect) GetConn(ctx context.Context, serviceName string, opts ...grpc.DialOption) (*grpc.ClientConn, error) {
-//	// Get service addresses
+//	// 获取服务地址
 //	addresses := getServiceAddresses(&cd.config.RpcRegisterName,
 //		&cd.config.RpcPort, cd.config.LongConnSvr.OpenImMessageGatewayPort)
 //	address, ok := addresses[serviceName]
@@ -128,13 +128,13 @@ package direct
 //			result = fmt.Sprintf(cd.config.Rpc.ListenIP+":%d", addr)
 //		}
 //	}
-//	// Try to dial a new connection
+//	// 尝试建立新连接
 //	conn, err := cd.dialService(ctx, result, append(cd.additionalOpts, opts...)...)
 //	if err != nil {
 //		return nil, errs.WrapMsg(err, "address", result)
 //	}
 //
-//	// Store the new connection
+//	// 保存新连接
 //	cd.conns[serviceName] = append(cd.conns[serviceName], conn)
 //	return conn, nil
 //}

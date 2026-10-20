@@ -18,8 +18,8 @@ spec:
         - name: minio
           image: minio/minio:RELEASE.2024-01-11T07-46-16Z
           ports:
-            - containerPort: 9000 # MinIO service port
-            - containerPort: 9090 # MinIO console port
+            - containerPort: 9000 # MinIO 服务端口
+            - containerPort: 9090 # MinIO 控制台端口
           volumeMounts:
             - name: minio-data
               mountPath: /data

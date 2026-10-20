@@ -30,5 +30,5 @@ func GetContextWithMQHeader(header []*sarama.RecordHeader) context.Context {
 	for _, recordHeader := range header {
 		values = append(values, string(recordHeader.Value))
 	}
-	return mcontext.WithMustInfoCtx(values) // Attach extracted values to context
+	return mcontext.WithMustInfoCtx(values) // 把解析出的值附加到 context
 }

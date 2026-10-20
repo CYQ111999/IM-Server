@@ -1,36 +1,36 @@
 # Alertmanager 全局运行时与 SMTP 配置。
 global:
-  resolve_timeout: 5m # Wait time before an alert is considered resolved when no further updates are received.
-  smtp_from: alert@openim.io # Sender address displayed in alert emails.
-  smtp_smarthost: smtp.163.com:465 # SMTP relay endpoint in host:port format.
-  smtp_auth_username: alert@openim.io # SMTP authentication username (commonly the same as smtp_from).
-  smtp_auth_password: YOURAUTHPASSWORD # SMTP authorization token or app password.
-  smtp_require_tls: false # Set to true when your SMTP provider requires STARTTLS.
-  smtp_hello: xxx # HELO/EHLO identity presented to the SMTP server.
+  resolve_timeout: 5m # 在不再收到更新后，等待多久才认为告警已恢复。
+  smtp_from: alert@openim.io # 告警邮件中显示的发件人地址。
+  smtp_smarthost: smtp.163.com:465 # SMTP 中继地址，格式为 host:port。
+  smtp_auth_username: alert@openim.io # SMTP 认证用户名（通常与 smtp_from 相同）。
+  smtp_auth_password: YOURAUTHPASSWORD # SMTP 授权码或应用专用密码。
+  smtp_require_tls: false # 若 SMTP 服务商要求 STARTTLS，则设为 true。
+  smtp_hello: xxx # 向 SMTP 服务器出示的 HELO/EHLO 身份。
 
 templates:
-  - /etc/alertmanager/email.tmpl # Go template file used to render HTML email content.
+  - /etc/alertmanager/email.tmpl # 用于渲染 HTML 邮件内容的 Go 模板文件。
 
 # 所有告警的根路由树。
 route:
-  group_by: [ 'alertname' ] # Alerts sharing this label value are batched into one notification.
-  group_wait: 5s # Initial delay before sending the first notification for a new alert group.
-  group_interval: 5s # Minimum interval between notifications for the same alert group.
-  repeat_interval: 5m # Reminder interval while an alert group remains firing.
-  receiver: email # Default receiver when no child route matches.
+  group_by: [ 'alertname' ] # 该标签值相同的告警会合并成一条通知。
+  group_wait: 5s # 新告警组发送首条通知前的初始延迟。
+  group_interval: 5s # 同一告警组两次通知之间的最小间隔。
+  repeat_interval: 5m # 告警组持续触发期间的重发提醒间隔。
+  receiver: email # 没有子路由匹配时使用的默认接收器。
   routes:
     - matchers:
-        - alertname = "XXX" # Example matcher; replace with a real alert name or remove this route.
-      group_by: [ 'instance' ] # Override grouping for this specific route.
+        - alertname = "XXX" # 示例匹配规则；请替换为真实的告警名，或删除这条路由。
+      group_by: [ 'instance' ] # 覆盖该路由的分组方式。
       group_wait: 5s
       group_interval: 5s
       repeat_interval: 5m
       receiver: email
 
 receivers:
-  - name: email # Receiver name referenced by route.receiver.
+  - name: email # 接收器名称，供 route.receiver 引用。
     email_configs:
-      - to: 'alert@example.com' # Recipient mailbox for alert notifications.
-        html: '{{ template "email.to.html" . }}' # Rendered with the template declared in email.tmpl.
-        headers: { Subject: "[OPENIM-SERVER]Alarm" } # Custom email subject line.
-        send_resolved: true # Also send a notification when the alert recovers.
+      - to: 'alert@example.com' # 告警通知的收件邮箱。
+        html: '{{ template "email.to.html" . }}' # 使用 email.tmpl 中声明的模板渲染。
+        headers: { Subject: "[OPENIM-SERVER]Alarm" } # 自定义邮件主题。
+        send_resolved: true # 告警恢复时也发送通知。

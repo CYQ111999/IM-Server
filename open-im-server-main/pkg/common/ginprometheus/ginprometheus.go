@@ -70,10 +70,10 @@ package ginprometheus
 //)
 //
 ///*
-//RequestCounterURLLabelMappingFn is a function which can be supplied to the middleware to control
-//the cardinality of the request counter's "url" label, which might be required in some contexts.
-//For instance, if for a "/customer/:name" route you don't want to generate a time series for every
-//possible customer name, you could use this function:
+//RequestCounterURLLabelMappingFn 是一个可传给中间件的函数，用于控制
+//请求计数器 "url" 标签的基数（cardinality），在某些场景下这是必需的。
+//例如，对于 "/customer/:name" 这类路由，如果不希望为每个可能的客户名都生成一条时间序列，
+//可以使用下面这个函数：
 //
 //	func(c *gin.Context) string {
 //		url := c.Request.URL.Path
@@ -86,12 +86,12 @@ package ginprometheus
 //		return url
 //	}
 //
-//which would map "/customer/alice" and "/customer/bob" to their template "/customer/:name".
+//这样就会把 "/customer/alice" 和 "/customer/bob" 都映射到模板 "/customer/:name"。
 //*/
 //type RequestCounterURLLabelMappingFn func(c *gin.Context) string
 //
-//// Metric is a definition for the name, description, type, ID, and
-//// prometheus.Collector type (i.e. CounterVec, Summary, etc) of each metric.
+//// Metric 定义了每个指标的 name、description、type、ID，
+//// 以及该指标对应的 prometheus.Collector 类型（如 CounterVec、Summary 等）。
 //type Metric struct {
 //	MetricCollector prometheus.Collector
 //	ID              string
@@ -101,7 +101,7 @@ package ginprometheus
 //	Args            []string
 //}
 //
-//// Prometheus contains the metrics gathered by the instance and its path.
+//// Prometheus 保存本实例采集到的指标以及指标暴露路径。
 //type Prometheus struct {
 //	reqCnt        *prometheus.CounterVec
 //	reqDur        *prometheus.HistogramVec
@@ -115,29 +115,29 @@ package ginprometheus
 //
 //	ReqCntURLLabelMappingFn RequestCounterURLLabelMappingFn
 //
-//	// gin.Context string to use as a prometheus URL label
+//	// 作为 prometheus URL 标签使用的 gin.Context 字符串
 //	URLLabelFromContext string
 //}
 //
-//// PrometheusPushGateway contains the configuration for pushing to a Prometheus pushgateway (optional).
+//// PrometheusPushGateway 保存推送到 Prometheus pushgateway 的配置（可选）。
 //type PrometheusPushGateway struct {
 //
-//	// Push interval in seconds
+//	// 推送间隔，单位秒
 //	PushIntervalSeconds time.Duration
 //
-//	// Push Gateway URL in format http://domain:port
-//	// where JOBNAME can be any string of your choice
+//	// Push Gateway 地址，格式为 http://domain:port
+//	// 其中 JOBNAME 可以是任意自定义字符串
 //	PushGatewayURL string
 //
-//	// Local metrics URL where metrics are fetched from, this could be omitted in the future
-//	// if implemented using prometheus common/expfmt instead
+//	// 本地指标地址，指标从这里抓取；如果将来改用 prometheus 的 common/expfmt 实现，
+//	// 这个地址可以省略
 //	MetricsURL string
 //
-//	// pushgateway job name, defaults to "gin"
+//	// pushgateway 的 job 名称，默认为 "gin"
 //	Job string
 //}
 //
-//// NewPrometheus generates a new set of metrics with a certain subsystem name.
+//// NewPrometheus 以指定的子系统名生成一组新的指标。
 //func NewPrometheus(subsystem string, customMetricsList ...[]*Metric) *Prometheus {
 //	if subsystem == "" {
 //		subsystem = "app"
@@ -165,8 +165,8 @@ package ginprometheus
 //	return p
 //}
 //
-//// SetPushGateway sends metrics to a remote pushgateway exposed on pushGatewayURL
-//// every pushIntervalSeconds. Metrics are fetched from metricsURL.
+//// SetPushGateway 每隔 pushIntervalSeconds 秒，把指标推送到
+//// 由 pushGatewayURL 暴露的远程 pushgateway；指标从 metricsURL 抓取。
 //func (p *Prometheus) SetPushGateway(pushGatewayURL, metricsURL string, pushIntervalSeconds time.Duration) {
 //	p.Ppg.PushGatewayURL = pushGatewayURL
 //	p.Ppg.MetricsURL = metricsURL
@@ -174,13 +174,13 @@ package ginprometheus
 //	p.startPushTicker()
 //}
 //
-//// SetPushGatewayJob job name, defaults to "gin".
+//// SetPushGatewayJob 设置 job 名称，默认为 "gin"。
 //func (p *Prometheus) SetPushGatewayJob(j string) {
 //	p.Ppg.Job = j
 //}
 //
-//// SetListenAddress for exposing metrics on address. If not set, it will be exposed at the
-//// same address of the gin engine that is being used.
+//// SetListenAddress 设置指标暴露的监听地址；如果不设置，
+//// 则使用当前 gin 引擎的同一地址。
 //func (p *Prometheus) SetListenAddress(address string) {
 //	p.listenAddress = address
 //	if p.listenAddress != "" {
@@ -188,8 +188,8 @@ package ginprometheus
 //	}
 //}
 //
-//// SetListenAddressWithRouter for using a separate router to expose metrics. (this keeps things like GET /metrics out of
-//// your content's access log).
+//// SetListenAddressWithRouter 使用独立路由暴露指标（这样可以把 GET /metrics 这类请求
+//// 排除在业务访问日志之外）。
 //func (p *Prometheus) SetListenAddressWithRouter(listenAddress string, r *gin.Engine) {
 //	p.listenAddress = listenAddress
 //	if len(p.listenAddress) > 0 {
@@ -197,7 +197,7 @@ package ginprometheus
 //	}
 //}
 //
-//// SetMetricsPath set metrics paths.
+//// SetMetricsPath 设置指标路径。
 //func (p *Prometheus) SetMetricsPath(e *gin.Engine) error {
 //
 //	if p.listenAddress != "" {
@@ -209,7 +209,7 @@ package ginprometheus
 //	}
 //}
 //
-//// SetMetricsPathWithAuth set metrics paths with authentication.
+//// SetMetricsPathWithAuth 设置带鉴权的指标路径。
 //func (p *Prometheus) SetMetricsPathWithAuth(e *gin.Engine, accounts gin.Accounts) error {
 //
 //	if p.listenAddress != "" {
@@ -271,7 +271,7 @@ package ginprometheus
 //	}()
 //}
 //
-//// NewMetric associates prometheus.Collector based on Metric.Type.
+//// NewMetric 依据 Metric.Type 关联对应的 prometheus.Collector。
 //func NewMetric(m *Metric, subsystem string) prometheus.Collector {
 //	var metric prometheus.Collector
 //	switch m.Type {
@@ -368,19 +368,19 @@ package ginprometheus
 //	}
 //}
 //
-//// Use adds the middleware to a gin engine.
+//// Use 把该中间件注册到 gin 引擎。
 //func (p *Prometheus) Use(e *gin.Engine) error {
 //	e.Use(p.HandlerFunc())
 //	return p.SetMetricsPath(e)
 //}
 //
-//// UseWithAuth adds the middleware to a gin engine with BasicAuth.
+//// UseWithAuth 把带 BasicAuth 的中间件注册到 gin 引擎。
 //func (p *Prometheus) UseWithAuth(e *gin.Engine, accounts gin.Accounts) error {
 //	e.Use(p.HandlerFunc())
 //	return p.SetMetricsPathWithAuth(e, accounts)
 //}
 //
-//// HandlerFunc defines handler function for middleware.
+//// HandlerFunc 定义中间件使用的处理函数。
 //func (p *Prometheus) HandlerFunc() gin.HandlerFunc {
 //	return func(c *gin.Context) {
 //		if c.Request.URL.Path == p.MetricsPath {
@@ -435,7 +435,7 @@ package ginprometheus
 //	}
 //	s += len(r.Host)
 //
-//	// r.FormData and r.MultipartForm are assumed to be included in r.URL.
+//	// 这里假定 r.FormData 和 r.MultipartForm 已包含在 r.URL 中。
 //
 //	if r.ContentLength != -1 {
 //		s += int(r.ContentLength)

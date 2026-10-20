@@ -74,17 +74,17 @@ func GetConversationIDByMsg(msg *sdkws.MsgData) string {
 		if !options.IsNotNotification() {
 			return "n_" + strings.Join(l, "_")
 		}
-		return "si_" + strings.Join(l, "_") // single chat
+		return "si_" + strings.Join(l, "_") // 单聊
 	case constant.WriteGroupChatType:
 		if !options.IsNotNotification() {
-			return "n_" + msg.GroupID // group chat
+			return "n_" + msg.GroupID // 群聊
 		}
-		return "g_" + msg.GroupID // group chat
+		return "g_" + msg.GroupID // 群聊
 	case constant.ReadGroupChatType:
 		if !options.IsNotNotification() {
-			return "n_" + msg.GroupID // super group chat
+			return "n_" + msg.GroupID // 超大群
 		}
-		return "sg_" + msg.GroupID // super group chat
+		return "sg_" + msg.GroupID // 超大群
 	case constant.NotificationChatType:
 		l := []string{msg.SendID, msg.RecvID}
 		sort.Strings(l)
@@ -103,13 +103,13 @@ func GetConversationIDBySessionType(sessionType int, ids ...string) string {
 	}
 	switch sessionType {
 	case constant.SingleChatType:
-		return "si_" + strings.Join(ids, "_") // single chat
+		return "si_" + strings.Join(ids, "_") // 单聊
 	case constant.WriteGroupChatType:
-		return "g_" + ids[0] // group chat
+		return "g_" + ids[0] // 群聊
 	case constant.ReadGroupChatType:
-		return "sg_" + ids[0] // super group chat
+		return "sg_" + ids[0] // 超大群
 	case constant.NotificationChatType:
-		return "sn_" + strings.Join(ids, "_") // server notification chat
+		return "sn_" + strings.Join(ids, "_") // 服务端通知会话
 	}
 	return ""
 }

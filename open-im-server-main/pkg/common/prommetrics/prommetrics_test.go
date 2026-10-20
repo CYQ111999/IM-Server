@@ -17,26 +17,26 @@ package prommetrics
 import "testing"
 
 //func TestNewGrpcPromObj(t *testing.T) {
-//	// Create a custom metric to pass into the NewGrpcPromObj function.
+//	// 构造一个自定义指标，传给 NewGrpcPromObj 函数。
 //	customMetric := prometheus.NewCounter(prometheus.CounterOpts{
 //		Name: "test_metric",
 //		Help: "This is a test metric.",
 //	})
 //	cusMetrics := []prometheus.Collector{customMetric}
 //
-//	// Call NewGrpcPromObj with the custom metrics.
+//	// 用这些自定义指标调用 NewGrpcPromObj。
 //	reg, grpcMetrics, err := NewGrpcPromObj(cusMetrics)
 //
-//	// Assert no error was returned.
+//	// 断言没有返回错误。
 //	assert.NoError(t, err)
 //
-//	// Assert the registry was correctly initialized.
+//	// 断言 registry 已正确初始化。
 //	assert.NotNil(t, reg)
 //
-//	// Assert the grpcMetrics was correctly initialized.
+//	// 断言 grpcMetrics 已正确初始化。
 //	assert.NotNil(t, grpcMetrics)
 //
-//	// Assert that the custom metric is registered.
+//	// 断言自定义指标已注册。
 //	mfs, err := reg.Gather()
 //	assert.NoError(t, err)
 //	assert.NotEmpty(t, mfs) // Ensure some metrics are present.
@@ -54,10 +54,10 @@ import "testing"
 //	conf := config2.NewGlobalConfig()
 //
 //	config2.InitConfig(conf, "../../config")
-//	// Test various cases based on the switch statement in the GetGrpcCusMetrics function.
+//	// 针对 GetGrpcCusMetrics 中的 switch 分支测试各种情况。
 //	testCases := []struct {
 //		name     string
-//		expected int // The expected number of metrics for each case.
+//		expected int // 每种情况期望的指标数量。
 //	}{
 //		{conf.RpcRegisterName.OpenImMessageGatewayName, 1},
 //	}

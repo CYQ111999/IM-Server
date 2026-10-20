@@ -221,7 +221,7 @@ func (f *FriendMgo) FindFriendUserIDs(ctx context.Context, ownerUserID string) (
 func (f *FriendMgo) UpdateFriends(ctx context.Context, ownerUserID string, friendUserIDs []string, val map[string]any) error {
 	// 确保有待更新的 ID
 	if len(friendUserIDs) == 0 || len(val) == 0 {
-		return nil // Or return an error if you expect there to always be IDs
+		return nil // 如果认为这里一定会有 ID，也可以改为返回错误
 	}
 
 	// 创建过滤条件：匹配指定 ownerUserID 且 friendUserIDs 中任意一个的文档

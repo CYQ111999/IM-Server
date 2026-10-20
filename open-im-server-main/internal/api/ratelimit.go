@@ -18,8 +18,8 @@ import (
 
 type RateLimiter struct {
 	Enable       bool          `yaml:"enable"`
-	Window       time.Duration `yaml:"window"`       // time duration per window
-	Bucket       int           `yaml:"bucket"`       // bucket number for each window
+	Window       time.Duration `yaml:"window"`       // 每个窗口的时长
+	Bucket       int           `yaml:"bucket"`       // 每个窗口的桶数量
 	CPUThreshold int64         `yaml:"cpuThreshold"` // CPU threshold; valid range 0–1000 (1000 = 100%)
 }
 
@@ -51,7 +51,7 @@ func RateLimitMiddleware(config *RateLimiter) gin.HandlerFunc {
 			c.Header("X-RateLimit-Policy", "BBR")
 			c.Header("Retry-After", calculateBBRRetryAfter(status))
 			c.Header("X-RateLimit-Limit", strconv.FormatInt(status.MaxInFlight, 10))
-			c.Header("X-RateLimit-Remaining", "0") // There is no concept of remaining quota in BBR.
+			c.Header("X-RateLimit-Remaining", "0") // BBR 算法中没有“剩余配额”的概念。
 
 			fmt.Println("rate limited:", err, "path:", c.Request.URL.Path)
 			log.ZWarn(c, "rate limited", err, "path", c.Request.URL.Path)

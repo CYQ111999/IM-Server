@@ -12,7 +12,7 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-// GetRocksCacheOptions returns the default configuration options for RocksCache.
+// GetRocksCacheOptions 返回 RocksCache 的默认配置项。
 func GetRocksCacheOptions() *rockscache.Options {
 	opts := rockscache.NewDefaultOptions()
 	opts.LockExpire = rocksCacheTimeout

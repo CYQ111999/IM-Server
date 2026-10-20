@@ -48,7 +48,7 @@ func (p *PrometheusDiscoveryApi) discovery(c *gin.Context, key string) {
 		}
 
 		resp.Targets = append(resp.Targets, tmp.Target)
-		resp.Labels = tmp.Labels // default label is fixed. See prommetrics.BuildDefaultTarget
+		resp.Labels = tmp.Labels // 默认标签是固定的，详见 prommetrics.BuildDefaultTarget
 	}
 
 	c.JSON(http.StatusOK, []*prommetrics.RespTarget{&resp})

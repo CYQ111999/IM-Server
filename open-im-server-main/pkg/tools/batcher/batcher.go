@@ -21,12 +21,12 @@ var (
 )
 
 type Config struct {
-	size       int           // Number of message aggregations
-	buffer     int           // The number of caches running in a single coroutine
-	dataBuffer int           // The size of the main data channel
-	worker     int           // Number of coroutines processed in parallel
-	interval   time.Duration // Time of message aggregations
-	syncWait   bool          // Whether to wait synchronously after distributing messages have been consumed
+	size       int           // 单次聚合的消息数量
+	buffer     int           // 单个协程中运行的缓存数量
+	dataBuffer int           // 主数据通道的容量
+	worker     int           // 并行处理的协程数量
+	interval   time.Duration // 消息聚合的时间间隔
+	syncWait   bool          // 分发出去的消息被消费完后是否同步等待
 }
 
 type Option func(c *Config)
@@ -278,7 +278,7 @@ func (b *Batcher[T]) run(channelID int, ch <-chan *Msg[T]) {
 }
 
 func (b *Batcher[T]) Close() {
-	b.cancel() // Signal to stop put data
+	b.cancel() // 用于通知停止写入数据的信号
 	b.data <- nil
 	// 等待所有 goroutine 退出
 	b.wait.Wait()

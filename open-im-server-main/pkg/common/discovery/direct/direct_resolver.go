@@ -65,7 +65,7 @@ func init() {
 	resolver.Register(&ResolverDirect{})
 }
 func (rd *ResolverDirect) Scheme() string {
-	return scheme // return your custom scheme name
+	return scheme // 返回自定义的 scheme 名称
 }
 
 // GetEndpoints 从给定 target 中解析出 endpoints。
