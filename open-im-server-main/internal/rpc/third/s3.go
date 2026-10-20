@@ -294,7 +294,7 @@ func (t *thirdServer) DeleteOutdatedData(ctx context.Context, req *third.DeleteO
 	}
 	engine := t.config.RpcConfig.Object.Enable
 	expireTime := time.UnixMilli(req.ExpireTime)
-	// Find all expired data in S3 database
+	// 查询 S3 数据库中所有已过期的数据
 	models, err := t.s3dataBase.FindExpirationObject(ctx, engine, expireTime, req.ObjectGroup, int64(req.Limit))
 	if err != nil {
 		return nil, err

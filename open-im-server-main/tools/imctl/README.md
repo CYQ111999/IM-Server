@@ -1,89 +1,88 @@
-# [RFC #0005] OpenIM CTL Module Proposal
+# [RFC #0005] OpenIM CTL 模块提案
 
-## Meta
+## 元信息
 
-- Name: OpenIM CTL Module Enhancement
-- Start Date: 2023-08-23
-- Author(s): @cubxxw
-- Status: Draft
-- RFC Pull Request: (leave blank)
-- OpenIMSDK Pull Request: (leave blank)
-- OpenIMSDK Issue: https://github.com/openimsdk/open-im-server/issues/924
-- Supersedes: N/A
+- 名称：OpenIM CTL 模块增强
+- 起始日期：2023-08-23
+- 作者：@cubxxw
+- 状态：草案
+- RFC Pull Request：（留空）
+- OpenIMSDK Pull Request：（留空）
+- OpenIMSDK Issue：https://github.com/openimsdk/open-im-server/issues/924
+- 取代的提案：无
 
-## 📇Topics
+## 📇目录
 
-- RFC #0000 OpenIMSDK CTL Module Proposal
-  - [Meta](#meta)
-  - [Summary](#summary)
-  - [Definitions](#definitions)
-  - [Motivation](#motivation)
-  - [What it is](#what-it-is)
-  - [How it Works](#how-it-works)
-  - [Migration](#migration)
-  - [Drawbacks](#drawbacks)
-  - [Alternatives](#alternatives)
-  - [Prior Art](#prior-art)
-  - [Unresolved Questions](#unresolved-questions)
-  - [Spec. Changes (OPTIONAL)](#spec-changes-optional)
-  - [History](#history)
+- RFC #0000 OpenIMSDK CTL 模块提案
+  - [元信息](#元信息)
+  - [概述](#概述)
+  - [名词定义](#名词定义)
+  - [动机](#动机)
+  - [它是什么](#它是什么)
+  - [工作原理](#工作原理)
+  - [迁移](#迁移)
+  - [不足](#不足)
+  - [替代方案](#替代方案)
+  - [同类方案](#同类方案)
+  - [未解决的问题](#未解决的问题)
+  - [规范变更（可选）](#规范变更可选)
 
-## Summary
+## 概述
 
-The OpenIM CTL module proposal aims to provide an integrated tool for the OpenIM system, offering utilities for user management, system monitoring, debugging, configuration, and more. This tool will enhance the extensibility of the OpenIM system and reduce dependencies on individual modules.
+OpenIM CTL 模块提案旨在为 OpenIM 系统提供一个集成化工具，覆盖用户管理、系统监控、调试、配置等能力。该工具将提升 OpenIM 系统的可扩展性，并减少对各独立模块的依赖。
 
-## Definitions
+## 名词定义
 
-- **OpenIM**: An Instant Messaging system.
-- **`imctl`**: The control command-line tool for OpenIM.
-- **E2E Testing**: End-to-End Testing.
-- **API**: Application Programming Interface.
+- **OpenIM**：即时通讯系统。
+- **`imctl`**：OpenIM 的控制命令行工具。
+- **E2E 测试**：端到端测试。
+- **API**：应用程序编程接口。
 
-## Motivation
+## 动机
 
-- Improve the OpenIM system's extensibility and reduce dependencies on individual modules.
-- Simplify the process for testers to perform automated tests.
-- Enhance interaction with scripts and reduce the system's coupling.
-- Implement a consistent tool similar to kubectl for a streamlined user experience.
+- 提升 OpenIM 系统的可扩展性，减少对各模块的依赖。
+- 简化测试人员执行自动化测试的流程。
+- 增强与脚本的协作能力，降低系统耦合。
+- 提供类似 kubectl 的一致体验，统一使用方式。
 
-## What it is
+## 它是什么
 
-`imctl` is a command-line utility designed for OpenIM to provide functionalities including:
+`imctl` 是为 OpenIM 设计的命令行工具，提供以下能力：
 
-- User Management: Add, delete, or disable user accounts.
-- System Monitoring: View metrics like online users, message transfer rate.
-- Debugging: View logs, adjust log levels, check system states.
-- Configuration Management: Update system settings, manage plugins/modules.
-- Data Management: Backup, restore, import, or export data.
-- System Maintenance: Update, restart services, or maintenance mode.
+- 用户管理：新增、删除或禁用用户账号。
+- 系统监控：查看在线用户数、消息流转速率等指标。
+- 调试：查看日志、调整日志级别、检查系统状态。
+- 配置管理：更新系统设置，管理插件与模块。
+- 数据管理：备份、恢复、导入或导出数据。
+- 系统维护：升级、重启服务或进入维护模式。
 
-## How it Works
+## 工作原理
 
-`imctl`, inspired by kubectl, will have sub-commands and options for the functionalities mentioned. Developers, operations, and testers can invoke these commands to manage and monitor the OpenIM system.
+`imctl` 参考 kubectl 的设计，通过子命令与选项提供上述功能。开发、运维与测试人员可调用这些命令来管理和监控 OpenIM 系统。
 
-## Migration
+## 迁移
 
-Currently, the `imctl` will be housed in `tools/imctl`, and later on, the plan is to move it to `cmd/imctl`. Migration guidelines will be provided to ensure smooth transitions.
+目前 `imctl` 放在 `tools/imctl`，后续计划迁移到 `cmd/imctl`，届时会给出迁移指引，保证过渡平滑。
 
-## Drawbacks
+## 不足
 
-- Overhead in learning and adapting to a new tool for existing users.
-- Potential complexities in implementing some of the advanced functionalities.
+- 老用户需要额外学习与适应新工具。
+- 部分高级功能的实现存在一定复杂度。
 
-## Alternatives
+## 替代方案
 
-- Continue using individual modules for OpenIM management.
-- Utilize third-party tools or platforms with similar functionalities, customizing them for OpenIM.
+- 继续用各独立模块来管理 OpenIM。
+- 使用功能相近的第三方工具或平台，并针对 OpenIM 做定制。
 
-## Prior Art
+## 同类方案
 
-Kubectl from Kubernetes is a significant inspiration for `imctl`, offering a comprehensive command-line tool for managing clusters.
+`imctl` 的重要参考是 Kubernetes 的 kubectl，它为集群管理提供了完整的命令行工具。
 
-## Unresolved Questions
+## 未解决的问题
 
-- What other functionalities might be required in future versions of `imctl`?
-- What's the expected timeline for transitioning from `tools/imctl` to `cmd/imctl`?
+- 后续版本的 `imctl` 还需要哪些功能？
+- 从 `tools/imctl` 迁移到 `cmd/imctl` 的预期时间点是什么？
 
-## Spec. Changes (OPTIONAL)
+## 规范变更（可选）
 
-As of now, there are no proposed changes to the core specifications or extensions. Future changes based on community feedback might necessitate spec changes, which will be documented accordingly.
+目前暂无针对核心规范或扩展的变更提议。后续若根据反馈需要调整规范，会同步补充文档。

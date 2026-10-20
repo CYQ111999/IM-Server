@@ -32,7 +32,7 @@ const (
 	jPush    = "jpush"
 )
 
-// OfflinePusher Offline Pusher.
+// OfflinePusher 离线推送接口。
 type OfflinePusher interface {
 	Push(ctx context.Context, userIDs []string, title, content string, opts *options.Opts) error
 }

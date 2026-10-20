@@ -22,7 +22,7 @@ import (
 	"net/http"
 )
 
-// API endpoints and other constants.
+// API 接口地址及其他常量。
 const (
 	APIHost         = "http://127.0.0.1:10002"
 	UserTokenURL    = APIHost + "/auth/user_token"
@@ -31,14 +31,14 @@ const (
 	OperationID     = "1646445464564"
 )
 
-// UserTokenRequest represents a request to get a user token.
+// UserTokenRequest 表示获取用户 token 的请求。
 type UserTokenRequest struct {
 	Secret     string `json:"secret"`
 	PlatformID int    `json:"platformID"`
 	UserID     string `json:"userID"`
 }
 
-// UserTokenResponse represents a response containing a user token.
+// UserTokenResponse 表示包含用户 token 的响应。
 type UserTokenResponse struct {
 	Token   string `json:"token"`
 	ErrCode int    `json:"errCode"`
@@ -51,13 +51,13 @@ type User struct {
 	FaceURL  string `json:"faceURL"`
 }
 
-// UserRegisterRequest represents a request to register a user.
+// UserRegisterRequest 表示注册用户的请求。
 type UserRegisterRequest struct {
 	Users []User `json:"users"`
 }
 
 /* func main() {
-	// Example usage of functions
+	// 函数用法示例
 	token, err := GetUserToken("openIM123456")
 	if err != nil {
 		log.Fatalf("Error getting user token: %v", err)
@@ -70,7 +70,7 @@ type UserRegisterRequest struct {
 	}
 } */
 
-// GetUserToken requests a user token from the API.
+// GetUserToken 调用接口获取用户 token。
 func GetUserToken(userID string) (string, error) {
 	reqBody := UserTokenRequest{
 		Secret:     SecretKey,
@@ -100,7 +100,7 @@ func GetUserToken(userID string) (string, error) {
 	return tokenResp.Token, nil
 }
 
-// RegisterUser registers a new user using the API.
+// RegisterUser 调用接口注册新用户。
 func RegisterUser(token, userID, nickname, faceURL string) error {
 	user := User{
 		UserID:   userID,

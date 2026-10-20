@@ -1,9 +1,9 @@
 
-# Test Data for OpenIM Server
+# OpenIM Server 测试数据
 
-This directory (`testdata`) contains various JSON formatted data files that are used for testing the OpenIM Server.
+本目录（`testdata`）存放用于测试 OpenIM Server 的各类 JSON 格式数据文件。
 
-## Structure
+## 目录结构
 
 ```bash
 testdata/
@@ -25,25 +25,25 @@ testdata/
     └── sendMessage.json # 模拟发送消息响应
 ```
 
-Here is an overview of what each subdirectory or file represents:
+各子目录与文件的作用说明如下：
 
-- `db/` - This directory contains mock data mimicking the actual database contents.
-  - `users.json` - Represents a list of users in the system. Each entry contains user-specific information such as user ID, username, password hash, etc.
-  - `messages.json` - Contains a list of messages exchanged between users. Each message entry includes the sender's and receiver's user IDs, message content, timestamp, etc.
-- `requests/` - This directory contains mock requests that a client might send to the server.
-  - `login.json` - Represents a user login request. It includes fields such as username and password.
-  - `register.json` - Mimics a user registration request. Contains details such as username, password, email, etc.
-  - `sendMessage.json` - Simulates a message sending request from a user to another user.
-- `responses/` - This directory holds the expected server responses for the respective requests.
-  - `login.json` - Represents a successful login response from the server. It typically includes a session token and user-specific information.
-  - `register.json` - Simulates a successful registration response from the server, usually containing the new user's ID, username, etc.
-  - `sendMessage.json` - Depicts a successful message sending response from the server, confirming the delivery of the message.
+- `db/` —— 存放模拟真实数据库内容的 mock 数据。
+  - `users.json` —— 系统中的用户列表，每条记录包含用户 ID、用户名、密码哈希等信息。
+  - `messages.json` —— 用户之间往来的消息列表，每条记录包含收发双方的用户 ID、消息内容、时间戳等信息。
+- `requests/` —— 存放客户端可能发给服务端的模拟请求。
+  - `login.json` —— 用户登录请求，包含用户名、密码等字段。
+  - `register.json` —— 用户注册请求，包含用户名、密码、邮箱等信息。
+  - `sendMessage.json` —— 用户向其他用户发送消息的模拟请求。
+- `responses/` —— 存放与上述请求对应的预期服务端响应。
+  - `login.json` —— 登录成功的响应，通常包含会话 token 与用户信息。
+  - `register.json` —— 注册成功的响应，通常包含新用户的 ID、用户名等。
+  - `sendMessage.json` —— 发送消息成功的响应，表示消息已被接收。
 
-## JSON Format
+## JSON 格式
 
-All the data files in this directory are in JSON format. JSON (JavaScript Object Notation) is a lightweight data-interchange format that is easy for humans to read and write and easy for machines to parse and generate.
+本目录下所有数据文件均为 JSON 格式。JSON（JavaScript Object Notation）是一种轻量级的数据交换格式，便于人阅读与编写，也便于机器解析与生成。
 
-Here is a simple example of what a JSON file might look like:
+下面是一个简单的 JSON 文件示例：
 
 ```bash
   "users": [
@@ -61,4 +61,4 @@ Here is a simple example of what a JSON file might look like:
 
 ```
 
-In this example, "users" is an array of user objects. Each user object has an "id", "username", and "password".
+上例中，`users` 是一个用户对象数组，每个用户对象包含 `id`、`username` 和 `password`。

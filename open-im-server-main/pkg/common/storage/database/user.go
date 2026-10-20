@@ -37,14 +37,14 @@ type User interface {
 	Exist(ctx context.Context, userID string) (exist bool, err error)
 	GetAllUserID(ctx context.Context, pagination pagination.Pagination) (count int64, userIDs []string, err error)
 	GetUserGlobalRecvMsgOpt(ctx context.Context, userID string) (opt int, err error)
-	// Get user total quantity
+	// 获取用户总数
 	CountTotal(ctx context.Context, before *time.Time) (count int64, err error)
-	// Get user total quantity every day
+	// 按天统计用户新增数量
 	CountRangeEverydayTotal(ctx context.Context, start time.Time, end time.Time) (map[string]int64, error)
 
 	SortQuery(ctx context.Context, userIDName map[string]string, asc bool) ([]*model.User, error)
 
-	// CRUD user command
+	// 用户指令（command）的增删改查
 	AddUserCommand(ctx context.Context, userID string, Type int32, UUID string, value string, ex string) error
 	DeleteUserCommand(ctx context.Context, userID string, Type int32, UUID string) error
 	UpdateUserCommand(ctx context.Context, userID string, Type int32, UUID string, val map[string]any) error

@@ -122,7 +122,7 @@ func (r *RootCmd) initializeConfiguration(cmd *cobra.Command, opts *CmdOpts) err
 		return err
 	}
 
-	// Load common configuration file
+	// 加载公共配置文件
 	//opts.configMap[ShareFileName] = StructEnvPrefix{EnvPrefix: shareEnvPrefix, ConfigStruct: &r.share}
 	for configFileName, configStruct := range opts.configMap {
 		err := config.Load(configDirectory, configFileName, config.EnvPrefixMap[configFileName], configStruct)
@@ -130,7 +130,7 @@ func (r *RootCmd) initializeConfiguration(cmd *cobra.Command, opts *CmdOpts) err
 			return err
 		}
 	}
-	// Load common log configuration file
+	// 加载公共日志配置文件
 	return config.Load(configDirectory, config.LogConfigFileName, config.EnvPrefixMap[config.LogConfigFileName], &r.log)
 }
 
@@ -187,7 +187,7 @@ func (r *RootCmd) updateConfigFromEtcd(opts *CmdOpts) error {
 	if err := update(config.LogConfigFileName, &r.log); err != nil {
 		return err
 	}
-	// Load common log configuration file
+	// 加载公共日志配置文件
 	return nil
 
 }

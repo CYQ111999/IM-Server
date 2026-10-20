@@ -6,7 +6,7 @@ import (
 
 type TokenModel interface {
 	SetTokenFlag(ctx context.Context, userID string, platformID int, token string, flag int) error
-	// SetTokenFlagEx set token and flag with expire time
+	// SetTokenFlagEx 设置带过期时间的 token 与标记
 	SetTokenFlagEx(ctx context.Context, userID string, platformID int, token string, flag int) error
 	GetTokensWithoutError(ctx context.Context, userID string, platformID int) (map[string]int, error)
 	HasTemporaryToken(ctx context.Context, userID string, platformID int, token string) error

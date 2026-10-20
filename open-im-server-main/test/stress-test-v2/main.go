@@ -25,11 +25,11 @@ import (
 	"github.com/openimsdk/tools/system/program"
 )
 
-// 1. Create 100K New Users
-// 2. Create 100 100K Groups
-// 3. Create 1000 999 Groups
-// 4. Send message to 100K Groups every second
-// 5. Send message to 999 Groups every minute
+// 1. 创建 10 万新用户
+// 2. 创建 100 个 10 万人大群
+// 3. 创建 1000 个 999 人群
+// 4. 每秒向 10 万人大群发送消息
+// 5. 每分钟向 999 人群发送消息
 
 var (
 	//  Use default userIDs List for testing, need to be created.
@@ -42,7 +42,7 @@ var (
 var (
 	ApiAddress string
 
-	// API method
+	// API 方法
 	GetAdminToken      = "/auth/get_admin_token"
 	UserCheck          = "/user/account_check"
 	CreateUser         = "/user/user_register"
@@ -120,9 +120,9 @@ func initConfig(configDir string) (*config.Share, *config.API, error) {
 	return share, apiConfig, nil
 }
 
-// Post Request
+// 发送 POST 请求
 func (st *StressTest) PostRequest(ctx context.Context, url string, reqbody any) ([]byte, error) {
-	// Marshal body
+	// 序列化请求体
 	jsonBody, err := json.Marshal(reqbody)
 	if err != nil {
 		log.ZError(ctx, "Failed to marshal request body", err, "url", url, "reqbody", reqbody)
@@ -234,7 +234,7 @@ func (st *StressTest) CreateUser(ctx context.Context, userID string) (string, er
 }
 
 func (st *StressTest) CreateUserBatch(ctx context.Context, userIDs []string) error {
-	// The method can import a large number of users at once.
+	// 该方法支持一次性批量导入大量用户。
 	var userList []*sdkws.UserInfo
 
 	defer st.Once.Do(
@@ -281,7 +281,7 @@ func (st *StressTest) GetGroupMembersInfo(ctx context.Context, groupID string, u
 			// log.ZInfo(ctx, "Processing group members batch", "groupID", groupID, "batch", i/maxBatchSize+1,
 			// 	"batchUserCount", len(batchUserIDs))
 
-			// Process a single batch
+			// 处理单个批次
 			batchReq := group.GetGroupMembersInfoReq{
 				GroupID: groupID,
 				UserIDs: batchUserIDs,
@@ -299,7 +299,7 @@ func (st *StressTest) GetGroupMembersInfo(ctx context.Context, groupID string, u
 				continue
 			}
 
-			// Process the batch results
+			// 处理批次结果
 			existingMembers := make(map[string]bool)
 			for _, member := range data.Members {
 				existingMembers[member.UserID] = true
@@ -385,7 +385,7 @@ func (st *StressTest) SendMsg(ctx context.Context, userID string, groupID string
 	return nil
 }
 
-// Max userIDs number is 1000
+// userID 数量上限为 1000
 func (st *StressTest) CreateGroup(ctx context.Context, groupID string, userID string, userIDsList []string) (string, error) {
 	groupInfo := &sdkws.GroupInfo{
 		GroupID:   groupID,
@@ -513,7 +513,7 @@ func main() {
 		}
 	}
 
-	// Execute create 100k group
+	// 执行创建 10 万人大群
 	st.Wg.Add(1)
 	go func() {
 		defer st.Wg.Done()
@@ -528,7 +528,7 @@ func main() {
 				return
 
 			case <-create100kGroupTicker.C:
-				// Create 100K groups
+				// 创建 10 万人大群
 				st.Wg.Add(1)
 				go func(idx int) {
 					startTime := time.Now()
@@ -556,7 +556,7 @@ func main() {
 
 					for i := 0; i <= MaxUser/MaxInviteUserLimit; i++ {
 						InviteUserIDs := make([]string, 0)
-						// ensure TargetUserList is in group
+						// 确认目标用户已在群内
 						InviteUserIDs = append(InviteUserIDs, TestTargetUserList...)
 
 						startIdx := max(i*MaxInviteUserLimit, 1)
@@ -583,7 +583,7 @@ func main() {
 							continue
 						}
 
-						// Invite To Group
+						// 邀请用户入群
 						if err = st.InviteToGroup(st.Ctx, groupID, InviteUserIDs); err != nil {
 							log.ZError(st.Ctx, "Invite To Group failed.", err, "UserID", InviteUserIDs)
 							continue
@@ -596,7 +596,7 @@ func main() {
 		}
 	}()
 
-	// create 999 groups
+	// 创建 999 人群
 	st.Wg.Add(1)
 	go func() {
 		defer st.Wg.Done()
@@ -611,7 +611,7 @@ func main() {
 				return
 
 			case <-create999GroupTicker.C:
-				// Create 999 groups
+				// 创建 999 人群
 				st.Wg.Add(1)
 				go func(idx int) {
 					startTime := time.Now()
@@ -638,7 +638,7 @@ func main() {
 					}
 					for i := 0; i <= Max1kUser/MaxInviteUserLimit; i++ {
 						InviteUserIDs := make([]string, 0)
-						// ensure TargetUserList is in group
+						// 确认目标用户已在群内
 						InviteUserIDs = append(InviteUserIDs, TestTargetUserList...)
 
 						startIdx := max(i*MaxInviteUserLimit, 1)
@@ -665,7 +665,7 @@ func main() {
 							continue
 						}
 
-						// Invite To Group
+						// 邀请用户入群
 						if err = st.InviteToGroup(st.Ctx, groupID, InviteUserIDs); err != nil {
 							log.ZError(st.Ctx, "Invite To Group failed.", err, "UserID", InviteUserIDs)
 							continue
@@ -678,7 +678,7 @@ func main() {
 		}
 	}()
 
-	// Send message to 100K groups
+	// 向 10 万人大群发送消息
 	st.Wg.Wait()
 	fmt.Println("All groups created successfully, starting to send messages...")
 	log.ZInfo(ctx, "All groups created successfully, starting to send messages...")
@@ -699,7 +699,7 @@ func main() {
 	send100kGroupLimiter := make(chan struct{}, 20)
 	send999GroupLimiter := make(chan struct{}, 100)
 
-	// execute Send message to 100K groups
+	// 执行向 10 万人大群发送消息
 	go func() {
 		ticker := time.NewTicker(SendMsgTo100KGroupTicker)
 		defer ticker.Stop()
@@ -711,7 +711,7 @@ func main() {
 				return
 
 			case <-ticker.C:
-				// Send message to 100K groups
+				// 向 10 万人大群发送消息
 				for _, groupID := range groups100K {
 					send100kGroupLimiter <- struct{}{}
 					go func(groupID string) {
@@ -726,7 +726,7 @@ func main() {
 		}
 	}()
 
-	// execute Send message to 999 groups
+	// 执行向 999 人群发送消息
 	go func() {
 		ticker := time.NewTicker(SendMsgTo999GroupTicker)
 		defer ticker.Stop()
@@ -738,7 +738,7 @@ func main() {
 				return
 
 			case <-ticker.C:
-				// Send message to 999 groups
+				// 向 999 人群发送消息
 				for _, groupID := range groups999 {
 					send999GroupLimiter <- struct{}{}
 					go func(groupID string) {

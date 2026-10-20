@@ -81,8 +81,8 @@ type defaultOnlineCache struct {
 	client *rpcli.UserClient
 	group  *GroupLocalCache
 
-	// fullUserCache if enabled, caches the online status of all users using mapCache;
-	// otherwise, only a portion of users' online statuses (regardless of whether they are online) will be cached using lruCache.
+	// fullUserCache 开启时，使用 mapCache 缓存全部用户的在线状态；
+	// 否则只用 lruCache 缓存部分用户的在线状态（无论其是否在线）。
 	fullUserCache bool
 
 	lruCache lru.LRU[string, []int32]

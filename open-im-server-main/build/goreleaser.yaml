@@ -1,34 +1,31 @@
-# This is an example .goreleaser.yml file with some sensible defaults.
-# Make sure to check the documentation at https://goreleaser.com
+# 这是一个带有常用默认值的 .goreleaser.yml 示例文件。
+# 详细文档请参考 https://goreleaser.com
 
 before:
   hooks:
     - make clean
-    # You may remove this if you don't use go modules.
+    # 如果不使用 go modules，可以删除此项。
     - make tidy
     - make copyright.add
-    # you may remove this if you don't need go generate
+    # 如果不需要 go generate，可以删除此项。
     - go generate ./...
 
 git:
-  # What should be used to sort tags when gathering the current and previous
-  # tags if there are more than one tag in the same commit.
+  # 同一提交上存在多个 tag 时，收集当前与上一个 tag 所采用的排序方式。
   #
-  # Default: '-version:refname'
+  # 默认值：'-version:refname'
   tag_sort: -version:creatordate
 
-  # What should be used to specify prerelease suffix while sorting tags when gathering
-  # the current and previous tags if there are more than one tag in the same commit.
+  # 同一提交上存在多个 tag 时，排序时用于指定预发布后缀的方式。
   #
-  # Since: v1.17
+  # 起始版本：v1.17
   prerelease_suffix: "-"
 
-  # Tags to be ignored by GoReleaser.
-  # This means that GoReleaser will not pick up tags that match any of the
-  # provided values as either previous or current tags.
+  # GoReleaser 需要忽略的 tag。
+  # 匹配到下列任意值的 tag，都不会被识别为上一个或当前 tag。
   #
-  # Templates: allowed.
-  # Since: v1.21.
+  # 支持模板。
+  # 起始版本：v1.21。
   ignore_tags:
     - nightly
     # - "{{.Env.IGNORE_TAG}}"
@@ -189,11 +186,11 @@ builds:
       - arm64
 
 
-# TODO：Need a script, such as the init - release to help binary to find the right directory
-# ,which can be compiled binary
+# TODO：需要一个脚本（例如 init - release），帮助二进制定位到正确的目录，
+# 也就是实际参与编译的二进制所在目录
 archives:
   - format: tar.gz
-    # this name template makes the OS and Arch compatible with the results of uname.
+    # 该名称模板使操作系统与架构标识与 uname 的输出保持一致。
     name_template: >-
       {{ .ProjectName }}_
       {{- title .Os }}_
@@ -202,14 +199,14 @@ archives:
       {{- else }}{{ .Arch }}{{ end }}
       {{- if .Arm }}v{{ .Arm }}{{ end }}
 
-    # Set this to true if you want all files in the archive to be in a single directory.
-    # If set to true and you extract the archive 'goreleaser_Linux_arm64.tar.gz',
-    # you'll get a folder 'goreleaser_Linux_arm64'.
-    # If set to false, all files are extracted separately.
-    # You can also set it to a custom folder name (templating is supported).
+    # 若希望压缩包内所有文件都放进同一个目录，把此项设为 true。
+    # 设为 true 时，解压 'goreleaser_Linux_arm64.tar.gz' 会得到一个
+    # 名为 'goreleaser_Linux_arm64' 的目录。
+    # 设为 false 时，所有文件平铺解压。
+    # 也可以设为自定义目录名（支持模板）。
     wrap_in_directory: true
 
-    # use zip for windows archives
+    # Windows 平台的压缩包使用 zip 格式
     files:
       - CHANGELOG/*
       - deployment/*
@@ -222,26 +219,26 @@ archives:
       - src: "*.md"
         dst: docs
 
-        # Strip parent folders when adding files to the archive.
+        # 加入压缩包时去掉父级目录。
         strip_parent: true
 
-        # File info.
-        # Not all fields are supported by all formats available formats.
+        # 文件信息。
+        # 并非所有压缩格式都支持这里的全部字段。
         #
-        # Default: copied from the source file
+        # 默认值：从源文件复制
         info:
-          # Templates: allowed (since v1.14)
+          # 支持模板（v1.14 起）
           owner: root
 
-          # Templates: allowed (since v1.14)
+          # 支持模板（v1.14 起）
           group: root
 
-          # Must be in time.RFC3339Nano format.
+          # 必须为 time.RFC3339Nano 格式。
           #
-          # Templates: allowed (since v1.14)
+          # 支持模板（v1.14 起）
           mtime: "{{ .CommitDate }}"
 
-          # File mode.
+          # 文件权限。
           mode: 0644
 
     format_overrides:
@@ -381,8 +378,8 @@ nfpms:
       - golang
 
 
-# The lines beneath this are called `modelines`. See `:help modeline`
-# Feel free to remove those if you don't want/use them.
+# 下面几行称为 modeline（模式行），详见 `:help modeline`
+# 如果不需要或不使用，可以自行删除这几行。
 # yaml-language-server: $schema=https://goreleaser.com/static/schema.json
 # vim: set ts=2 sw=2 tw=0 fo=cnqoj
 
@@ -391,21 +388,21 @@ dist: ./_output/dist
 
 # .goreleaser.yaml
 milestones:
-  # You can have multiple milestone configs
+  # 可以配置多个 milestone
   -
-    # Repository for the milestone
-    # Default is extracted from the origin remote URL
+    # milestone 所属的仓库
+    # 默认从 origin 远程地址中提取
     repo:
       owner: OpenIMSDK
       name: Open-IM-Server
 
-    # Whether to close the milestone
+    # 是否关闭该 milestone
     close: true
 
-    # Fail release on errors, such as missing milestone.
+    # 出错时中断发布，例如 milestone 不存在。
     fail_on_error: false
 
-    # Name of the milestone
+    # milestone 名称
     #
     # Default: '{{ .Tag }}'
     name_template: "Current Release"

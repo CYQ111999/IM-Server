@@ -31,7 +31,7 @@ func TestUsersDB2Pb(t *testing.T) {
 		args       args
 		wantResult []*sdkws.UserInfo
 	}{
-		// TODO: Add test cases.
+		// TODO: 补充测试用例。
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -51,7 +51,7 @@ func TestUserPb2DB(t *testing.T) {
 		args args
 		want *relationtb.User
 	}{
-		// TODO: Add test cases.
+		// TODO: 补充测试用例。
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

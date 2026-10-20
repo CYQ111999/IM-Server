@@ -24,12 +24,12 @@ import (
 )
 
 var (
-	// The default template version.
+	// 默认模板版本。
 	defaultTemplateVersion = "v1.3.0"
 )
 
 func main() {
-	// Define the URL to get the latest version
+	// 定义获取最新版本号的 URL
 	// latestVersionURL := "https://github.com/openimsdk/chat/releases/latest"
 	// latestVersion, err := getLatestVersion(latestVersionURL)
 	// if err != nil {
@@ -40,34 +40,34 @@ func main() {
 
 	// getLatestVersion
 
-	// Construct the download URL
+	// 拼接下载 URL
 	downloadURL := fmt.Sprintf("https://github.com/openimsdk/chat/releases/download/%s/chat_Linux_x86_64.tar.gz", latestVersion)
 
-	// Set the installation directory
+	// 设置安装目录
 	installDir := "/tmp/chat"
 
-	// Clear the installation directory before proceeding
+	// 执行前先清空安装目录
 	err := os.RemoveAll(installDir)
 	if err != nil {
 		fmt.Printf("Failed to clear installation directory: %v\n", err)
 		return
 	}
 
-	// Create the installation directory
+	// 创建安装目录
 	err = os.MkdirAll(installDir, 0755)
 	if err != nil {
 		fmt.Printf("Failed to create installation directory: %v\n", err)
 		return
 	}
 
-	// Download and extract OpenIM Chat to the installation directory
+	// 下载 OpenIM Chat 并解压到安装目录
 	err = downloadAndExtract(downloadURL, installDir)
 	if err != nil {
 		fmt.Printf("Failed to download and extract OpenIM Chat: %v\n", err)
 		return
 	}
 
-	// Create configuration file directory
+	// 创建配置文件目录
 	configDir := filepath.Join(installDir, "config")
 	err = os.MkdirAll(configDir, 0755)
 	if err != nil {
@@ -75,7 +75,7 @@ func main() {
 		return
 	}
 
-	// Download configuration files
+	// 下载配置文件
 	configURL := "https://raw.githubusercontent.com/openimsdk/chat/main/config/config.yaml"
 	err = downloadAndExtract(configURL, configDir)
 	if err != nil {
@@ -83,7 +83,7 @@ func main() {
 		return
 	}
 
-	// Define the processes to be started
+	// 定义需要启动的进程
 	cmds := []string{
 		"admin-api",
 		"admin-rpc",
@@ -91,12 +91,12 @@ func main() {
 		"chat-rpc",
 	}
 
-	// Start each process in a new goroutine
+	// 每个进程在独立的 goroutine 中启动
 	for _, cmd := range cmds {
 		go startProcess(filepath.Join(installDir, cmd))
 	}
 
-	// Block the main thread indefinitely
+	// 永久阻塞主线程
 	select {}
 }
 
@@ -112,12 +112,12 @@ func main() {
 // 		return defaultTemplateVersion, nil
 // 	}
 
-	// Extract the version number from the URL
+	// 从 URL 中解析版本号
 	latestVersion := filepath.Base(location)
 	return latestVersion, nil
 } */
 
-// downloadAndExtract downloads a file from a URL and extracts it to a destination directory.
+// downloadAndExtract 从 URL 下载文件并解压到目标目录。
 func downloadAndExtract(url, destDir string) error {
 	resp, err := http.Get(url)
 	if err != nil {
@@ -129,7 +129,7 @@ func downloadAndExtract(url, destDir string) error {
 		return fmt.Errorf("error downloading file, HTTP status code: %d", resp.StatusCode)
 	}
 
-	// Create the destination directory
+	// 创建目标目录
 	err = os.MkdirAll(destDir, 0755)
 	if err != nil {
 		return err
@@ -143,20 +143,20 @@ func downloadAndExtract(url, destDir string) error {
 	}
 	defer file.Close()
 
-	// Copy the downloaded file
+	// 复制已下载的文件
 	_, err = io.Copy(file, resp.Body)
 	if err != nil {
 		return err
 	}
 
-	// Extract the file
+	// 解压文件
 	cmd := exec.Command("tar", "xzvf", filePath, "-C", destDir)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	return cmd.Run()
 }
 
-// startProcess starts a process and prints any errors encountered.
+// startProcess 启动进程并输出遇到的错误。
 func startProcess(cmdPath string) {
 	cmd := exec.Command(cmdPath)
 	cmd.Stdout = os.Stdout

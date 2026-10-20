@@ -1,6 +1,6 @@
-{{/* OpenIM Alertmanager email template.
-This template renders both firing and resolved alerts.
-Each alert entry reads labels and annotations from Prometheus rule definitions. */}}
+{{/* OpenIM Alertmanager 邮件模板。
+本模板同时渲染触发中（firing）与已恢复（resolved）的告警。
+每条告警会读取 Prometheus 规则中定义的标签与注解。 */}}
 {{ define "email.to.html" }}
 {{ if eq .Status "firing" }}
     {{ range .Alerts }}

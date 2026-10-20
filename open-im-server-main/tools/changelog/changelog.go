@@ -12,16 +12,16 @@ import (
 )
 
 // You can specify a tag as a command line argument to generate the changelog for a specific version.
-// Example: go run tools/changelog/changelog.go v0.0.33
-// If no tag is provided, the latest release will be used.
+// 示例：go run tools/changelog/changelog.go v0.0.33
+// 不传 tag 时默认使用最新的 release。
 
-// Setting repo owner and repo name by generate changelog
+// 生成 changelog 前需设置仓库所有者与仓库名
 const (
 	repoOwner = "openimsdk"
 	repoName  = "open-im-server"
 )
 
-// GitHubRepo struct represents the repo details.
+// GitHubRepo 结构体保存仓库的基本信息。
 type GitHubRepo struct {
 	Owner         string
 	Repo          string
@@ -40,7 +40,7 @@ type GitHubError struct {
 	Message string `json:"message"`
 }
 
-// Method to classify and format release notes.
+// 对 release note 进行分类并格式化。
 func (g *GitHubRepo) classifyReleaseNotes(body string) map[string][]string {
 	result := map[string][]string{
 		"feat":     {},
@@ -55,7 +55,7 @@ func (g *GitHubRepo) classifyReleaseNotes(body string) map[string][]string {
 	rePR := regexp.MustCompile(`(?i)in (https://github\.com/[^\s]+/pull/(\d+))`)
 
 	for line := range strings.SplitSeq(body, "\n") {
-		// Skip lines that contain "deps: Merge"
+		// 跳过包含 "deps: Merge" 的行
 		if strings.Contains(strings.ToLower(line), "deps: merge #") {
 			continue
 		}
@@ -64,7 +64,7 @@ func (g *GitHubRepo) classifyReleaseNotes(body string) map[string][]string {
 		if strings.Contains(strings.ToLower(line), "**full changelog**") {
 			matches := regexp.MustCompile(`(?i)\*\*full changelog\*\*: (https://github\.com/[^\s]+/compare/([^\s]+))`).FindStringSubmatch(line)
 			if len(matches) > 2 {
-				// Format the Full Changelog link with title
+				// 格式化 Full Changelog 链接及其标题
 				g.FullChangelog = fmt.Sprintf("[%s](%s)", matches[2], matches[1])
 			}
 			continue // Skip further processing for this line.
@@ -100,7 +100,7 @@ func (g *GitHubRepo) classifyReleaseNotes(body string) map[string][]string {
 				formattedLine := fmt.Sprintf("* %s [#%s](%s)", strings.Split(line, " by ")[0][2:], prNumber, prURL)
 				result[category] = append(result[category], formattedLine)
 			} else {
-				// If no PR link is found, just add the line as is
+				// 未找到 PR 链接时，原样添加该行
 				result[category] = append(result[category], line)
 			}
 		}
@@ -109,7 +109,7 @@ func (g *GitHubRepo) classifyReleaseNotes(body string) map[string][]string {
 	return result
 }
 
-// Method to generate the final changelog.
+// 生成最终的 changelog。
 func (g *GitHubRepo) generateChangelog(tag, date, htmlURL, body string) (string, error) {
 	if tag == "" {
 		return "", errors.New("release tag is empty")
@@ -123,10 +123,10 @@ func (g *GitHubRepo) generateChangelog(tag, date, htmlURL, body string) (string,
 
 	sections := g.classifyReleaseNotes(body)
 
-	// Convert ISO 8601 date to simpler format (YYYY-MM-DD)
+	// 将 ISO 8601 日期转换为 YYYY-MM-DD 格式
 	formattedDate := date[:10]
 
-	// Changelog header with tag, date, and links.
+	// changelog 头部，包含 tag、日期和链接。
 	changelog := fmt.Sprintf("## [%s](%s) \t(%s)\n\n", tag, htmlURL, formattedDate)
 
 	if len(sections["feat"]) > 0 {
@@ -155,15 +155,15 @@ func (g *GitHubRepo) generateChangelog(tag, date, htmlURL, body string) (string,
 	return changelog, nil
 }
 
-// Method to fetch release data from GitHub API.
+// 从 GitHub API 获取 release 数据。
 func (g *GitHubRepo) fetchReleaseData(version string) (*ReleaseData, error) {
 	var apiURL string
 
 	if version == "" {
-		// Fetch the latest release.
+		// 获取最新的 release。
 		apiURL = fmt.Sprintf("https://api.github.com/repos/%s/%s/releases/latest", g.Owner, g.Repo)
 	} else {
-		// Fetch a specific version.
+		// 获取指定版本。
 		apiURL = fmt.Sprintf("https://api.github.com/repos/%s/%s/releases/tags/%s", g.Owner, g.Repo, version)
 	}
 
@@ -197,7 +197,7 @@ func (g *GitHubRepo) fetchReleaseData(version string) (*ReleaseData, error) {
 func main() {
 	repo := &GitHubRepo{Owner: repoOwner, Repo: repoName}
 
-	// Get the version from command line arguments, if provided
+	// 从命令行参数中获取版本号（若已提供）
 	var version string // Default is use latest
 
 	if len(os.Args) > 1 {
@@ -211,7 +211,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Generate and print the formatted changelog
+	// 生成并打印格式化后的 changelog
 	changelog, err := repo.generateChangelog(releaseData.TagName, releaseData.Published, releaseData.HtmlUrl, releaseData.Body)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "Error generating changelog:", err)

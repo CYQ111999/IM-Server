@@ -14,7 +14,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Use the Available field to get the available memory
+	// 使用 Available 字段获取可用内存
 	availableMemoryGB := float64(vMem.Available) / float64(1024*1024*1024)
 
 	if availableMemoryGB < 1.0 {

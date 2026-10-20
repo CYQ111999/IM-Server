@@ -1,21 +1,21 @@
-# Notes about go workspace
+# 关于 go workspace 的说明
 
-As openim is using go1.18's [workspace feature](https://go.dev/doc/tutorial/workspaces), once you add a new module, you need to run `go work use -r .` at root directory to update the workspace synced.
+OpenIM 使用了 go1.18 的 [workspace 特性](https://go.dev/doc/tutorial/workspaces)。新增模块后，需要在根目录执行 `go work use -r .`，让 workspace 保持同步。
 
-### Create a new extensions
+### 新建一个工具
 
-1. Create your tools_name directory in pkg `/tools` first and cd into it.
-2. Init the project.
-3. Then `go work use -r .` at current directory to update the workspace.
-4. Create your tools
+1. 先在 `/tools` 下创建以工具名命名的目录，并进入该目录。
+2. 初始化工程。
+3. 在当前目录执行 `go work use -r .` 更新 workspace。
+4. 编写你的工具。
 
-You can execute the following commands to do things above:
+可以执行下面的命令完成上述步骤：
 
 ```bash
-# edit the CRD_NAME and CRD_GROUP to your own
+# 把 CRD_NAME 和 CRD_GROUP 改成你自己的名称
 export OPENIM_TOOLS_NAME=<Changeme>
 
-# copy and paste to create a new CRD and Controller
+# 复制粘贴执行，创建新的工具模块
 mkdir tools/${OPENIM_TOOLS_NAME}
 cd tools/${OPENIM_TOOLS_NAME}
 go mod init github.com/openimsdk/open-im-server/tools/${OPENIM_TOOLS_NAME}

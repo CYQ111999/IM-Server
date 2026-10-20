@@ -1,4 +1,4 @@
-# Global Alertmanager runtime and SMTP settings.
+# Alertmanager 全局运行时与 SMTP 配置。
 global:
   resolve_timeout: 5m # Wait time before an alert is considered resolved when no further updates are received.
   smtp_from: alert@openim.io # Sender address displayed in alert emails.
@@ -11,7 +11,7 @@ global:
 templates:
   - /etc/alertmanager/email.tmpl # Go template file used to render HTML email content.
 
-# Root routing tree for all incoming alerts.
+# 所有告警的根路由树。
 route:
   group_by: [ 'alertname' ] # Alerts sharing this label value are batched into one notification.
   group_wait: 5s # Initial delay before sending the first notification for a new alert group.

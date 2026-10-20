@@ -23,10 +23,10 @@ import (
 func main() {
 	rawJWT := `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySUQiOiI4MjkzODEzMTgzIiwiUGxhdGZvcm1JRCI6NSwiZXhwIjoxNzA2NTk0MTU0LCJuYmYiOjE2OTg4MTc4NTQsImlhdCI6MTY5ODgxODE1NH0.QCJHzU07SC6iYBoFO6Zsm61TNDor2D89I4E3zg8HHHU`
 
-	// Verify the token
+	// 校验 token
 	claims := &jwt.MapClaims{}
 	parsedT, err := jwt.ParseWithClaims(rawJWT, claims, func(token *jwt.Token) (any, error) {
-		// Validate the alg is HMAC signature
+		// 校验签名算法是否为 HMAC
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}

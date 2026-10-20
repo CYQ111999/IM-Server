@@ -28,9 +28,9 @@ var (
 	customToolsDir  = "tools"   // tools source code directory, default is "tools"
 )
 
-// Build support specifical binary build.
+// Build 支持只构建指定的二进制。
 //
-// Example: `mage build openim-api openim-rpc-user seq`
+// 示例：`mage build openim-api openim-rpc-user seq`
 func Build() {
 	flag.Parse()
 	bin := flag.Args()

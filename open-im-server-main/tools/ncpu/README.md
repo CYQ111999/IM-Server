@@ -1,39 +1,39 @@
 # ncpu
 
-**ncpu** is a simple utility to fetch the number of CPU cores across different operating systems.
+**ncpu** 是一个小工具，用于跨操作系统获取 CPU 核心数。
 
-## Introduction
+## 简介
 
-In various scenarios, especially while compiling code, it's beneficial to know the number of available CPU cores to optimize the build process. However, the command to fetch the CPU core count differs between operating systems. For example, on Linux, we use `nproc`, while on macOS, it's `sysctl -n hw.ncpu`. The `ncpu` utility provides a unified way to obtain this number, regardless of the platform.
+在很多场景下（尤其是编译代码时），知道可用的 CPU 核心数有助于优化构建过程。但获取核心数的命令在不同操作系统上并不一样：Linux 下用 `nproc`，macOS 下用 `sysctl -n hw.ncpu`。`ncpu` 提供了一种跨平台统一的方式，无需再关心具体平台。
 
-## Usage
+## 使用方式
 
-To retrieve the number of CPU cores, simply use the `ncpu` command:
+获取 CPU 核心数只需执行 `ncpu` 命令：
 
 ```bash
 $ ncpu
 ```
 
-This will return an integer representing the number of available CPU cores.
+它会返回一个整数，表示可用的 CPU 核心数。
 
-### Example:
+### 示例
 
-Let's say you're compiling a project using `make`. To utilize all the CPU cores for the compilation process, you can use:
+假设你正在用 `make` 编译项目，想用上全部 CPU 核心，可以这样写：
 
 ```bash
-$ make -j $(ncpu) build # or any other build command
+$ make -j $(ncpu) build # 或其它构建命令
 ```
 
-The above command will ensure the build process takes advantage of all the available CPU cores, thereby potentially speeding up the compilation.
+上面的命令会让构建过程利用所有可用核心，从而加快编译速度。
 
-## Why use `ncpu`?
+## 为什么用 `ncpu`？
 
-- **Cross-platform compatibility**: No need to remember or detect which OS-specific command to use. Just use `ncpu`!
-  
-- **Ease of use**: A simple and intuitive command that's easy to incorporate into scripts or command-line operations.
+- **跨平台**：不必记住或判断当前系统该用哪条命令，直接用 `ncpu` 即可。
 
-- **Consistency**: Ensures consistent behavior and output across different systems and environments.
+- **易于使用**：命令简单直观，方便写进脚本或命令行操作。
 
-## Installation
+- **行为一致**：在不同系统与环境下输出的行为保持一致。
 
-(Include installation steps here, e.g., how to clone the repo, build the tool, or install via package manager.)
+## 安装
+
+（在此补充安装步骤，例如如何克隆仓库、编译该工具，或通过包管理器安装。）

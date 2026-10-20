@@ -1,30 +1,30 @@
-# Global Prometheus runtime settings.
+# Prometheus 全局运行时配置。
 global:
   scrape_interval:     15s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
   evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
-  # scrape_timeout defaults to 10s unless overridden in a specific scrape job.
+  # scrape_timeout 默认为 10s，除非在具体抓取任务中覆盖。
 
-# Alertmanager endpoints that receive alert events from Prometheus.
+# Alertmanager 地址，用于接收 Prometheus 推送的告警事件。
 alerting:
   alertmanagers:
     - static_configs:
         - targets: [127.0.0.1:19093] # Alertmanager address in host:port format.
 
-# Rule files loaded by Prometheus.
+# Prometheus 加载的规则文件。
 rule_files:
   - instance-down-rules.yml # Default OpenIM alert rules; add more files here if needed.
 # - first_rules.yml
 # - second_rules.yml
 
-# Scrape jobs used to collect infrastructure and OpenIM service metrics.
+# 用于采集基础设施与 OpenIM 服务指标的抓取任务。
 scrape_configs:
-  # The job_name value is attached as the "job" label in collected time series.
+  # job_name 会作为 “job” 标签附加到采集到的时间序列上。
   - job_name: node_exporter
     static_configs:
       - targets: [ 127.0.0.1:19100 ] # node_exporter endpoint for host CPU, memory, disk, and network metrics.
 
-  # OpenIM services are discovered dynamically from the admin API.
-  # For multi-host deployments, replace 127.0.0.1 with a reachable internal address.
+  # OpenIM 服务通过 admin API 动态发现。
+  # 多机部署时，请把 127.0.0.1 换成可访问的内网地址。
 
   - job_name: openimserver-openim-api
     http_sd_configs:

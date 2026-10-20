@@ -82,7 +82,7 @@ services:
     environment:
       - ETCD_NAME=s1
       - ETCD_DATA_DIR=/etcd-data
-      # Authentication is managed below; no-auth requires a trusted, isolated network.
+      # 认证在下方配置；关闭认证要求网络可信且隔离。
       - ALLOW_NONE_AUTHENTICATION=yes
       - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
       - ETCD_ADVERTISE_CLIENT_URLS=http://0.0.0.0:2379
@@ -92,7 +92,7 @@ services:
       - ETCD_INITIAL_CLUSTER_TOKEN=tkn
       - ETCD_INITIAL_CLUSTER_STATE=new
 
-      ## Optional: Enable etcd authentication by setting the following credentials
+      ## 可选：通过下面的凭据开启 etcd 认证
       # - ETCD_ROOT_USER=root
       # - ETCD_ROOT_PASSWORD=openIM123
       # - ETCD_USERNAME=openIM
@@ -179,39 +179,39 @@ services:
     environment:
       #KAFKA_HEAP_OPTS: "-Xms128m -Xmx256m"
       TZ: Asia/Shanghai
-      # Unique identifier for the Kafka node (required in controller mode)
+      # Kafka 节点的唯一标识（controller 模式下必填）
       KAFKA_CFG_NODE_ID: 0
-      # Defines the roles this Kafka node plays: broker, controller, or both
+      # 指定该 Kafka 节点承担的角色：broker、controller，或两者兼具
       KAFKA_CFG_PROCESS_ROLES: controller,broker
-      # Specifies which nodes are controller nodes for quorum voting.
-      # The syntax follows the KRaft mode (no ZooKeeper): node.id@host:port
-      # The controller listener endpoint here is kafka:9093
+      # 指定哪些节点作为 controller 节点参与仲裁投票。
+      # 语法遵循 KRaft 模式（不再依赖 ZooKeeper）：node.id@host:port
+      # controller 监听地址为 kafka:9093
       KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 0@kafka:9093
-      # Specifies which listener is used for controller-to-controller communication
+      # 指定 controller 之间通信所用的监听器
       KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
-      # Default number of partitions for new topics
+      # 新建 topic 的默认分区数
       KAFKA_NUM_PARTITIONS: 8
-      # Whether to enable automatic topic creation
+      # 是否允许自动创建 topic
       KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: "true"
-      # Kafka internal listeners; Kafka supports multiple ports with different protocols
-      # Each port is used for a specific purpose: INTERNAL for internal broker communication,
-      # CONTROLLER for controller communication, EXTERNAL for external client connections.
-      # These logical listener names are mapped to actual protocols via KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP
-      # In short, Kafka is listening on three logical ports: 9092 for internal communication,
-      # 9093 for controller traffic, and 9094 for external access.
+      # Kafka 内部监听器；Kafka 支持在多个端口上使用不同协议
+      # 每个端口的用途不同：INTERNAL 用于 broker 之间通信，
+      # CONTROLLER 用于 controller 通信，EXTERNAL 用于外部客户端连接。
+      # 这些逻辑监听器名称通过 KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP 映射到实际协议
+      # 简而言之，Kafka 监听三个逻辑端口：9092 用于内部通信，
+      # 9093 用于 controller 通信，9094 用于外部访问。
       KAFKA_CFG_LISTENERS: "INTERNAL://:9092,CONTROLLER://:9093,EXTERNAL://:9094"
-      # Addresses advertised to clients. INTERNAL://kafka:9092 uses the internal Docker service name 'kafka',
-      # so other containers can access Kafka via kafka:9092.
-      # EXTERNAL://localhost:19094 is the address external clients (e.g., in the LAN) should use to connect.
-      # If Kafka is deployed on a different machine than IM, 'localhost' should be replaced with the LAN IP.
+      # 对外公布的地址。INTERNAL://kafka:9092 使用 Docker 内部服务名 kafka，
+      # 因此其他容器可通过 kafka:9092 访问 Kafka。
+      # EXTERNAL://localhost:19094 是外部客户端（例如局域网内）应使用的连接地址。
+      # 若 Kafka 与 IM 部署在不同机器上，需把 localhost 换成局域网 IP。
       KAFKA_CFG_ADVERTISED_LISTENERS: "INTERNAL://kafka:9092,EXTERNAL://localhost:19094"
-      # Maps logical listener names to actual protocols.
-      # Supported protocols include: PLAINTEXT, SSL, SASL_PLAINTEXT, SASL_SSL
+      # 将逻辑监听器名称映射到实际协议。
+      # 支持的协议包括：PLAINTEXT、SSL、SASL_PLAINTEXT、SASL_SSL
       KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,INTERNAL:PLAINTEXT"
-      # Defines which listener is used for inter-broker communication within the Kafka cluster
+      # 指定 Kafka 集群内部 broker 之间通信用哪个监听器
       KAFKA_CFG_INTER_BROKER_LISTENER_NAME: "INTERNAL"
 
-      # Authentication configuration variables - comment out to disable auth
+      # 认证相关配置；注释掉即可关闭认证
       # KAFKA_USERNAME: "openIM"
       # KAFKA_PASSWORD: "openIM123"
     command: >
@@ -220,7 +220,7 @@ services:
           echo "=== Kafka SASL Authentication ENABLED ==="
           echo "Username: $${KAFKA_USERNAME}"
           
-          # Set environment variables for SASL authentication
+          # 为 SASL 认证设置环境变量
           export KAFKA_CFG_LISTENERS="SASL_PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9094"
           export KAFKA_CFG_ADVERTISED_LISTENERS="SASL_PLAINTEXT://kafka:9092,EXTERNAL://localhost:19094"
           export KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP="CONTROLLER:PLAINTEXT,EXTERNAL:SASL_PLAINTEXT,SASL_PLAINTEXT:SASL_PLAINTEXT"
@@ -231,7 +231,7 @@ services:
           export KAFKA_CLIENT_PASSWORDS="$${KAFKA_PASSWORD}"
         fi
         
-        # Start Kafka with the configured environment
+        # 使用上述配置的环境变量启动 Kafka
         exec /opt/bitnami/scripts/kafka/entrypoint.sh /opt/bitnami/scripts/kafka/run.sh
       '
     networks:

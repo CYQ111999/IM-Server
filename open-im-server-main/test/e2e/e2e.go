@@ -21,31 +21,29 @@ import (
 	"github.com/openimsdk/open-im-server/v3/test/e2e/api/user"
 )
 
-// RunE2ETests checks configuration parameters (specified through flags) and then runs
-// E2E tests using the Ginkgo runner.
-// If a "report directory" is specified, one or more JUnit test reports will be
-// generated in this directory, and cluster logs will also be saved.
-// This function is called on each Ginkgo node in parallel mode.
+// RunE2ETests 先校验配置参数（通过命令行 flag 传入），再使用 Ginkgo 运行 E2E 测试。
+// 若指定了“报告目录”，该目录下会生成一个或多个 JUnit 测试报告，集群日志也会一并保存。
+// 并行模式下，该函数会在每个 Ginkgo 节点上被调用。
 func RunE2ETests(t *testing.T) {
 
-	// Example usage of new functions
+	// 新函数的用法示例
 	token, _ := gettoken.GetUserToken("openIM123456")
 
-	// Example of getting user info
+	// 示例：获取用户信息
 	_ = user.GetUsersInfo(token, []string{"user1", "user2"})
 
-	// Example of updating user info
+	// 示例：更新用户信息
 	_ = user.UpdateUserInfo(token, "user1", "NewNickname", "https://github.com/openimsdk/open-im-server/blob/main/assets/logo/openim-logo.png")
 
-	// Example of getting users' online status
+	// 示例：获取用户在线状态
 	_ = user.GetUsersOnlineStatus(token, []string{"user1", "user2"})
 
-	// Example of forcing a logout
+	// 示例：强制用户下线
 	_ = user.ForceLogout(token, "4950983283", 2)
 
-	// Example of checking user account
+	// 示例：校验用户账号
 	_ = user.CheckUserAccount(token, []string{"openIM123456", "anotherUserID"})
 
-	// Example of getting users
+	// 示例：批量获取用户
 	_ = user.GetUsers(token, 1, 100)
 }

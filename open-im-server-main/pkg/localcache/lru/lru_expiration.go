@@ -97,7 +97,7 @@ func (x *ExpirationLRU[K, V]) GetBatch(keys []K, fetch func(keys []K) (map[K]V, 
 		x.lock.Unlock()
 	}
 
-	// any keys not returned from fetch remain absent (no cache write)
+	// fetch 未返回的 key 保持缺席状态（不写入缓存）
 	return results, err
 }
 

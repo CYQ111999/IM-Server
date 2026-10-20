@@ -74,7 +74,7 @@ func (f *FriendLocalCache) isFriend(ctx context.Context, possibleFriendUserID, u
 	}, cachekey.GetFriendIDsKey(possibleFriendUserID)))
 }
 
-// IsBlack possibleBlackUserID selfUserID.
+// IsBlack 判断 possibleBlackUserID 是否为 selfUserID 的黑名单用户。
 func (f *FriendLocalCache) IsBlack(ctx context.Context, possibleBlackUserID, userID string) (val bool, err error) {
 	res, err := f.isBlack(ctx, possibleBlackUserID, userID)
 	if err != nil {
@@ -83,7 +83,7 @@ func (f *FriendLocalCache) IsBlack(ctx context.Context, possibleBlackUserID, use
 	return res.InUser2Blacks, nil
 }
 
-// IsBlack possibleBlackUserID selfUserID.
+// IsBlack 判断 possibleBlackUserID 是否为 selfUserID 的黑名单用户。
 func (f *FriendLocalCache) isBlack(ctx context.Context, possibleBlackUserID, userID string) (val *relation.IsBlackResp, err error) {
 	log.ZDebug(ctx, "FriendLocalCache isBlack req", "possibleBlackUserID", possibleBlackUserID, "userID", userID)
 	defer func() {

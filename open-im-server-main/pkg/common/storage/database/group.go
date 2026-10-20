@@ -28,9 +28,9 @@ type Group interface {
 	Find(ctx context.Context, groupIDs []string) (groups []*model.Group, err error)
 	Take(ctx context.Context, groupID string) (group *model.Group, err error)
 	Search(ctx context.Context, keyword string, pagination pagination.Pagination) (total int64, groups []*model.Group, err error)
-	// Get Group total quantity
+	// 获取群组总数
 	CountTotal(ctx context.Context, before *time.Time) (count int64, err error)
-	// Get Group total quantity every day
+	// 按天统计群组新增数量
 	CountRangeEverydayTotal(ctx context.Context, start time.Time, end time.Time) (map[string]int64, error)
 
 	FindJoinSortGroupID(ctx context.Context, groupIDs []string) ([]string, error)

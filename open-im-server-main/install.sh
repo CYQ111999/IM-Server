@@ -21,67 +21,67 @@ set -e
 
 
 ############################## OpenIM Github ##############################
-# ... rest of the script ...
+# …… 脚本其余内容 ……
 
 # TODO
-# You can configure this script in three ways. 
-# 1. First, set the variables in this column with more comments. 
-# 2. The second is to pass an environment variable via a flag such as --help. 
-# 3. The third way is to set the variable externally, or pass it in as an environment variable
+# 该脚本有三种配置方式。
+# 1. 直接修改下方带注释的变量。
+# 2. 通过 --help 等命令行参数传入。
+# 3. 在外部设置变量，或通过环境变量传入。
 
-# Default configuration for OpenIM Repo
-# The OpenIM Repo settings can be customized according to your needs.
+# OpenIM 仓库的默认配置
+# 可按需要自行调整 OpenIM 仓库相关设置。
 
-# OpenIM Repo owner, by default it's set to "OpenIMSDK". If you're using a different owner, replace accordingly.
+# OpenIM 仓库所有者，默认为 "OpenIMSDK"；若使用其他所有者请相应替换。
 OWNER="OpenIMSDK" 
 
-# The repository name, by default it's "Open-IM-Server". If you're using a different repository, replace accordingly.
+# 仓库名称，默认为 "Open-IM-Server"；若使用其他仓库请相应替换。
 REPO="Open-IM-Server" 
 
-# Version of Go you want to use, make sure it is compatible with your OpenIM-Server requirements.
-# Default is 1.18, if you want to use a different version, replace accordingly.
+# 使用的 Go 版本，需与 OpenIM-Server 的要求兼容。
+# 默认为 1.18，如需其他版本请相应替换。
 GO_VERSION="1.20"
 
-# Default HTTP_PORT is 80. If you want to use a different port, uncomment and replace the value.
+# 默认 HTTP_PORT 为 80；如需其他端口，取消注释并替换该值。
 # HTTP_PORT=80
 
-# CPU core number for concurrent execution. By default it's determined automatically.
-# Uncomment the next line if you want to set it manually.
+# 并发执行所用的 CPU 核心数，默认自动确定。
+# 如需手动指定，取消下一行的注释。
 # CPU=$(grep -c ^processor /proc/cpuinfo)
 
-# By default, the script uses the latest tag from OpenIM-Server releases.
-# If you want to use a specific tag, uncomment and replace "v3.0.0" with the desired tag.
+# 默认使用 OpenIM-Server release 中的最新 tag。
+# 如需指定 tag，取消注释并把 "v3.0.0" 换成目标 tag。
 # LATEST_TAG=v3.0.0
 
-# Default OpenIM install directory is /tmp. If you want to use a different directory, uncomment and replace "/test".
+# 默认安装目录为 /tmp；如需其他目录，取消注释并替换 "/test"。
 # DOWNLOAD_OPENIM_DIR="/test"
 
-# GitHub proxy settings. If you are using a proxy, uncomment and replace the empty field with your proxy URL.
+# GitHub 代理设置；如使用代理，取消注释并把空值替换为代理地址。
 PROXY=
 
-# If you have a GitHub token, replace the empty field with your token.
+# 如有 GitHub token，把空值替换为你的 token。
 GITHUB_TOKEN=
 
-# Default user is "root". If you need to modify it, uncomment and replace accordingly.
+# 默认用户为 "root"；如需修改，取消注释并相应替换。
 # OPENIM_USER=root 
 
-# Default password for redis, mysql, mongo, as well as accessSecret in config/config.yaml.
-# Remember, it should be a combination of 8 or more numbers and letters. If you want to set a different password, uncomment and replace "openIM123".
+# redis、mysql、mongo 的默认密码，同时也是 config/config.yaml 中的 accessSecret。
+# 注意：密码需为 8 位以上的数字与字母组合；如需自定义，取消注释并替换。
 # PASSWORD=openIM123
 
-# Default endpoint for minio's external service IP and port. If you want to use a different endpoint, uncomment and replace.
+# minio 对外服务的默认 IP 与端口；如需其他地址，取消注释并替换。
 # ENDPOINT=http://127.0.0.1:10005 
 
-# Default API_URL, replace if necessary. 
+# 默认 API_URL，必要时替换。
 # API_URL=http://127.0.0.1:10002/object/
 
-# Default data directory. If you want to specify a different directory, uncomment and replace "./".
+# 默认数据目录；如需指定其他目录，取消注释并替换 "./"。
 # DATA_DIR=./
 
 ############################## OpenIM Functions ##############################
-# Install horizon of the script
+# 脚本安装概览
 #
-# Pre-requisites:
+# 前置依赖：
 #   - git
 #   - make
 #   - jq
@@ -90,23 +90,23 @@ GITHUB_TOKEN=
 #   - go
 #
 
-# Check if the script is run as root
+# 检查脚本是否以 root 运行
 function check_isroot() {
     if [ "$EUID" -ne 0 ]; then
     fatal "Please run the script as root or use sudo."
     fi
 }
 
-# check if the current directory is a OpenIM git repository
+# 检查当前目录是否为 OpenIM 的 git 仓库
 function check_git_repo() {
     if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-        # Inside a git repository
+        # 位于 git 仓库内
         for remote in $(git remote); do
             repo_url=$(git remote get-url $remote)
             if [[ $repo_url == "https://github.com/openimsdk/open-im-server.git" || \
                   $repo_url == "https://github.com/openimsdk/open-im-server" || \
                   $repo_url == "git@github.com:openimsdk/open-im-server.git" ]]; then
-                # If it's OpenIMSDK repository
+                # 若是 OpenIMSDK 仓库
                 info "Current directory is OpenIMSDK git repository."
                 info "Executing installation directly."
                 install_openim
@@ -114,13 +114,13 @@ function check_git_repo() {
             fi
             debug "Remote: $remote, URL: $repo_url"
         done
-        # If it's not OpenIMSDK repository
+        # 若不是 OpenIMSDK 仓库
         debug "Current directory is not OpenIMSDK git repository."
     fi
     info "Current directory is not a git repository."
 }
 
-# Function to update and install necessary tools
+# 更新并安装所需工具的函数
 function install_tools() {
     info "Checking and installing necessary tools, about git, make, jq, docker, docker-compose."
     local tools=("git" "make" "jq" "docker" "docker-compose")
@@ -153,7 +153,7 @@ function install_tools() {
     done
 }
 
-# Function to check if Docker and Docker Compose are installed
+# 检查是否已安装 Docker 与 Docker Compose 的函数
 function check_docker() {
     if ! command -v docker &> /dev/null; then
         fatal "Docker is not installed. Please install Docker first."
@@ -163,10 +163,10 @@ function check_docker() {
     fi
 }
 
-# Function to download and install Go if it's not already installed
+# 未安装 Go 时，下载并安装 Go 的函数
 function install_go() {
     command -v go >/dev/null 2>&1
-    # Determines if GO_VERSION is defined
+    # 判断是否已定义 GO_VERSION
     if [ -z "$GO_VERSION" ]; then
         GO_VERSION="1.20"
     fi
@@ -188,12 +188,12 @@ function install_go() {
 
 function download_source_code() {
 
-    # If LATEST_TAG was not defined outside the function, get it here example: v3.0.1-beta.1
+    # 若函数外未定义 LATEST_TAG，在此获取，例如 v3.0.1-beta.1
     if [ -z "$LATEST_TAG" ]; then
         LATEST_TAG=$(curl -s "https://api.github.com/repos/$OWNER/$REPO/tags" | jq -r '.[0].name')
     fi
 
-    # If LATEST_TAG is still empty, set a default value
+    # 若 LATEST_TAG 仍为空，设置默认值
     local DEFAULT_TAG="v3.0.0"
 
     LATEST_TAG="${LATEST_TAG:-$DEFAULT_TAG}"
@@ -201,30 +201,30 @@ function download_source_code() {
     debug "DEFAULT_TAG: $DEFAULT_TAG"
     info "Use OpenIM Version LATEST_TAG: $LATEST_TAG"
 
-    # If MODIFIED_TAG was not defined outside the function, modify it here,example: 3.0.1-beta.1
+    # 若函数外未定义 MODIFIED_TAG，在此处理，例如 3.0.1-beta.1
     if [ -z "$MODIFIED_TAG" ]; then
         MODIFIED_TAG=$(echo $LATEST_TAG | sed 's/v//')
     fi
 
-    # If MODIFIED_TAG is still empty, set a default value
+    # 若 MODIFIED_TAG 仍为空，设置默认值
     local DEFAULT_MODIFIED_TAG="${DEFAULT_TAG#v}" 
     MODIFIED_TAG="${MODIFIED_TAG:-$DEFAULT_MODIFIED_TAG}"
     
     debug "MODIFIED_TAG: $MODIFIED_TAG"
 
-    # Construct the tarball URL
+    # 拼接 tar 包的下载地址
     TARBALL_URL="${PROXY}https://github.com/$OWNER/$REPO/archive/refs/tags/$LATEST_TAG.tar.gz"
 
     info "Downloaded OpenIM TARBALL_URL: $TARBALL_URL"
 
     info "Starting the OpenIM automated one-click deployment script."
 
-    # Set the download and extract directory to /tmp
+    # 把下载与解压目录设为 /tmp
     if [ -z "$DOWNLOAD_OPENIM_DIR" ]; then
         DOWNLOAD_OPENIM_DIR="/tmp"
     fi
 
-    # Check if /tmp directory exists
+    # 检查 /tmp 目录是否存在
     if [ ! -d "$DOWNLOAD_OPENIM_DIR" ]; then
         warn "$DOWNLOAD_OPENIM_DIR does not exist. Creating it..."
         mkdir -p "$DOWNLOAD_OPENIM_DIR"
@@ -243,37 +243,37 @@ function download_source_code() {
 
 function set_openim_env() {
     warn "This command can only be executed once. It will modify the component passwords in docker-compose based on the PASSWORD variable in .env, and modify the component passwords in config/config.yaml. If the password in .env changes, you need to first execute docker-compose down; rm components -rf and then execute this command."
-    # Set default values for user input
-    # If the OPENIM_USER environment variable is not set, it defaults to 'root'
+    # 为各输入项设置默认值
+    # 若未设置 OPENIM_USER 环境变量，默认为 'root'
     if [ -z "$OPENIM_USER" ]; then
         OPENIM_USER="root"
         debug "OPENIM_USER is not set. Defaulting to 'root'."
     fi
 
-    # If the PASSWORD environment variable is not set, it defaults to 'openIM123'
-    # This password applies to redis, mysql, mongo, as well as accessSecret in config/config.yaml
+    # 若未设置 PASSWORD 环境变量，默认为 'openIM123'
+    # 该密码用于 redis、mysql、mongo，以及 config/config.yaml 中的 accessSecret
     if [ -z "$PASSWORD" ]; then
         PASSWORD="openIM123"
         debug "PASSWORD is not set. Defaulting to 'openIM123'."
     fi
 
-    # If the ENDPOINT environment variable is not set, it defaults to 'http://127.0.0.1:10005'
-    # This is minio's external service IP and port, or it could be a domain like storage.xx.xx
-    # The app must be able to access this IP and port or domain
+    # 若未设置 ENDPOINT 环境变量，默认为 'http://127.0.0.1:10005'
+    # 这是 minio 对外服务的 IP 与端口，也可以是 storage.xx.xx 这类域名
+    # 应用必须能访问该 IP 与端口（或域名）
     if [ -z "$ENDPOINT" ]; then
         ENDPOINT="http://127.0.0.1:10005"
         debug "ENDPOINT is not set. Defaulting to 'http://127.0.0.1:10005'."
     fi
 
-    # If the API_URL environment variable is not set, it defaults to 'http://127.0.0.1:10002/object/'
-    # The app must be able to access this IP and port or domain
+    # 若未设置 API_URL 环境变量，默认为 'http://127.0.0.1:10002/object/'
+    # 应用必须能访问该 IP 与端口（或域名）
     if [ -z "$API_URL" ]; then
         API_URL="http://127.0.0.1:10002/object/"
         debug "API_URL is not set. Defaulting to 'http://127.0.0.1:10002/object/'."
     fi
 
-    # If the DATA_DIR environment variable is not set, it defaults to the current directory './'
-    # This can be set to a directory with large disk space
+    # 若未设置 DATA_DIR 环境变量，默认为当前目录 './'
+    # 可设为磁盘空间较大的目录
     if [ -z "$DATA_DIR" ]; then
         DATA_DIR="./"
         debug "DATA_DIR is not set. Defaulting to './'."
@@ -292,7 +292,7 @@ function install_openim() {
 
 ############################## OpenIM Help ##############################
 
-# Function to display help message
+# 显示帮助信息的函数
 function cmd_help() {
     openim_color
     color_echo ${BRIGHT_GREEN_PREFIX} "Usage: $0 [options]"
@@ -407,7 +407,7 @@ function parseinput() {
 }
 
 ############################## OpenIM LOG ##############################
-# Set text color to cyan for header and URL
+# 头部与 URL 使用青色文字
 print_with_delay() {
   text="$1"
   delay="$2"
@@ -431,14 +431,14 @@ print_progress() {
   printf "]\n"
 }
 
-# Function for colored echo
+# 彩色输出的函数
 color_echo() {
     COLOR=$1
     shift
     echo -e "${COLOR} $* ${COLOR_SUFFIX}"
 }
 
-# Color definitions
+# 颜色定义
 function openim_color() {
     COLOR_SUFFIX="\033[0m"      # End all colors and special effects
 
@@ -457,7 +457,7 @@ function openim_color() {
     CYAN_PREFIX="\033[0;36m"     # Cyan prefix
 }
 
-# --- helper functions for logs ---
+# --- 日志相关的辅助函数 ---
 info() {
     echo -e "[${GREEN_PREFIX}INFO${COLOR_SUFFIX}] " "$@"
 }
@@ -476,11 +476,11 @@ success() {
 }
 
 function openim_logo() {
-    # Set text color to cyan for header and URL
+    # 头部与 URL 使用青色文字
     echo -e "\033[0;36m"
 
-    # Display fancy ASCII Art logo
-    # look http://patorjk.com/software/taag/#p=display&h=1&v=1&f=Doh&t=OpenIM
+    # 显示 ASCII Art 图形 logo
+    # 参考 http://patorjk.com/software/taag/#p=display&h=1&v=1&f=Doh&t=OpenIM
     print_with_delay '
                                                                                                                       
                                                                                                                       
@@ -509,13 +509,13 @@ O:::::::OOO:::::::O p:::::ppppp:::::::pe::::::::e            n::::n    n::::nII:
                                                                                                                       
     ' 0.0001
 
-    # Display product URL
+    # 显示产品地址
     print_with_delay "Discover more and contribute at: https://github.com/openimsdk/open-im-server" 0.01
 
-    # Reset text color back to normal
+    # 恢复默认文字颜色
     echo -e "\033[0m"
 
-    # Set text color to green for product description
+    # 产品描述使用绿色文字
     echo -e "\033[1;32m"
 
     print_with_delay "Open-IM-Server: Reinventing Instant Messaging" 0.01
@@ -525,19 +525,19 @@ O:::::::OOO:::::::O p:::::ppppp:::::::pe::::::::e            n::::n    n::::nII:
 
     print_progress 50 0.02
 
-    # Reset text color back to normal
+    # 恢复默认文字颜色
     echo -e "\033[0m"
 
-    # Set text color to yellow for the Slack link
+    # Slack 链接使用黄色文字
     echo -e "\033[1;33m"
 
     print_with_delay "Join our developer community on Slack: https://join.slack.com/t/openimsdk/shared_invite/zt-2ijy1ys1f-O0aEDCr7ExRZ7mwsHAVg9A" 0.01
 
-    # Reset text color back to normal
+    # 恢复默认文字颜色
     echo -e "\033[0m"
 }
 
-# Main function to run the script
+# 运行脚本的主函数
 function openim_main() {
     check_git_repo
     check_isroot

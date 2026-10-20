@@ -21,13 +21,13 @@ import (
 	"github.com/openimsdk/open-im-server/v3/test/e2e/framework/config"
 )
 
-// UserInfoRequest represents a request to get or update user information.
+// UserInfoRequest 表示获取或更新用户信息的请求。
 type UserInfoRequest struct {
 	UserIDs  []string       `json:"userIDs,omitempty"`
 	UserInfo *gettoken.User `json:"userInfo,omitempty"`
 }
 
-// GetUsersOnlineStatusRequest represents a request to get users' online status.
+// GetUsersOnlineStatusRequest 表示获取用户在线状态的请求。
 type GetUsersOnlineStatusRequest struct {
 	UserIDs []string `json:"userIDs"`
 }

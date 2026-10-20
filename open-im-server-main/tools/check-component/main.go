@@ -43,7 +43,7 @@ const (
 )
 
 func CheckZookeeper(ctx context.Context, config *config.ZooKeeper) error {
-	// Temporary disable logging
+	// 临时关闭日志输出
 	originalLogger := log.Default().Writer()
 	log.SetOutput(io.Discard)
 	defer log.SetOutput(originalLogger) // Ensure logging is restored
@@ -137,8 +137,8 @@ func main() {
 	ctx := context.Background()
 	err = performChecks(ctx, mongoConfig, redisConfig, kafkaConfig, minioConfig, zookeeperConfig, maxRetry)
 	if err != nil {
-		// Assume program.ExitWithError logs the error and exits.
-		// Replace with your error handling logic as necessary.
+		// 此处假定 program.ExitWithError 会记录错误并退出。
+		// 可按需替换为你自己的错误处理逻辑。
 		program.ExitWithError(err)
 	}
 }

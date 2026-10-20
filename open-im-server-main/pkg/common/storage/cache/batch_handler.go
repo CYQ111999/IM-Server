@@ -4,14 +4,14 @@ import (
 	"context"
 )
 
-// BatchDeleter interface defines a set of methods for batch deleting cache and publishing deletion information.
+// BatchDeleter 接口定义了批量删除缓存并发布删除信息的一组方法。
 type BatchDeleter interface {
-	//ChainExecDel method is used for chain calls and must call Clone to prevent memory pollution.
+	// ChainExecDel 方法用于链式调用，必须先调用 Clone，以免污染原对象。
 	ChainExecDel(ctx context.Context) error
-	//ExecDelWithKeys method directly takes keys for deletion.
+	// ExecDelWithKeys 方法直接按传入的 key 执行删除。
 	ExecDelWithKeys(ctx context.Context, keys []string) error
-	//Clone method creates a copy of the BatchDeleter to avoid modifying the original object.
+	// Clone 方法返回 BatchDeleter 的副本，避免修改原对象。
 	Clone() BatchDeleter
-	//AddKeys method adds keys to be deleted.
+	// AddKeys 方法添加待删除的 key。
 	AddKeys(keys ...string)
 }

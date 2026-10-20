@@ -25,37 +25,37 @@ data:
       third: third-rpc-service
 
   log.yml: |
-    # Log storage path, default is acceptable, change to a full path if modification is needed
+    # 日志存储路径，默认值即可；如需修改请填写完整路径
     storageLocation: ./logs/
-    # Log rotation period (in hours), default is acceptable
+    # 日志轮转周期（小时），默认值即可
     rotationTime: 24
-    # Number of log files to retain, default is acceptable
+    # 保留的日志文件数量，默认值即可
     remainRotationCount: 2
-    # Log level settings: 3 for production environment; 6 for more verbose logging in debugging environments
+    # 日志级别：生产环境用 3；调试环境用 6 可输出更详细的日志
     remainLogLevel: 6
-    # Whether to output to standard output, default is acceptable
+    # 是否输出到标准输出，默认值即可
     isStdout: true
-    # Whether to log in JSON format, default is acceptable
+    # 日志是否使用 JSON 格式，默认值即可
     isJson: false
-    # output simplify log when KeyAndValues's value len is bigger than 50 in rpc method log
+    # RPC 方法日志中，当 KeyAndValues 的值长度超过 50 时输出简化日志
     isSimplify: true
 
   mongodb.yml: |
-    # URI for database connection, leave empty if using address and credential settings directly
+    # 数据库连接 URI；若直接使用地址与账号密码配置，可留空
     uri: ''
-    # List of MongoDB server addresses
+    # MongoDB 服务器地址列表
     address: [ mongo-service:37017 ]
-    # Name of the database
+    # 数据库名称
     database: openim_v3
-    # Username for database authentication
+    # 数据库认证用户名
     username: ''  # openIM
-    # Password for database authentication
+    # 数据库认证密码
     password: '' # openIM123
-    # Authentication source for database authentication, if use root user, set it to admin
+    # 数据库认证源；使用 root 用户时填 admin
     authSource: openim_v3
-    # Maximum number of connections in the connection pool
+    # 连接池最大连接数
     maxPoolSize: 100
-    # Maximum number of retry attempts for a failed database connection
+    # 数据库连接失败时的最大重试次数
     maxRetry: 10
 
   local-cache.yml: |
@@ -86,37 +86,37 @@ data:
 
   openim-api.yml: |
     api:
-      # Listening IP; 0.0.0.0 means both internal and external IPs are listened to, default is recommended
+      # 监听 IP；0.0.0.0 表示同时监听内外网 IP，建议使用默认值
       listenIP: 0.0.0.0
-      # Listening ports; if multiple are configured, multiple instances will be launched, must be consistent with the number of prometheus.ports
+      # 监听端口；配置多个端口会启动多个实例，数量必须与 prometheus.ports 一致
       ports: [ 10002 ]
-      # API compression level; 0: default compression, 1: best compression, 2: best speed, -1: no compression
+      # API 压缩级别；0：默认压缩，1：压缩率最优，2：速度最优，-1：不压缩
       compressionLevel: 0
 
     prometheus:
-      # Whether to enable prometheus
+      # 是否开启 prometheus
       enable: true
-      # Prometheus listening ports, must match the number of api.ports
+      # Prometheus 监听端口，数量必须与 api.ports 一致
       ports: [ 12002 ]
-      # This address can be accessed via a browser
+      # 该地址可通过浏览器访问
       grafanaURL: http://127.0.0.1:13000/
 
   openim-rpc-user.yml: |
     rpc:
-      # API or other RPCs can access this RPC through this IP; if left blank, the internal network IP is obtained by default
+      # API 或其他 RPC 通过该 IP 访问本 RPC；留空则默认取内网 IP
       registerIP:
-      # Listening IP; 0.0.0.0 means both internal and external IPs are listened to, if blank, the internal network IP is automatically obtained by default
+      # 监听 IP；0.0.0.0 表示同时监听内外网 IP，留空则默认自动获取内网 IP
       listenIP: 0.0.0.0
-      # autoSetPorts indicates whether to automatically set the ports
-      # if you use in kubernetes, set it to false
+      # autoSetPorts 表示是否自动分配端口
+      # 在 kubernetes 中部署时请设为 false
       autoSetPorts: false
-      # List of ports that the RPC service listens on; configuring multiple ports will launch multiple instances. These must match the number of configured prometheus ports
-      # It will only take effect when autoSetPorts is set to false.
+      # RPC 服务监听的端口列表；配置多个端口会启动多个实例，数量必须与 prometheus 端口数一致
+      # 仅在 autoSetPorts 设为 false 时生效。
       ports: [ 10320 ]
     prometheus:
-      # Whether to enable prometheus
+      # 是否开启 prometheus
       enable: true
-      # Prometheus listening ports, must be consistent with the number of rpc.ports
+      # Prometheus 监听端口，数量必须与 rpc.ports 一致
       ports: [ 12320 ]
 
   openim-crontask.yml: |
@@ -127,64 +127,64 @@ data:
 
   openim-msggateway.yml: |
     rpc:
-      # The IP address where this RPC service registers itself; if left blank, it defaults to the internal network IP
+      # 本 RPC 服务注册使用的 IP；留空则默认取内网 IP
       registerIP:
-      # autoSetPorts indicates whether to automatically set the ports
-      # if you use in kubernetes, set it to false
+      # autoSetPorts 表示是否自动分配端口
+      # 在 kubernetes 中部署时请设为 false
       autoSetPorts: false
-      # List of ports that the RPC service listens on; configuring multiple ports will launch multiple instances. These must match the number of configured prometheus ports
-      # It will only take effect when autoSetPorts is set to false.
+      # RPC 服务监听的端口列表；配置多个端口会启动多个实例，数量必须与 prometheus 端口数一致
+      # 仅在 autoSetPorts 设为 false 时生效。
       ports: [ 10140 ]
 
     prometheus:
-      # Enable or disable Prometheus monitoring
+      # 是否开启 Prometheus 监控
       enable: true
-      # List of ports that Prometheus listens on; these must match the number of rpc.ports to ensure correct monitoring setup
+      # Prometheus 监听端口列表，必须与 rpc.ports 数量一致，监控才能正确采集
       ports: [ 12140 ]
 
-    # IP address that the RPC/WebSocket service listens on; setting to 0.0.0.0 listens on both internal and external IPs. If left blank, it automatically uses the internal network IP
+    # RPC/WebSocket 服务的监听 IP；设为 0.0.0.0 表示同时监听内外网 IP，留空则自动使用内网 IP
     listenIP: 0.0.0.0
 
     longConnSvr:
-      # WebSocket listening ports, must match the number of rpc.ports
+      # WebSocket 监听端口，数量必须与 rpc.ports 一致
       ports: [ 10001 ]
-      # Maximum number of WebSocket connections
+      # WebSocket 最大连接数
       websocketMaxConnNum: 100000
-      # Maximum length of the entire WebSocket message packet
+      # WebSocket 完整消息包的最大长度
       websocketMaxMsgLen: 4096
-      # WebSocket connection handshake timeout in seconds
+      # WebSocket 连接握手超时时间（秒）
       websocketTimeout: 10
 
   openim-msgtransfer.yml: |
     prometheus:
-      # Enable or disable Prometheus monitoring
+      # 是否开启 Prometheus 监控
       enable: true
-      # List of ports that Prometheus listens on; each port corresponds to an instance of monitoring. Ensure these are managed accordingly
-      # Because four instances have been launched, four ports need to be specified
+      # Prometheus 监听端口列表，每个端口对应一个监控实例，请相应管理
+      # 由于已启动四个实例，因此这里需要指定四个端口
       ports: [ 12020 ]
 
   openim-push.yml: |
     rpc:
-      # The IP address where this RPC service registers itself; if left blank, it defaults to the internal network IP
+      # 本 RPC 服务注册使用的 IP；留空则默认取内网 IP
       registerIP:
-      # IP address that the RPC service listens on; setting to 0.0.0.0 listens on both internal and external IPs. If left blank, it automatically uses the internal network IP
+      # RPC 服务的监听 IP；设为 0.0.0.0 表示同时监听内外网 IP，留空则自动使用内网 IP
       listenIP: 0.0.0.0
-      # autoSetPorts indicates whether to automatically set the ports
-      # if you use in kubernetes, set it to false
+      # autoSetPorts 表示是否自动分配端口
+      # 在 kubernetes 中部署时请设为 false
       autoSetPorts: false
-      # List of ports that the RPC service listens on; configuring multiple ports will launch multiple instances. These must match the number of configured prometheus ports
-      # It will only take effect when autoSetPorts is set to false.
+      # RPC 服务监听的端口列表；配置多个端口会启动多个实例，数量必须与 prometheus 端口数一致
+      # 仅在 autoSetPorts 设为 false 时生效。
       ports: [ 10170 ]
 
 
     prometheus:
-      # Enable or disable Prometheus monitoring
+      # 是否开启 Prometheus 监控
       enable: true
-      # List of ports that Prometheus listens on; these must match the number of rpc.ports to ensure correct monitoring setup
+      # Prometheus 监听端口列表，必须与 rpc.ports 数量一致，监控才能正确采集
       ports: [ 12170 ]
 
     maxConcurrentWorkers: 3
-    #Use geTui for offline push notifications, or choose fcm or jpns; corresponding configuration settings must be specified.
+    # 离线推送可使用 geTui，也可选择 fcm 或 jpush；需同时填写对应厂商的配置。
     enable:
     geTui:
       pushUrl: https://restapi.getui.com/v2/$appId
@@ -194,7 +194,7 @@ data:
       channelID:
       channelName:
     fcm:
-      # Prioritize using file paths. If the file path is empty, use URL
+      # 优先使用文件路径；文件路径为空时改用 URL
       filePath:   # File path is concatenated with the parameters passed in through - c(`mage` default pass in `config/`) and filePath.
       authURL:   #  Must start with https or http.
     jpush:
@@ -203,7 +203,7 @@ data:
       pushURL:
       pushIntent:
 
-    # iOS system push sound and badge count
+    # iOS 推送提示音与角标数量
     iosPush:
       pushSound: xxx
       badgeCount: true
@@ -213,134 +213,134 @@ data:
 
   openim-rpc-auth.yml: |
     rpc:
-      # The IP address where this RPC service registers itself; if left blank, it defaults to the internal network IP
+      # 本 RPC 服务注册使用的 IP；留空则默认取内网 IP
       registerIP:
-      # IP address that the RPC service listens on; setting to 0.0.0.0 listens on both internal and external IPs. If left blank, it automatically uses the internal network IP
+      # RPC 服务的监听 IP；设为 0.0.0.0 表示同时监听内外网 IP，留空则自动使用内网 IP
       listenIP: 0.0.0.0
-      # autoSetPorts indicates whether to automatically set the ports
-      # if you use in kubernetes, set it to false
+      # autoSetPorts 表示是否自动分配端口
+      # 在 kubernetes 中部署时请设为 false
       autoSetPorts: false
-      # List of ports that the RPC service listens on; configuring multiple ports will launch multiple instances. These must match the number of configured prometheus ports
-      # It will only take effect when autoSetPorts is set to false.
+      # RPC 服务监听的端口列表；配置多个端口会启动多个实例，数量必须与 prometheus 端口数一致
+      # 仅在 autoSetPorts 设为 false 时生效。
       ports: [ 10200 ]
 
     prometheus:
-      # Enable or disable Prometheus monitoring
+      # 是否开启 Prometheus 监控
       enable: true
-      # List of ports that Prometheus listens on; these must match the number of rpc.ports to ensure correct monitoring setup
+      # Prometheus 监听端口列表，必须与 rpc.ports 数量一致，监控才能正确采集
       ports: [12200]
 
     tokenPolicy:
-      # Token validity period, in days
+      # token 有效期（天）
       expire: 90
 
   openim-rpc-conversation.yml: |
     rpc:
-      # The IP address where this RPC service registers itself; if left blank, it defaults to the internal network IP
+      # 本 RPC 服务注册使用的 IP；留空则默认取内网 IP
       registerIP:
-      # IP address that the RPC service listens on; setting to 0.0.0.0 listens on both internal and external IPs. If left blank, it automatically uses the internal network IP
+      # RPC 服务的监听 IP；设为 0.0.0.0 表示同时监听内外网 IP，留空则自动使用内网 IP
       listenIP: 0.0.0.0
-      # autoSetPorts indicates whether to automatically set the ports
-      # if you use in kubernetes, set it to false
+      # autoSetPorts 表示是否自动分配端口
+      # 在 kubernetes 中部署时请设为 false
       autoSetPorts: false
-      # List of ports that the RPC service listens on; configuring multiple ports will launch multiple instances. These must match the number of configured prometheus ports
-      # It will only take effect when autoSetPorts is set to false.
+      # RPC 服务监听的端口列表；配置多个端口会启动多个实例，数量必须与 prometheus 端口数一致
+      # 仅在 autoSetPorts 设为 false 时生效。
       ports: [ 10220 ]
 
     prometheus:
-      # Enable or disable Prometheus monitoring
+      # 是否开启 Prometheus 监控
       enable: true
-      # List of ports that Prometheus listens on; these must match the number of rpc.ports to ensure correct monitoring setup
+      # Prometheus 监听端口列表，必须与 rpc.ports 数量一致，监控才能正确采集
       ports: [ 12200 ]
 
     tokenPolicy:
-      # Token validity period, in days
+      # token 有效期（天）
       expire: 90
 
   openim-rpc-friend.yml: |
     rpc:
-      # The IP address where this RPC service registers itself; if left blank, it defaults to the internal network IP
+      # 本 RPC 服务注册使用的 IP；留空则默认取内网 IP
       registerIP:
-      # IP address that the RPC service listens on; setting to 0.0.0.0 listens on both internal and external IPs. If left blank, it automatically uses the internal network IP
+      # RPC 服务的监听 IP；设为 0.0.0.0 表示同时监听内外网 IP，留空则自动使用内网 IP
       listenIP: 0.0.0.0
-      # autoSetPorts indicates whether to automatically set the ports
-      # if you use in kubernetes, set it to false
+      # autoSetPorts 表示是否自动分配端口
+      # 在 kubernetes 中部署时请设为 false
       autoSetPorts: false
-      # List of ports that the RPC service listens on; configuring multiple ports will launch multiple instances. These must match the number of configured prometheus ports
-      # It will only take effect when autoSetPorts is set to false.
+      # RPC 服务监听的端口列表；配置多个端口会启动多个实例，数量必须与 prometheus 端口数一致
+      # 仅在 autoSetPorts 设为 false 时生效。
       ports: [ 10240 ]
 
     prometheus:
-      # Enable or disable Prometheus monitoring
+      # 是否开启 Prometheus 监控
       enable: true
-      # List of ports that Prometheus listens on; these must match the number of rpc.ports to ensure correct monitoring setup
+      # Prometheus 监听端口列表，必须与 rpc.ports 数量一致，监控才能正确采集
       ports: [ 12240 ]
 
   openim-rpc-group.yml: |
     rpc:
-      # The IP address where this RPC service registers itself; if left blank, it defaults to the internal network IP
+      # 本 RPC 服务注册使用的 IP；留空则默认取内网 IP
       registerIP:
-      # IP address that the RPC service listens on; setting to 0.0.0.0 listens on both internal and external IPs. If left blank, it automatically uses the internal network IP
+      # RPC 服务的监听 IP；设为 0.0.0.0 表示同时监听内外网 IP，留空则自动使用内网 IP
       listenIP: 0.0.0.0
-      # autoSetPorts indicates whether to automatically set the ports
-      # if you use in kubernetes, set it to false
+      # autoSetPorts 表示是否自动分配端口
+      # 在 kubernetes 中部署时请设为 false
       autoSetPorts: false
-      # List of ports that the RPC service listens on; configuring multiple ports will launch multiple instances. These must match the number of configured prometheus ports
-      # It will only take effect when autoSetPorts is set to false.
+      # RPC 服务监听的端口列表；配置多个端口会启动多个实例，数量必须与 prometheus 端口数一致
+      # 仅在 autoSetPorts 设为 false 时生效。
       ports: [ 10260 ]
 
     prometheus:
-      # Enable or disable Prometheus monitoring
+      # 是否开启 Prometheus 监控
       enable: true
-      # List of ports that Prometheus listens on; these must match the number of rpc.ports to ensure correct monitoring setup
+      # Prometheus 监听端口列表，必须与 rpc.ports 数量一致，监控才能正确采集
       ports: [ 12260 ]
 
     enableHistoryForNewMembers: true
 
   openim-rpc-msg.yml: |
     rpc:
-      # The IP address where this RPC service registers itself; if left blank, it defaults to the internal network IP
+      # 本 RPC 服务注册使用的 IP；留空则默认取内网 IP
       registerIP:
-      # IP address that the RPC service listens on; setting to 0.0.0.0 listens on both internal and external IPs. If left blank, it automatically uses the internal network IP
+      # RPC 服务的监听 IP；设为 0.0.0.0 表示同时监听内外网 IP，留空则自动使用内网 IP
       listenIP: 0.0.0.0
-      # autoSetPorts indicates whether to automatically set the ports
-      # if you use in kubernetes, set it to false
+      # autoSetPorts 表示是否自动分配端口
+      # 在 kubernetes 中部署时请设为 false
       autoSetPorts: false
-      # List of ports that the RPC service listens on; configuring multiple ports will launch multiple instances. These must match the number of configured prometheus ports
+      # RPC 服务监听的端口列表；配置多个端口会启动多个实例，数量必须与 prometheus 端口数一致
       ports: [ 10280 ]
 
     prometheus:
-      # Enable or disable Prometheus monitoring
+      # 是否开启 Prometheus 监控
       enable: true
-      # List of ports that Prometheus listens on; these must match the number of rpc.ports to ensure correct monitoring setup
+      # Prometheus 监听端口列表，必须与 rpc.ports 数量一致，监控才能正确采集
       ports: [ 12280 ]
 
 
-    # Does sending messages require friend verification
+    # 发送消息是否需要好友验证
     friendVerify: false
 
   openim-rpc-third.yml: |
     rpc:
-      # The IP address where this RPC service registers itself; if left blank, it defaults to the internal network IP
+      # 本 RPC 服务注册使用的 IP；留空则默认取内网 IP
       registerIP:
-      # IP address that the RPC service listens on; setting to 0.0.0.0 listens on both internal and external IPs. If left blank, it automatically uses the internal network IP
+      # RPC 服务的监听 IP；设为 0.0.0.0 表示同时监听内外网 IP，留空则自动使用内网 IP
       listenIP: 0.0.0.0
-      # autoSetPorts indicates whether to automatically set the ports
-      # if you use in kubernetes, set it to false
+      # autoSetPorts 表示是否自动分配端口
+      # 在 kubernetes 中部署时请设为 false
       autoSetPorts: false
-      # List of ports that the RPC service listens on; configuring multiple ports will launch multiple instances. These must match the number of configured prometheus ports
-      # It will only take effect when autoSetPorts is set to false.
+      # RPC 服务监听的端口列表；配置多个端口会启动多个实例，数量必须与 prometheus 端口数一致
+      # 仅在 autoSetPorts 设为 false 时生效。
       ports: [ 10300 ]
 
     prometheus:
-      # Enable or disable Prometheus monitoring
+      # 是否开启 Prometheus 监控
       enable: true
-      # List of ports that Prometheus listens on; these must match the number of rpc.ports to ensure correct monitoring setup
+      # Prometheus 监听端口列表，必须与 rpc.ports 数量一致，监控才能正确采集
       ports: [ 12300 ]
 
 
     object:
-      # Use MinIO as object storage, or set to "cos", "oss", "kodo", "aws", while also configuring the corresponding settings
+      # 使用 MinIO 作为对象存储；也可设为 "cos"、"oss"、"kodo"、"aws"，并填写对应配置
       enable: minio
       cos:
         bucketURL: https://temp-1252357374.cos.ap-chengdu.myqcloud.com
@@ -377,51 +377,51 @@ data:
 
     imAdminUserID: ["imAdmin"]
 
-    # 1: For Android, iOS, Windows, Mac, and web platforms, only one instance can be online at a time
+    # 1：Android、iOS、Windows、Mac 与 Web 平台同一时间只允许一个实例在线
     multiLogin:
       policy: 1
       maxNumOneEnd: 30
 
   kafka.yml: |
-    # Username for authentication
+    # 认证用户名
     username: ''
-    # Password for authentication
+    # 认证密码
     password: ''
-    # Producer acknowledgment settings
+    # 生产者确认（acks）设置
     producerAck:
-    # Compression type to use (e.g., none, gzip, snappy)
+    # 压缩类型（例如 none、gzip、snappy）
     compressType: none
-    # List of Kafka broker addresses
+    # Kafka broker 地址列表
     address: [ "kafka-service:19094" ]
-    # Kafka topic for Redis integration
+    # 写入 Redis 所用的 Kafka topic
     toRedisTopic: toRedis
-    # Kafka topic for MongoDB integration
+    # 写入 MongoDB 所用的 Kafka topic
     toMongoTopic: toMongo
-    # Kafka topic for push notifications
+    # 推送通知所用的 Kafka topic
     toPushTopic: toPush
-    # Kafka topic for offline push notifications
+    # 离线推送所用的 Kafka topic
     toOfflinePushTopic: toOfflinePush
-    # Consumer group ID for Redis topic
+    # Redis topic 的消费组 ID
     toRedisGroupID: redis
-    # Consumer group ID for MongoDB topic
+    # MongoDB topic 的消费组 ID
     toMongoGroupID: mongo
-    # Consumer group ID for push notifications topic
+    # 推送通知 topic 的消费组 ID
     toPushGroupID: push
-    # Consumer group ID for offline push notifications topic
+    # 离线推送 topic 的消费组 ID
     toOfflinePushGroupID: offlinePush
-    # TLS (Transport Layer Security) configuration
+    # TLS（传输层安全）配置
     tls:
-      # Enable or disable TLS
+      # 是否启用 TLS
       enableTLS: false
-      # CA certificate file path
+      # CA 证书文件路径
       caCrt:
-      # Client certificate file path
+      # 客户端证书文件路径
       clientCrt:
-      # Client key file path
+      # 客户端私钥文件路径
       clientKey:
-      # Client key password
+      # 客户端私钥密码
       clientKeyPwd:
-      # Whether to skip TLS verification (not recommended for production)
+      # 是否跳过 TLS 校验（生产环境不建议开启）
       insecureSkipVerify: false
 
   redis.yml: |
@@ -434,39 +434,39 @@ data:
     poolSize: 100
 
   minio.yml: |
-    # Name of the bucket in MinIO
+    # MinIO 的 bucket 名称
     bucket: openim
-    # Access key ID for MinIO authentication
+    # MinIO 认证用的 Access Key ID
     accessKeyID: root   
-    # Secret access key for MinIO authentication
+    # MinIO 认证用的 Secret Access Key
     secretAccessKey:    # openIM123
-    # Session token for MinIO authentication (optional)
+    # MinIO 认证用的 Session Token（可选）
     sessionToken:
-    # Internal address of the MinIO server
+    # MinIO 服务的内网地址
     internalAddress: minio-service:10005
-    # External address of the MinIO server, accessible from outside. Supports both HTTP and HTTPS using a domain name
+    # MinIO 服务的外网地址，供外部访问；支持使用域名，HTTP 与 HTTPS 均可
     externalAddress: http://minio-service:10005
-    # Flag to enable or disable public read access to the bucket
+    # 是否允许对该 bucket 进行公开只读访问
     publicRead: "false"
 
   notification.yml: |
     groupCreated:
       isSendMsg: true
-    # Reliability level of the message sending.
-    # Set to 1 to send only when online, 2 for guaranteed delivery.
+    # 消息发送的可靠性级别。
+    # 设为 1 表示仅在线时发送，设为 2 表示保证送达。
       reliabilityLevel: 1
-    # This setting is effective only when 'isSendMsg' is true.
-    # It controls whether to count unread messages.
+    # 仅在 'isSendMsg' 为 true 时生效。
+    # 用于控制是否统计未读消息。
       unreadCount: false
-    # Configuration for offline push notifications.
+    # 离线推送相关配置。
       offlinePush:
-        # Enables or disables offline push notifications.
+        # 是否启用离线推送。
         enable: false
-        # Title for the notification when a group is created.
+        # 创建群组时通知的标题。
         title: create group title
-        # Description for the notification.
+        # 通知的描述内容。
         desc: create group desc
-        # Additional information for the notification.
+        # 通知的附加信息。
         ext: create group ext
 
     groupInfoSet:
@@ -641,7 +641,7 @@ data:
         desc: groupInfoSetName desc
         ext: groupInfoSetName ext
 
-    #############################friend#################################
+    ############################# friend（好友相关）#########################
     friendApplicationAdded:
       isSendMsg: false
       reliabilityLevel: 1
@@ -732,7 +732,7 @@ data:
         desc: friend info updated
         ext: friend info updated
 
-    #####################user#########################
+    ##################### user（用户相关）#########################
     userInfoUpdated:
       isSendMsg: false
       reliabilityLevel: 1
@@ -753,7 +753,7 @@ data:
         desc: user status changed
         ext: user status changed
 
-    #####################conversation#########################
+    ##################### conversation（会话相关）#########################
     conversationChanged:
       isSendMsg: false
       reliabilityLevel: 1
@@ -780,15 +780,15 @@ data:
       enable: false
       timeout: 5
       failedContinue: true
-      # Only the contentType in allowedTypes will send the callback.
-      # Supports two formats: a single type or a range. The range is defined by the lower and upper bounds connected with a hyphen ("-").
-      # e.g. allowedTypes: [1, 100, 200-500, 600-700] means that only contentType within the range
-      # {1, 100} ∪ [200, 500] ∪ [600, 700] will be allowed through the filter.
-      # If not set, all contentType messages will through this filter.
+      # 只有 contentType 属于 allowedTypes 的消息才会触发回调。
+      # 支持两种写法：单个类型，或区间。区间由上下界以连字符（"-"）连接表示。
+      # 例如 allowedTypes: [1, 100, 200-500, 600-700] 表示只有处于以下范围内的 contentType
+      # {1, 100} ∪ [200, 500] ∪ [600, 700] 才能通过该过滤。
+      # 不配置时，所有 contentType 的消息都会通过该过滤。
       allowedTypes: []
-      # Only the contentType not in deniedTypes will send the callback.
-      # Supports two formats, same as allowedTypes.
-      # If not set, all contentType messages will through this filter.
+      # 只有 contentType 不在 deniedTypes 中的消息才会触发回调。
+      # 支持两种写法，与 allowedTypes 相同。
+      # 不配置时，所有 contentType 的消息都会通过该过滤。
       deniedTypes: []
     beforeUpdateUserInfoEx:
       enable:  false
@@ -800,30 +800,30 @@ data:
     afterSendSingleMsg:
       enable: false
       timeout: 5
-      # Only the senID/recvID specified in attentionIds will send the callback
-      # if not set, all user messages will be callback
+      # 只有 senID/recvID 命中 attentionIds 的消息才会触发回调
+      # 不配置时，所有用户消息都会触发回调
       attentionIds: []
-      # See beforeSendSingleMsg comment.
+      # 参见 beforeSendSingleMsg 处的注释。
       allowedTypes: []
       deniedTypes: []
     beforeSendGroupMsg:
       enable: false
       timeout: 5
       failedContinue: true
-      # See beforeSendSingleMsg comment.
+      # 参见 beforeSendSingleMsg 处的注释。
       allowedTypes: []
       deniedTypes: []
     beforeMsgModify:
       enable: false
       timeout: 5
       failedContinue: true
-      # See beforeSendSingleMsg comment.
+      # 参见 beforeSendSingleMsg 处的注释。
       allowedTypes: []
       deniedTypes: []
     afterSendGroupMsg:
       enable: false
       timeout: 5
-      # See beforeSendSingleMsg comment.
+      # 参见 beforeSendSingleMsg 处的注释。
       allowedTypes: []
       deniedTypes: []
     afterUserOnline:
@@ -968,31 +968,31 @@ data:
       timeout: 5
 
   prometheus.yml: |
-    # my global config
+    # 全局配置
     global:
       scrape_interval:     15s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
       evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
-      # scrape_timeout is set to the global default (10s).
+      # scrape_timeout 使用全局默认值（10s）。
 
-    # Alertmanager configuration
+    # Alertmanager 配置
     alerting:
       alertmanagers:
         - static_configs:
             - targets: [internal_ip:19093]
 
-    # Load rules once and periodically evaluate them according to the global evaluation_interval.
+    # 规则只加载一次，之后按全局 evaluation_interval 周期性评估。
     rule_files:
       - instance-down-rules.yml
     # - first_rules.yml
     # - second_rules.yml
 
-    # A scrape configuration containing exactly one endpoint to scrape:
-    # Here it's Prometheus itself.
+    # 抓取配置，只包含一个待抓取的端点：
+    # 这里抓取的是 Prometheus 自身。
     scrape_configs:
-      # The job name is added as a label "job=job_name" to any timeseries scraped from this config.
-      # Monitored information captured by prometheus
+      # 任务名会作为 "job=job_name" 标签附加到本配置抓取到的所有时间序列上。
+      # Prometheus 采集的监控信息
 
-      # prometheus fetches application services
+      # Prometheus 抓取应用服务的指标
       - job_name: node_exporter
         static_configs:
           - targets: [ internal_ip:20500 ]

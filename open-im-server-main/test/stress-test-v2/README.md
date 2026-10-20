@@ -1,17 +1,17 @@
-# Stress Test V2
+# 压力测试 V2
 
-## Usage
+## 使用说明
 
-You need set `TestTargetUserList` variables.
+需要先设置 `TestTargetUserList` 变量。
 
-### Build
+### 编译
 
 ```bash
 
 go build -o test/stress-test-v2/stress-test-v2 test/stress-test-v2/main.go
 ```
 
-### Excute
+### 运行
 
 ```bash
 

@@ -83,7 +83,7 @@ func Start(ctx context.Context, config *Config, client discovery.SvcDiscoveryReg
 		return err
 	}
 	thirdCache := redis.NewThirdCache(rdb)
-	// Select the oss method according to the profile policy
+	// 根据配置中的策略选择对应的对象存储实现
 	var o s3.Interface
 	switch enable := config.RpcConfig.Object.Enable; enable {
 	case "minio":

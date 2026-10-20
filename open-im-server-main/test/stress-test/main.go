@@ -27,16 +27,16 @@ import (
 )
 
 /*
- 1. Create one user every minute
- 2. Import target users as friends
- 3. Add users to the default group
- 4. Send a message to the default group every second, containing index and current timestamp
- 5. Create a new group every minute and invite target users to join
+ 1. 每分钟创建一个用户
+ 2. 将目标用户导入为好友
+ 3. 将用户加入默认群组
+ 4. 每秒向默认群组发送一条消息，内容包含序号和当前时间戳
+ 5. 每分钟创建一个新群组，并邀请目标用户加入
 */
 
-// !!! ATTENTION: This variable is must be added!
+// !!! 注意：这个变量必须填写！
 var (
-	//  Use default userIDs List for testing, need to be created.
+	// 这里是测试用的用户 ID 列表，这些用户需要提前创建。
 	TestTargetUserList = []string{
 		"<need-update-it>",
 	}
@@ -46,7 +46,7 @@ var (
 var (
 	ApiAddress string
 
-	// API method
+	// API 方法
 	GetAdminToken = "/auth/get_admin_token"
 	CreateUser    = "/user/user_register"
 	ImportFriend  = "/friend/import_friend"
@@ -114,9 +114,9 @@ func initConfig(configDir string) (*config.Share, *config.API, error) {
 	return share, apiConfig, nil
 }
 
-// Post Request
+// 发送 POST 请求
 func (st *StressTest) PostRequest(ctx context.Context, url string, reqbody any) ([]byte, error) {
-	// Marshal body
+	// 序列化请求体
 	jsonBody, err := json.Marshal(reqbody)
 	if err != nil {
 		log.ZError(ctx, "Failed to marshal request body", err, "url", url, "reqbody", reqbody)
@@ -367,7 +367,7 @@ func main() {
 				return
 
 			case <-ticker.C:
-				// Create User
+				// 创建用户
 				userID := fmt.Sprintf("%d_Stresstest_%s", st.UserCounter, time.Now().Format("0102150405"))
 
 				userCreatedID, err := st.CreateUser(st.Ctx, userID)
@@ -378,13 +378,13 @@ func main() {
 				}
 				// fmt.Println("User Created ID:", userCreatedID)
 
-				// Import Friend
+				// 导入好友
 				if err = st.ImportFriend(st.Ctx, userCreatedID); err != nil {
 					log.ZError(st.Ctx, "Import Friend failed.", err, "UserID", userCreatedID)
 					os.Exit(1)
 					return
 				}
-				// Invite To Group
+				// 邀请用户入群
 				if err = st.InviteToGroup(st.Ctx, userCreatedID); err != nil {
 					log.ZError(st.Ctx, "Invite To Group failed.", err, "UserID", userCreatedID)
 					os.Exit(1)
@@ -415,7 +415,7 @@ func main() {
 				return
 
 			case <-ticker.C:
-				// Send Message
+				// 发送消息
 				if err = st.SendMsg(st.Ctx, st.DefaultUserID); err != nil {
 					log.ZError(st.Ctx, "Send Message failed.", err, "UserID", st.DefaultUserID)
 					continue
@@ -441,7 +441,7 @@ func main() {
 
 			case <-ticker.C:
 
-				// Create Group
+				// 创建群组
 				_, err := st.CreateGroup(st.Ctx, st.DefaultUserID)
 				if err != nil {
 					log.ZError(st.Ctx, "Create Group failed.", err, "UserID", st.DefaultUserID)

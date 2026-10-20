@@ -21,7 +21,7 @@ import (
 	"github.com/openimsdk/open-im-server/v3/test/e2e/framework/config"
 )
 
-// handleFlags sets up all flags and parses the command line.
+// handleFlags 注册所有命令行 flag 并解析命令行参数。
 func handleFlags() {
 	config.CopyFlags(config.Flags, flag.CommandLine)
 	flag.Parse()

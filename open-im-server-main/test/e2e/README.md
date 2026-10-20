@@ -1,136 +1,111 @@
-# OpenIM End-to-End (E2E) Testing Module
+# OpenIM 端到端（E2E）测试模块
 
-## Overview
+## 概述
 
-This repository contains the End-to-End (E2E) testing suite for OpenIM, a comprehensive instant messaging platform. The E2E tests are designed to simulate real-world usage scenarios to ensure that all components of the OpenIM system are functioning correctly in an integrated environment.
+本目录是 OpenIM 的端到端（E2E）测试套件。E2E 测试用于模拟真实使用场景，验证 OpenIM 各组件在集成环境下能否正常工作。
 
-The tests cover various aspects of the system, including API endpoints, chat services, web interfaces, and RPC components, as well as performance and scalability under different load conditions.
+测试覆盖 API 接口、聊天服务、Web 界面、RPC 组件，以及不同负载下的性能与扩展能力。
 
-## Directory Structure
+## 目录结构
 
 ```bash
-❯ tree e2e
 test/e2e/
-├── conformance/             # Contains tests for verifying OpenIM API conformance
-├── framework/               # Provides auxiliary code and libraries for building and running E2E tests
-│   ├── config/              # Test configuration files and management
-│   ├── ginkgowrapper/       # Functions wrapping the testing library for handling test failures and skips
-│   └── helpers/             # Helper functions such as user creation, message sending, etc.
-├── api/                     # End-to-end tests for OpenIM API
-├── chat/                    # Tests for the business server (including login, registration, and other logic)
-├── web/                     # Tests for the web frontend (login, registration, message sending and receiving)
-├── rpc/                     # End-to-end tests for various RPC components
-│   ├── auth/                # Tests for the authentication service
-│   ├── conversation/        # Tests for conversation management
-│   ├── friend/              # Tests for friend relationship management
-│   ├── group/               # Tests for group management
-│   └── message/             # Tests for message handling
-├── scalability/             # Tests for the scalability of the OpenIM system
-├── performance/             # Performance tests such as load testing and stress testing
-└── upgrade/                 # Tests for compatibility and stability during OpenIM upgrades
+├── conformance/             # 验证 OpenIM API 行为一致性的测试
+├── framework/               # 构建与运行 E2E 测试所用的辅助代码
+│   ├── config/              # 测试配置与管理
+│   ├── ginkgowrapper/       # 包装测试库，统一处理失败与跳过
+│   └── helpers/             # 辅助函数，例如创建用户、发送消息等
+├── api/                     # OpenIM API 的端到端测试
+├── chat/                    # 业务服务测试（登录、注册等逻辑）
+├── web/                     # Web 前端测试（登录、注册、消息收发）
+├── rpc/                     # 各 RPC 组件的端到端测试
+│   ├── auth/                # 认证服务测试
+│   ├── conversation/        # 会话管理测试
+│   ├── friend/              # 好友关系测试
+│   ├── group/               # 群组管理测试
+│   └── message/             # 消息处理测试
+├── scalability/             # OpenIM 扩展能力测试
+├── performance/             # 性能测试，例如负载测试与压力测试
+└── upgrade/                 # 升级过程中的兼容性与稳定性测试
 ```
 
-The E2E tests are organized into the following directory structure:
+各目录说明：
 
-- `conformance/`: Contains tests to verify the conformance of OpenIM API implementations.
-- `framework/`: Provides helper code for constructing and running E2E tests using the Ginkgo framework.
-  - `config/`: Manages test configurations and options.
-  - `ginkgowrapper/`: Wrappers for Ginkgo's `Fail` and `Skip` functions to handle structured data panics.
-  - `helpers/`: Utility functions for common test actions like user creation, message dispatching, etc.
-- `api/`: E2E tests for the OpenIM API endpoints.
-- `chat/`: Tests for the chat service, including authentication, session management, and messaging logic.
-- `web/`: Tests for the web interface, including user interactions and information exchange.
-- `rpc/`: E2E tests for each of the RPC components.
-  - `auth/`: Tests for the authentication service.
-  - `conversation/`: Tests for conversation management.
-  - `friend/`: Tests for friend relationship management.
-  - `group/`: Tests for group management.
-  - `message/`: Tests for message handling.
-- `scalability/`: Tests for the scalability of the OpenIM system.
-- `performance/`: Performance tests, including load and stress tests.
-- `upgrade/`: Tests for the upgrade process of OpenIM, ensuring compatibility and stability.
+- `conformance/`：验证 OpenIM API 实现是否符合约定的测试。
+- `framework/`：基于 Ginkgo 框架构建与运行 E2E 测试的辅助代码。
+  - `config/`：管理测试配置与选项。
+  - `ginkgowrapper/`：对 Ginkgo 的 `Fail`、`Skip` 做包装，以便处理结构化数据引发的 panic。
+  - `helpers/`：通用测试动作的工具函数，例如创建用户、投递消息等。
+- `api/`：OpenIM API 接口的 E2E 测试。
+- `chat/`：聊天服务测试，包含鉴权、会话管理与消息逻辑。
+- `web/`：Web 界面测试，包含用户交互与信息交换。
+- `rpc/`：各 RPC 组件的 E2E 测试（`auth`、`conversation`、`friend`、`group`、`message`）。
+- `scalability/`：OpenIM 系统的扩展能力测试。
+- `performance/`：性能测试，包含负载测试与压力测试。
+- `upgrade/`：升级流程测试，关注兼容性与稳定性。
 
-## Prerequisites
+## 前置条件
 
-Since the deployment of OpenIM requires some components such as Mongo and Kafka, you should think a bit before using E2E tests
+OpenIM 的运行依赖 Mongo、Kafka 等组件，因此运行 E2E 测试前需要先把依赖环境启动起来：
 
 ```bash
 docker compose up -d
 ```
 
-OR User [kubernetes deployment](https://github.com/openimsdk/helm-charts)
+也可以使用 [kubernetes 部署方式](https://github.com/openimsdk/helm-charts)。
 
-Before running the E2E tests, ensure that you have the following prerequisites installed:
+运行前请确认已安装：
 
 - Docker
 - Kubernetes
-- Ginkgo test framework
-- Go (version 1.19 or higher)
+- Ginkgo 测试框架
+- Go（1.19 及以上）
 
-## Configuration
+## 配置
 
-Test configurations can be customized via the `config/` directory. The configuration files are in YAML format and allow you to set parameters such as API endpoints, user credentials, and test data.
+测试配置位于 `config/` 目录，格式为 YAML，可设置 API 地址、用户凭据、测试数据等参数。
 
-## Running the Tests
+## 运行测试
 
-To run a single test or set of tests, you'll need the [Ginkgo](https://github.com/onsi/ginkgo) tool installed on your machine:
+运行单个或一组测试需要本机已安装 [Ginkgo](https://github.com/onsi/ginkgo)：
 
 ```
 ginkgo --help
   --focus value
-    	If set, ginkgo will only run specs that match this regular expression. Can be specified multiple times, values are ORed.
+    	设置后，Ginkgo 只运行匹配该正则的用例，可多次指定，多个取值之间为“或”的关系。
 ```
 
-To run the entire suite of E2E tests, use the following command:
+运行全部 E2E 测试：
 
 ```sh
 ginkgo -v --randomizeAllSpecs --randomizeSuites --failOnPending --cover --trace --race --progress
 ```
 
-You can also run a specific test or group of tests by specifying the path to the test directory:
+也可以指定测试目录，只运行某个测试或某组测试：
 
 ```bash
 ginkgo -v ./test/e2e/chat
 ```
 
-Or you can use Makefile to run the tests:
+或通过 Makefile 运行：
 
 ```bash
 make test-e2e
 ```
 
-## Test Development
+## 编写测试
 
-To contribute to the E2E tests:
+1. 进入 `test/e2e/` 目录。
+2. 新增测试文件，或修改已有测试以覆盖新场景。
+3. 按 Ginkgo 的 BDD 风格编写用例，保证描述清晰。
+4. 本地运行并通过测试。
+5. 提交改动。
 
-1. Clone the repository and navigate to the `test/e2e/` directory.
-2. Create a new test file or modify an existing test to cover a new scenario.
-3. Write test cases using the Ginkgo BDD style, ensuring that they are clear and descriptive.
-4. Run the tests locally to ensure they pass.
-5. Submit a pull request with your changes.
+## 反馈问题
 
-Please refer to the `CONTRIBUTING.md` file for more detailed instructions on contributing to the test suite.
+运行 E2E 测试时若遇到问题，请在 GitHub 仓库提交 issue，并附上：
 
-
-## Reporting Issues
-
-If you encounter any issues while running the E2E tests, please open an issue on the GitHub repository with the following information:
-
-Open issue: https://github.com/openimsdk/open-im-server/issues/new/choose, choose "Failing Test" template.
-
-+ A clear and concise description of the issue.
-+ Steps to reproduce the behavior.
-+ Relevant logs and test output.
-+ Any other context that could be helpful in troubleshooting.
-
-
-## Continuous Integration (CI)
-
-The E2E test suite is integrated with CI, which runs the tests automatically on each code commit. The results are reported back to the pull request or commit to provide immediate feedback on the impact of the changes.
-
-[![OpenIM Linux System E2E Test](https://github.com/openimsdk/open-im-server/actions/workflows/e2e-test.yml/badge.svg)](https://github.com/openimsdk/open-im-server/actions/workflows/e2e-test.yml)
-
-
-## Contact
-
-For any queries or assistance, please reach out to the OpenIM development team at [support@openim.com](mailto:support@openim.com).
+- 清晰简洁的问题描述。
+- 复现步骤。
+- 相关日志与测试输出。
+- 其他有助于排查的信息。

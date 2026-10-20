@@ -43,17 +43,17 @@ type Fcm struct {
 	cache     cache.ThirdCache
 }
 
-// NewClient initializes a new FCM client using the Firebase Admin SDK.
-// It requires the FCM service account credentials file located within the project's configuration directory.
+// NewClient 使用 Firebase Admin SDK 初始化一个 FCM 客户端。
+// 需要提供 FCM 服务账号凭据文件，该文件位于项目的配置目录下。
 func NewClient(pushConf *config.Push, cache cache.ThirdCache, fcmConfigPath string) (*Fcm, error) {
 	var opt option.ClientOption
 	switch {
 	case len(pushConf.FCM.FilePath) != 0:
-		// with file path
+		// 使用凭据文件路径
 		credentialsFilePath := filepath.Join(fcmConfigPath, pushConf.FCM.FilePath)
 		opt = option.WithCredentialsFile(credentialsFilePath)
 	case len(pushConf.FCM.AuthURL) != 0:
-		// with authentication URL
+		// 使用认证 URL 获取凭据
 		client := httputil.NewHTTPClient(httputil.NewClientConfig())
 		resp, err := client.Get(pushConf.FCM.AuthURL)
 		if err != nil {
@@ -77,7 +77,7 @@ func NewClient(pushConf *config.Push, cache cache.ThirdCache, fcmConfigPath stri
 }
 
 func (f *Fcm) Push(ctx context.Context, userIDs []string, title, content string, opts *options.Opts) error {
-	// accounts->registrationToken
+	// 账号 -> 注册令牌
 	allTokens := make(map[string][]string, 0)
 	for _, account := range userIDs {
 		var personTokens []string
@@ -104,14 +104,14 @@ func (f *Fcm) Push(ctx context.Context, userIDs []string, title, content string,
 			response, err := f.fcmMsgCli.SendEach(ctx, messages)
 			if err != nil {
 				Fail = Fail + messageCount
-				// Record push error
+				// 记录推送错误
 				sendErrBuilder.WriteString(err.Error())
 				sendErrBuilder.WriteByte('.')
 			} else {
 				Success = Success + response.SuccessCount
 				Fail = Fail + response.FailureCount
 				if response.FailureCount != 0 {
-					// Record message error
+					// 记录单条消息的发送错误
 					for i := range response.Responses {
 						if !response.Responses[i].Success {
 							msgErrBuilder.WriteString(response.Responses[i].Error.Error())

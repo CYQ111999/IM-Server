@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// OPENIM plan on prow tools
+// OpenIM 中 prow 相关工具的规划
 package main
 
 import (
@@ -25,7 +25,7 @@ import (
 )
 
 func main() {
-	// Prow OWNERs file defines the default indent as 2 spaces.
+	// Prow 的 OWNERs 文件约定默认缩进为 2 个空格。
 	indent := flag.Int("indent", 2, "default indent")
 	flag.Parse()
 	for _, path := range flag.Args() {

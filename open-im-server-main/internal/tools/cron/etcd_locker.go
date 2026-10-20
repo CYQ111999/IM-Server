@@ -17,7 +17,7 @@ type EtcdLocker struct {
 	instanceID string
 }
 
-// NewEtcdLocker creates a new etcd distributed lock
+// NewEtcdLocker 创建一个基于 etcd 的分布式锁
 func NewEtcdLocker(client *clientv3.Client) (*EtcdLocker, error) {
 	hostname, _ := os.Hostname()
 	pid := os.Getpid()

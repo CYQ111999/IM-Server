@@ -153,7 +153,7 @@ func (g *Client) GetTaskID(ctx context.Context, token string, pushReq PushReq) (
 	return respTask.TaskID, nil
 }
 
-// max num is 999.
+// 单批最大数量为 999。
 func (g *Client) batchPush(ctx context.Context, token string, userIDs []string, pushReq PushReq) error {
 	taskID, err := g.GetTaskID(ctx, token, pushReq)
 	if err != nil {

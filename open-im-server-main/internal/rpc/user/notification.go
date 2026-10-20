@@ -32,7 +32,7 @@ import (
 type UserNotificationSender struct {
 	*notification.NotificationSender
 	getUsersInfo func(ctx context.Context, userIDs []string) ([]common_user.CommonUser, error)
-	// db controller
+	// 数据库控制器
 	db controller.UserDatabase
 }
 

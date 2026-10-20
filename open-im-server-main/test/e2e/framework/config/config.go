@@ -19,20 +19,17 @@ import (
 	"os"
 )
 
-// Flags is the flag set that AddOptions adds to. Test authors should
-// also use it instead of directly adding to the global command line.
+// Flags 是 AddOptions 注册参数所用的 flag 集合。编写测试时应使用它，
+// 而不是直接往全局命令行上添加参数。
 var Flags = flag.NewFlagSet("", flag.ContinueOnError)
 
-// CopyFlags ensures that all flags that are defined in the source flag
-// set appear in the target flag set as if they had been defined there
-// directly. From the flag package it inherits the behavior that there
-// is a panic if the target already contains a flag from the source.
+// CopyFlags 保证源 flag 集合中定义的所有参数都出现在目标集合中，
+// 效果等同于直接在目标集合中定义。沿用 flag 包的行为：
+// 若目标集合已存在同名参数，则会 panic。
 func CopyFlags(source *flag.FlagSet, target *flag.FlagSet) {
 	source.VisitAll(func(flag *flag.Flag) {
-		// We don't need to copy flag.DefValue. The original
-		// default (from, say, flag.String) was stored in
-		// the value and gets extracted by Var for the help
-		// message.
+		// 这里无需复制 flag.DefValue。原始默认值（例如 flag.String 设置的）
+		// 已经保存在取值中，Var 在生成帮助信息时会自行提取。
 		target.Var(flag.Value, flag.Name, flag.Usage)
 	})
 }
@@ -51,16 +48,16 @@ type Config struct {
 	RPCMsgHost          string
 	RPCThirdHost        string
 	RPCUserHost         string
-	// Add other configuration fields as needed
+	// 按需补充其他配置字段
 }
 
-// LoadConfig loads the configurations from environment variables or default values.
+// LoadConfig 从环境变量或默认值加载配置。
 func LoadConfig() *Config {
 	return &Config{
 		APIHost: getEnv("OPENIM_API_HOST", "127.0.0.1"),
 		APIPort: getEnv("API_OPENIM_PORT", "10002"),
 
-		// TODO: Set default variable
+		// TODO: 设置默认值
 		MsgGatewayHost:      getEnv("OPENIM_MSGGATEWAY_HOST", "default-msggateway-host"),
 		MsgTransferHost:     getEnv("OPENIM_MSGTRANSFER_HOST", "default-msgtransfer-host"),
 		PushHost:            getEnv("OPENIM_PUSH_HOST", "default-push-host"),

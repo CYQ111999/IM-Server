@@ -1,6 +1,6 @@
 package options
 
-// Opts opts.
+// Opts 推送可选参数。
 type Opts struct {
 	Signal        *Signal
 	IOSPushSound  string
@@ -8,7 +8,7 @@ type Opts struct {
 	Ex            string
 }
 
-// Signal message id.
+// Signal 对应的消息 ID。
 type Signal struct {
 	ClientMsgID string
 }

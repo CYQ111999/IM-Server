@@ -1,17 +1,17 @@
-# Stress Test
+# 压力测试
 
-## Usage
+## 使用说明
 
-You need set `TestTargetUserList` and `DefaultGroupID` variables.
+需要先设置 `TestTargetUserList` 和 `DefaultGroupID` 两个变量。
 
-### Build
+### 编译
 
 ```bash
 
 go build -o test/stress-test/stress-test test/stress-test/main.go
 ```
 
-### Excute
+### 运行
 
 ```bash
 
