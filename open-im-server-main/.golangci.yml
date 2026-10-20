@@ -465,9 +465,9 @@ linters-settings:
           - pkg: github.com/OpenIMSDK
             desc: "The OpenIM organization has been replaced with lowercase, please do not use uppercase organization name, you will use openimsdk"
           - pkg: log
-            desc: "We have a wrapped log package at openim, we recommend you to use our wrapped log package, https://github.com/openimsdk/open-im-server/blob/main/docs/contrib/logging.md"
+            desc: "请使用项目封装的日志包，说明见 docs/日志与错误处理.md"
           - pkg: errors
-            desc: "We have a wrapped errors package at openim, we recommend you to use our wrapped errors package, https://github.com/openimsdk/open-im-server/blob/main/docs/contrib/error-code.md"
+            desc: "请使用项目封装的错误包（errs），说明见 docs/日志与错误处理.md 与 docs/错误码规范.md"
 
   importas:
     # if set to `true`, force to use alias.

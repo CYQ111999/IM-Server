@@ -1,9 +1,9 @@
-# 						OpenIM配置文件说明以及常用配置修改说明
+# OpenIM 配置文件说明与常用配置修改
 
 ## 外部组件相关配置
 
-| Configuration File | Description                        |
-| ------------------ | ---------------------------------- |
+| 配置文件 | 说明 |
+| --- | --- |
 | **kafka.yml**      | Kafka用户名、密码、地址等配置      |
 | **redis.yml**      | Redis密码、地址等配置              |
 | **minio.yml**      | MinIO用户名、密码、地址等配置      |
@@ -11,8 +11,8 @@
 | **discovery.yml**  | 服务发现以及etcd用户名、密码、地址 |
 
 ## OpenIMServer相关配置
-| Configuration File              | Description                                    |
-| ------------------------------- | ---------------------------------------------- |
+| 配置文件 | 说明 |
+| --- | --- |
 | **log.yml**                     | 日志级别及存储目录等配置                       |
 | **notification.yml**            | 添加好友、创建群组等事件通知配置               |
 | **share.yml**                   | 各服务所需的公共配置，如secret等               |
@@ -33,28 +33,28 @@
 
 
 ## 监控告警相关配置
-| Configuration File             | Description     |
-| ------------------------------ | --------------- |
+| 配置文件 | 说明 |
+| --- | --- |
 | **prometheus.yml**             | prometheus配置  |
 | **instance-down-rules.yml**    | 告警规则        |
 | **alertmanager.yml**           | 告警管理配置    |
-| **email.tmpl**                 | 邮件告警模版    |
-| **grefana-template/Demo.json** | 默认的dashboard |
+| **email.tmpl**                 | 邮件告警模板    |
+| **grefana-template/Demo.json** | 默认的监控面板 |
 
 ## 常用配置修改
-| 修改配置项                                               | 配置文件                |
-| -------------------------------------------------------- | ----------------------- |
-| 使用minio作为对象存储时配置，重点关注externalAddress字段 | `minio.yml`             |
+| 修改场景 | 配置文件 |
+| --- | --- |
+| 使用 MinIO 作为对象存储时的配置，重点关注 externalAddress 字段 | `minio.yml`             |
 | 日志级别及日志文件数量调整                               | `log.yml`               |
 | 发送消息是否需要验证好友关系                             | `openim-rpc-msg.yml`    |
 | OpenIMServer秘钥                                         | `share.yml`             |
-| 使用oss, cos, aws, kodo作为对象存储时配置                | `openim-rpc-third.yml`  |
+| 使用 OSS、COS、AWS、KODO 作为对象存储时的配置                | `openim-rpc-third.yml`  |
 | 多端互踢策略，单个gateway同时最大连接数                  | `openim-msggateway.yml` |
 | 消息离线推送                                             | `openim-push.yml`       |
-| 配置webhook来通知回调服务器，如消息发送前后回调          | `webhooks.yml`          |
+| 配置 webhook 回调服务器（如消息发送前后回调）          | `webhooks.yml`          |
 | 新入群用户是否可以查看历史消息                           | `openim-rpc-group.yml`  |
 | token 过期时间设置                                       | `openim-rpc-auth.yml`     |
-| 定时任务设置，例如消息保存多长时间                       | `openim-crontask.yml`   |
+| 定时任务设置，例如消息保存时长                       | `openim-crontask.yml`   |
 
 ## 启动某个服务的多个实例和最大文件句柄数
 

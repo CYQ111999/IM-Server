@@ -121,6 +121,10 @@ mage check                      # 检查各服务进程状态
 
 - [配置说明](docs/配置说明.md)
 - [开发指南](docs/开发指南.md)
+- [Go 代码规范](docs/Go代码规范.md)
+- [日志与错误处理](docs/日志与错误处理.md)
+- [测试指南](docs/测试指南.md)
+- [版本与分支管理](docs/版本与分支管理.md)
 - [Kafka 说明](docs/Kafka说明.md)
 - [错误码规范](docs/错误码规范.md)
 - [命名规范](docs/命名规范.md)
