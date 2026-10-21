@@ -43,13 +43,14 @@ flowchart LR
 │   ├── openim-msggateway/      #   WebSocket 长连接网关
 │   ├── openim-msgtransfer/     #   Kafka 消费：消息分发与落库
 │   ├── openim-push/            #   推送服务（在线推送 + 离线推送）
-│   └── openim-rpc/             #   六大 gRPC 业务服务
+│   └── openim-rpc/             #   六大 gRPC 业务服务 + 第三方能力代理
 │       ├── openim-rpc-auth/        #   鉴权（token 签发/校验）
 │       ├── openim-rpc-user/        #   用户资料
 │       ├── openim-rpc-friend/      #   好友/黑名单
 │       ├── openim-rpc-group/       #   群组
 │       ├── openim-rpc-msg/         #   消息
-│       └── openim-rpc-conversation/#   会话
+│       ├── openim-rpc-conversation/#   会话
+│       └── openim-rpc-third/       #   对象存储签名、推送 token、日志代理
 ├── internal/                   # 各服务业务实现（api/msggateway/msgtransfer/push/rpc）
 ├── pkg/                        # 基础设施
 │   ├── common/storage/         #   ★ 存储分层：Redis 缓存 + MongoDB 持久化 + Kafka

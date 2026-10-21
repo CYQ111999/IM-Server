@@ -116,7 +116,6 @@ func Export() {
 		"cmd",
 		"internal",
 		"pkg",
-		"test",
 		"tools",
 		"**/*.go",
 		"go.mod",
