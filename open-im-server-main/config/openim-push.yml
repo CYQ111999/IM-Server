@@ -41,24 +41,6 @@ prometheus:
 
 # maxConcurrentWorkers: 最大并发 worker 数
 maxConcurrentWorkers: 3
-# enable: 离线推送开关；可选择 getui（个推）、fcm 或 jpush，需同时配置对应参数
-enable:
-getui:
-  pushUrl: https://restapi.getui.com/v2/$appId
-  masterSecret:
-  appKey:
-  intent:
-  channelID:
-  channelName:
-fcm:
-  # 优先使用文件路径；文件路径为空时使用 URL
-  filePath:   # 文件路径会与 -c 参数（mage 默认传 config/）传入的值拼接
-  authURL:   #  必须以 https 或 http 开头
-jpush:
-  appKey:
-  masterSecret:
-  pushURL:
-  pushIntent:
 
 # iOS 系统推送的声音与角标数
 iosPush:

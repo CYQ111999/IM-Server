@@ -39,7 +39,6 @@ type Config struct {
 	WebhooksConfig     config.Webhooks
 	LocalCacheConfig   config.LocalCache
 	Discovery          config.Discovery
-	FcmConfigPath      config.Path
 }
 
 func (p pushServer) DelUserPushToken(ctx context.Context,
@@ -57,7 +56,7 @@ func Start(ctx context.Context, config *Config, client discovery.SvcDiscoveryReg
 		return err
 	}
 	cacheModel := redis.NewThirdCache(rdb)
-	offlinePusher, err := offlinepush.NewOfflinePusher(&config.RpcConfig, cacheModel, string(config.FcmConfigPath))
+	offlinePusher, err := offlinepush.NewOfflinePusher(&config.RpcConfig, cacheModel)
 	if err != nil {
 		return err
 	}

@@ -246,26 +246,7 @@ type Push struct {
 	RPC                  RPC        `yaml:"rpc"`
 	Prometheus           Prometheus `yaml:"prometheus"`
 	MaxConcurrentWorkers int        `yaml:"maxConcurrentWorkers"`
-	Enable               string     `yaml:"enable"`
-	GeTui                struct {
-		PushUrl      string `yaml:"pushUrl"`
-		MasterSecret string `yaml:"masterSecret"`
-		AppKey       string `yaml:"appKey"`
-		Intent       string `yaml:"intent"`
-		ChannelID    string `yaml:"channelID"`
-		ChannelName  string `yaml:"channelName"`
-	} `yaml:"geTui"`
-	FCM struct {
-		FilePath string `yaml:"filePath"`
-		AuthURL  string `yaml:"authURL"`
-	} `yaml:"fcm"`
-	JPush struct {
-		AppKey       string `yaml:"appKey"`
-		MasterSecret string `yaml:"masterSecret"`
-		PushURL      string `yaml:"pushURL"`
-		PushIntent   string `yaml:"pushIntent"`
-	} `yaml:"jpush"`
-	IOSPush struct {
+	IOSPush              struct {
 		PushSound  string `yaml:"pushSound"`
 		BadgeCount bool   `yaml:"badgeCount"`
 		Production bool   `yaml:"production"`
