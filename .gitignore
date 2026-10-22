@@ -1,0 +1,10 @@
+# === 仓库根目录忽略规则 ===
+# 说明：本仓库真正的项目代码在 open-im-server-main/（自带 .gitignore），
+#      学习文档在 项目学习计划/。以下两类是本机环境产物，不应入库。
+
+# IDE 配置（IDEA / GoLand）
+.idea/
+*.iml
+
+# WorkBuddy 本地记忆与项目数据（含个人笔记、本地偏好，不入仓库）
+.workbuddy/
